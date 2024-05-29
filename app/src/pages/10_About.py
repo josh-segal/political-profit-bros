@@ -1,13 +1,9 @@
-
-
 import streamlit as st
 from streamlit_extras.app_logo import add_logo
+from modules.nav import SideBarLinks
 
+SideBarLinks()
 
-
-
-st.set_page_config (page_title="About", page_icon="👋")
-add_logo("assets/logo.png", height=400)
 st.write("# About this App")
 
 st.markdown (
