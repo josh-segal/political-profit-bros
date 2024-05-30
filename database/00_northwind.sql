@@ -7,6 +7,18 @@ CREATE SCHEMA IF NOT EXISTS `northwind` DEFAULT CHARACTER SET latin1 ;
 USE `northwind` ;
 
 -- -----------------------------------------------------
+-- Model Params Table and data added by Dr. Fontenot
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `northwind`.`model1_param_vals`(
+    `sequence_number` INTEGER AUTO_INCREMENT,
+    `beta_0` FLOAT,
+    `beta_1` FLOAT,
+    `beta_2` FLOAT
+);
+
+INSERT INTO model1_param_vals(beta_0, beta_1, beta_2) values (0.1214, 0.2354, 0.3245);
+
+-- -----------------------------------------------------
 -- Table `northwind`.`customers`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `northwind`.`customers` (

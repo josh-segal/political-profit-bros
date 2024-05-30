@@ -5,14 +5,27 @@
 from flask import Blueprint, request, jsonify, make_response, current_app
 import json
 from backend.db_connection import db
+from backend.ml_models.model01 import predict
 
 customers = Blueprint('customers', __name__)
+
+@customers.route('/predict', methods=['GET'])
+def prediction():
+    # use the predict function from ml_models.model01 module to 
+    # get a predicted value for inputs 10, 25. 
+    returnVal = predict(10, 25)
+    # turn the value returned into a dictionary
+    return_dict = {'result': returnVal}
+    # jsonify the dictionary and create an HTTP response object from it
+    the_response = make_response(jsonify(return_dict))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
 
 # Get all customers from the DB
 @customers.route('/customers', methods=['GET'])
 def get_customers():
     current_app.logger.info('customer_routes.py: GET /customers')
-    print("hello")
     cursor = db.get_db().cursor()
     cursor.execute('select id, company, last_name,\
         first_name, job_title, business_phone from customers')
