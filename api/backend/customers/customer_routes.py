@@ -9,18 +9,31 @@ from backend.ml_models.model01 import predict
 
 customers = Blueprint('customers', __name__)
 
-@customers.route('/predict', methods=['GET'])
-def prediction():
-    # use the predict function from ml_models.model01 module to 
-    # get a predicted value for inputs 10, 25. 
-    returnVal = predict(10, 25)
-    # turn the value returned into a dictionary
+@customers.route('/prediction/<var01>/<var02>', methods=['GET'])
+def predict_value(var01, var02):
+    current_app.logger.info(f'var01 = {var01}')
+    current_app.logger.info(f'var02 = {var02}')
+
+    returnVal = predict(var01, var02)
     return_dict = {'result': returnVal}
-    # jsonify the dictionary and create an HTTP response object from it
+
     the_response = make_response(jsonify(return_dict))
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
     return the_response
+
+# @customers.route('/predict', methods=['GET'])
+# def prediction():
+#     # use the predict function from ml_models.model01 module to 
+#     # get a predicted value for inputs 10, 25. 
+#     returnVal = predict(10, 25)
+#     # turn the value returned into a dictionary
+#     return_dict = {'result': returnVal}
+#     # jsonify the dictionary and create an HTTP response object from it
+#     the_response = make_response(jsonify(return_dict))
+#     the_response.status_code = 200
+#     the_response.mimetype = 'application/json'
+#     return the_response
 
 # Get all customers from the DB
 @customers.route('/customers', methods=['GET'])

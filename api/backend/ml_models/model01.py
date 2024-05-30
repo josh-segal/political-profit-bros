@@ -17,7 +17,7 @@ def train():
 def test():
   return 'Testing the model'
 
-def predict(var1, var2):
+def predict(var01, var02):
   """
   Retreives model parameters from the database and uses them for real-time prediction
   """
@@ -25,9 +25,10 @@ def predict(var1, var2):
   cursor = db.get_db().cursor()
   # retreive the parameters from the appropriate table
   cursor.execute('select beta_0, beta_1, beta_2 from model1_param_vals')
+  
   # fetch the first row from the cursor
   data = cursor.fetchone()
   # calculate the predicted result using this functions arguments as well as the model parameter values
-  result = data[0] + var1 * data[1] + var2 * data[2]
+  result = data[0] + int(var01) * data[1] + int(var02) * data[2]
   # return the result 
   return result

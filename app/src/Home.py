@@ -1,27 +1,19 @@
-# import logging
-# logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
-# logger = logging.getLogger(__name__)
+import logging
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-import pandas as pd
 import streamlit as st
-from streamlit_extras.app_logo import add_logo
-import world_bank_data as wb
-import matplotlib.pyplot as plt
-import numpy as np
-import plotly.express as px
 from modules.nav import SideBarLinks
 
 st.set_page_config(layout = 'wide')
 
 st.session_state['authenticated'] = False
-SideBarLinks()
-
-add_logo("assets/logo.png", height=400)
+SideBarLinks(show_home=True)
 
 st.title('The Profs App')
 
 st.write('\n\n')
-st.write('## Landing Page Logins')
+st.write('### HI! As which user would you like to log in?')
 
 if st.button("Act as John, a Political Strategy Advisor", 
             type = 'primary', 
@@ -29,7 +21,7 @@ if st.button("Act as John, a Political Strategy Advisor",
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'pol_strat_advisor'
     st.session_state['first_name'] = 'John'
-    st.switch_page('pages/01_World_Bank_Viz.py')
+    st.switch_page('pages/00_Pol_Strat_Home.py')
 
 if st.button('Act as Mohammad, an USAID worker', 
             type = 'primary', 
@@ -37,7 +29,15 @@ if st.button('Act as Mohammad, an USAID worker',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'usaid_worker'
     st.session_state['first_name'] = 'Mohammad'
-    st.switch_page('pages/02_Map_Demo.py')
+    st.switch_page('pages/10_USAID_Worker_Home.py')
+
+if st.button('Act as System Administrator', 
+            type = 'primary', 
+            use_container_width=True):
+    st.session_state['authenticated'] = True
+    st.session_state['role'] = 'administrator'
+    st.session_state['first_name'] = 'SysAdmin'
+    st.switch_page('pages/20_Admin_Home.py')
 
 
 
