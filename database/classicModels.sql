@@ -27,7 +27,6 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/`classicmodels` /*!40100 DEFAULT CHARACT
 
 USE `classicmodels`;
 
-grant all privileges on classicmodels.* to 'webapp'@'%';
 flush privileges;
 
 /*Table structure for table `customers` */
