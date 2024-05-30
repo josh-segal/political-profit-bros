@@ -1,4 +1,4 @@
-# Borrowed from https://github.com/fsmosca/sample-streamlit-authenticator
+# Idea borrowed from https://github.com/fsmosca/sample-streamlit-authenticator
 
 import streamlit as st
 
