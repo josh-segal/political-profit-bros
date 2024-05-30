@@ -14,8 +14,6 @@ def create_app():
 
     # Load environment variables
     load_dotenv()
-    testvar = os.getenv('TEST_VAR')
-    app.logger.info(f'testvar is {testvar}')
 
     # secret key that will be used for securely signing the session 
     # cookie and can be used for any other security related needs by 
