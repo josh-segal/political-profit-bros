@@ -10,34 +10,34 @@ st.set_page_config(layout = 'wide')
 st.session_state['authenticated'] = False
 SideBarLinks(show_home=True)
 
-st.title('The Profs App')
+st.title('Political Profit Bros App')
 
 st.write('\n\n')
 st.write('### HI! As which user would you like to log in?')
 
-if st.button("Act as John, a Political Strategy Advisor", 
+if st.button("Act as John, an independent stock investor", 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'pol_strat_advisor'
+    st.session_state['role'] = 'investor'
     st.session_state['first_name'] = 'John'
-    st.switch_page('pages/00_Pol_Strat_Home.py')
+    st.switch_page('pages/00_Investor_Home.py')
 
-if st.button('Act as Mohammad, an USAID worker', 
+if st.button('Act as Caroline, a political campaign manager', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'usaid_worker'
-    st.session_state['first_name'] = 'Mohammad'
-    st.switch_page('pages/10_USAID_Worker_Home.py')
+    st.session_state['role'] = 'manager'
+    st.session_state['first_name'] = 'Caroline'
+    st.switch_page('pages/10_Manager_Home.py')
 
-if st.button('Act as System Administrator', 
+if st.button('Act as Bobby, a financial investigative journalist', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'administrator'
-    st.session_state['first_name'] = 'SysAdmin'
-    st.switch_page('pages/20_Admin_Home.py')
+    st.session_state['role'] = 'journalist'
+    st.session_state['first_name'] = 'Bobby'
+    st.switch_page('pages/20_Journalist_Home.py')
 
 
 
