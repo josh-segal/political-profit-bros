@@ -90,26 +90,23 @@ def put_tracked_stock ():
     date = the_data['date']
     id = the_data['id']
 
+    # price = 2
+    # buy = 1
+    # stock_id = 1
+    # investor_id = 1
+    # volume = 100
+    # date = '2024-06-05 14:30:00'
+    # id = 2
 
-    # Ensure all variables are properly formatted
-    price = 2
-    buy = 1
-    stock_id = 1
-    investor_id = 1
-    volume = 100
-    date = '2024-06-05 14:30:00'  # Make sure date is a string
-    id = 2
-
-    # # Constructing the query
-    # query = f"""
-    #         INSERT INTO investor_order (price, buy, stock_id, investor_id, volume, date, id)
-    #         VALUES ({price}, {buy}, {stock_id}, {investor_id}, {volume}, '{date}', {id})
-    #         """
-    
-    query = """
+    query = f"""
             INSERT INTO investor_order (price, buy, stock_id, investor_id, volume, date, id)
-            VALUES (1, 1, 2, 1, 10, '2024-06-05 14:30:00', 790)
+            VALUES ({price}, {buy}, {stock_id}, {investor_id}, {volume}, '{date}', {id})
             """
+    
+    # query = """
+    #         INSERT INTO investor_order (price, buy, stock_id, investor_id, volume, date, id)
+    #         VALUES (1, 1, 2, 1, 10, '2024-06-05 14:30:00', 790)
+    #         """
     current_app.logger.info(query)
 
     # Execute the query
