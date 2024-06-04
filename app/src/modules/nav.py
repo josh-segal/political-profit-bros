@@ -9,15 +9,18 @@ def HomeNav():
 def AboutPageNav():
     st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
 
-#### ------------------------ Examples for Role of pol_strat_advisor ------------------------
+#### ------------------------ Examples for Role of investor ------------------------
 def PolStratAdvHomeNav():
     st.sidebar.page_link("pages/00_Investor_Home.py", label="Political Strategist Home", icon='👤')
 
-def WorldBankVizNav():
-    st.sidebar.page_link("pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon='🏦')
+def StockSearchNav():
+    st.sidebar.page_link("pages/01_Stock_Search.py", label="Stock Search", icon='🏦')
 
 def MapDemoNav():
     st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon='🗺️')
+
+def PortfolioNav():
+    st.sidebar.page_link("pages/05_Portfolio.py", label="My Portfolio", icon='🗺️')
 
 ## ------------------------ Examples for Role of usaid_worker ------------------------
 def ApiTestNav():
@@ -59,8 +62,8 @@ def SideBarLinks(show_home=False):
         # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
         if st.session_state['role'] == 'investor':
             PolStratAdvHomeNav()
-            WorldBankVizNav()
-            MapDemoNav()
+            StockSearchNav()
+            PortfolioNav()
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state['role'] == 'manager':

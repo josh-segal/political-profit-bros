@@ -6,6 +6,8 @@ from flask import Flask
 from backend.db_connection import db
 from backend.customers.customer_routes import customers
 from backend.products.products_routes import products
+from backend.stocks.stocks_routes import stocks
+from backend.investors.investor_routes import investors
 import os
 from dotenv import load_dotenv
 
@@ -61,6 +63,7 @@ def create_app():
     app.register_blueprint(customers,   url_prefix='/c')
     app.register_blueprint(products,    url_prefix='/p')
     app.register_blueprint(stocks,    url_prefix='/s')
+    app.register_blueprint(investors,    url_prefix='/i')
 
     # Don't forget to return the app object
     return app
