@@ -196,7 +196,7 @@ CREATE TABLE IF NOT EXISTS legislation_politician_ids
 );
 
 
---ChatGPT data for testing, trash later:
+-- ChatGPT data for testing, trash later:
 
 -- Sample data for investor table
 INSERT INTO investor (name, created_at, amount_invested, id) 
