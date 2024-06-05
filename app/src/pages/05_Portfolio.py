@@ -18,4 +18,12 @@ st.header('Portfolio')
 st.write(f"### Hi, {st.session_state['first_name']}.")
 
 results = requests.get(f'http://api:4000/i/stock_portfolio/{1}').json()
-st.write(results)
+if results:
+    for stock in results:
+                if st.button(stock['company'],
+                            type='primary',
+                            use_container_width=True):
+                    st.session_state.payload = stock
+                    st.switch_page('pages/08_Stock_Detail.py')         
+else:
+       st.write('no stocks found... check spelling')
