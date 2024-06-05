@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS investor_order
     investor_id INT,
     volume FLOAT,
     date DATETIME,
-    id INT,
+    id INT AUTO_INCREMENT,
     PRIMARY KEY (id),
     FOREIGN KEY (stock_id) REFERENCES stock (id),
     FOREIGN KEY (investor_id) REFERENCES investor (id)
@@ -208,6 +208,16 @@ INSERT INTO stock (curr_price, company, industry, id)
 VALUES
 (10, 'apple', 'technology', 1),
 (100, 'Health House', 'BS', 2);
+
+-- Insert two managers
+INSERT INTO manager (name, created_at, party, id)
+VALUES ('John Doe', '2023-01-01 10:00:00', 'Independent', 1),
+       ('Jane Smith', '2023-02-01 11:00:00', 'Democratic', 2);
+
+-- Insert two politicians managed by the two managers
+INSERT INTO politician (name, party, state, chamber, manager_id, id)
+VALUES ('Alice Johnson', 'Independent', 'California', 'Senate', 1, 1),
+       ('Bob Brown', 'Democratic', 'Texas', 'House of Representatives', 2, 2);
 
 
 

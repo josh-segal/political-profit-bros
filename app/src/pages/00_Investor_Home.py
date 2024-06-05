@@ -22,7 +22,7 @@ if st.button('Search Stock Database',
 if st.button('Search Politician Database', 
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/02_Map_Demo.py')
+  st.switch_page('pages/07_Politician_Search.py')
 
 if st.button('View My Portfolio', 
              type='primary',

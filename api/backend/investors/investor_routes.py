@@ -10,7 +10,7 @@ def get_stock_portfolio(investor_id):
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of stocks
-    cursor.execute(f"SELECT s.company, s.id FROM stock s JOIN investor_order io ON s.id = io.stock_id AND io.buy = 1 WHERE investor_id = '{investor_id}'")
+    cursor.execute(f"SELECT DISTINCT s.company, s.id FROM stock s JOIN investor_order io ON s.id = io.stock_id AND io.buy = 1 WHERE investor_id = '{investor_id}'")
 
     # fetch all the data from the cursor
     theData = cursor.fetchall()

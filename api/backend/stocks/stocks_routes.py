@@ -16,20 +16,11 @@ def get_stocks():
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of stocks
-    cursor.execute('SELECT curr_price, company, industry, id FROM stock')
-
-    # grab the column headers from the returned data
-    column_headers = [x[0] for x in cursor.description]
-
-    # create an empty dictionary object to use in 
-    # putting column headers together with data
-    json_data = []
+    cursor.execute('SELECT s.curr_price, s.company, s.industry, s.id FROM stock s LEFT JOIN stock_search_history ssh ON s.id = ssh.stock_id GROUP BY s.id ORDER BY count(ssh.stock_id) LIMIT 5')
 
     # fetch all the data from the cursor
     theData = cursor.fetchall()
     current_app.logger.info(f'GET /stocks: theData = {theData}')
-    # for each of the rows, zip the data elements together with
-    # the column headers. 
 
     return jsonify(theData)
 
@@ -47,35 +38,6 @@ def get_stock_detail (stock_name):
     return jsonify(the_data)
 
 
-# @stocks.route('/product', methods=['POST'])
-# def add_new_product():
-    
-#     # collecting data from the request object 
-#     the_data = request.json
-#     current_app.logger.info(the_data)
-
-#     #extracting the variable
-#     name = the_data['product_name']
-#     description = the_data['product_description']
-#     price = the_data['product_price']
-#     category = the_data['product_category']
-
-#     # Constructing the query
-#     query = 'insert into stocks (product_name, description, category, list_price) values ("'
-#     query += name + '", "'
-#     query += description + '", "'
-#     query += category + '", '
-#     query += str(price) + ')'
-#     current_app.logger.info(query)
-
-#     # executing and committing the insert statement 
-#     cursor = db.get_db().cursor()
-#     cursor.execute(query)
-#     db.get_db().commit()
-    
-#     return 'Success!'
-
-
 @stocks.route('/track', methods=['POST'])
 def put_tracked_stock ():
     
@@ -88,25 +50,11 @@ def put_tracked_stock ():
     investor_id = the_data['investor_id']
     volume = the_data['volume']
     date = the_data['date']
-    id = the_data['id']
-
-    # price = 2
-    # buy = 1
-    # stock_id = 1
-    # investor_id = 1
-    # volume = 100
-    # date = '2024-06-05 14:30:00'
-    # id = 2
 
     query = f"""
-            INSERT INTO investor_order (price, buy, stock_id, investor_id, volume, date, id)
-            VALUES ({price}, {buy}, {stock_id}, {investor_id}, {volume}, '{date}', {id})
+            INSERT INTO investor_order (price, buy, stock_id, investor_id, volume, date)
+            VALUES ({price}, {buy}, {stock_id}, {investor_id}, {volume}, '{date}')
             """
-    
-    # query = """
-    #         INSERT INTO investor_order (price, buy, stock_id, investor_id, volume, date, id)
-    #         VALUES (1, 1, 2, 1, 10, '2024-06-05 14:30:00', 790)
-    #         """
     current_app.logger.info(query)
 
     # Execute the query

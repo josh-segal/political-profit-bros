@@ -11,10 +11,13 @@ def AboutPageNav():
 
 #### ------------------------ Examples for Role of investor ------------------------
 def PolStratAdvHomeNav():
-    st.sidebar.page_link("pages/00_Investor_Home.py", label="Political Strategist Home", icon='👤')
+    st.sidebar.page_link("pages/00_Investor_Home.py", label="Investor Home", icon='👤')
 
 def StockSearchNav():
     st.sidebar.page_link("pages/01_Stock_Search.py", label="Stock Search", icon='🏦')
+
+def PoliticianSearchNav():
+    st.sidebar.page_link("pages/07_Politician_Search.py", label="Politician Search", icon='🏦')
 
 def MapDemoNav():
     st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon='🗺️')
@@ -63,6 +66,7 @@ def SideBarLinks(show_home=False):
         if st.session_state['role'] == 'investor':
             PolStratAdvHomeNav()
             StockSearchNav()
+            PoliticianSearchNav()
             PortfolioNav()
 
         # If the user role is usaid worker, show the Api Testing page

@@ -36,7 +36,6 @@ if st.button('Buy Stock',
                     'investor_id': 1, #TODO: change to specific investor users
                     'volume': volume,
                     'date': dt.now().isoformat(),
-                    'id': 1,
     }
 
     url = 'http://api:4000/s/track'

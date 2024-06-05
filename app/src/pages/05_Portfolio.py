@@ -17,13 +17,27 @@ st.header('Portfolio')
 # You can access the session state to make a more customized/personalized app experience
 st.write(f"### Hi, {st.session_state['first_name']}. Here are the stocks you own.")
 
-results = requests.get(f'http://api:4000/i/stock_portfolio/{1}').json()
-if results:
-    for stock in results:
-                if st.button(stock['company'],
-                            type='primary',
-                            use_container_width=True):
-                    st.session_state.payload = stock
-                    st.switch_page('pages/08_Stock_Detail.py')         
+stock_pol = st.toggle("Politician / Stock Portfolio", value=True)
+
+if stock_pol:
+    results = requests.get(f'http://api:4000/i/stock_portfolio/{1}').json()
+    if results:
+        for stock in results:
+                    if st.button(stock['company'],
+                                type='primary',
+                                use_container_width=True):
+                        st.session_state.payload = stock
+                        st.switch_page('pages/08_Stock_Detail.py')         
+    else:
+        st.write('no stocks found... check spelling')
 else:
-       st.write('no stocks found... check spelling')
+    results = requests.get(f'http://api:4000/po/politician_portfolio/{1}').json()
+    if results:
+        for politician in results:
+                    if st.button(politician['name'],
+                                type='primary',
+                                use_container_width=True):
+                        st.session_state.payload = politician
+                        st.switch_page('pages/09_Politician_Detail.py')         
+    else:
+        st.write('no politician found... check spelling')
