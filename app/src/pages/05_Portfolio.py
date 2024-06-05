@@ -15,7 +15,7 @@ SideBarLinks()
 st.header('Portfolio')
 
 # You can access the session state to make a more customized/personalized app experience
-st.write(f"### Hi, {st.session_state['first_name']}.")
+st.write(f"### Hi, {st.session_state['first_name']}. Here are the stocks you own.")
 
 results = requests.get(f'http://api:4000/i/stock_portfolio/{1}').json()
 if results:
