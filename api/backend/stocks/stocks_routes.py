@@ -27,7 +27,7 @@ def get_stocks():
 
     # fetch all the data from the cursor
     theData = cursor.fetchall()
-    current_app.logger.info(f'theData = {theData}')
+    current_app.logger.info(f'GET /stocks: theData = {theData}')
     # for each of the rows, zip the data elements together with
     # the column headers. 
 
@@ -80,7 +80,7 @@ def get_stock_detail (stock_name):
 def put_tracked_stock ():
     
     the_data = request.json
-    current_app.logger.info(the_data)
+    current_app.logger.info(f'the_data = {the_data}')
 
     price = the_data['price']
     buy = the_data['buy']

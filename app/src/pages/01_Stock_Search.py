@@ -12,11 +12,16 @@ logger = logging.getLogger()
 from datetime import datetime as dt
 import uuid
 
+def handler():
+     logger.info(f'in handler function')
+
 
 # Call the SideBarLinks from the nav module in the modules directory
 SideBarLinks()
-
+logger.info('01_Stock_Search page')
 search_query = st.text_input('Search for a stock...')
+
+
 
 if search_query:
     # logger.info('search query = ', search_query)
@@ -26,38 +31,39 @@ if search_query:
     if results:
             
         for stock in results:
-                if st.button(stock['company'],
-                            type='primary',
-                            use_container_width=True):
-                    dates = pd.date_range('2023-01-01', periods=100)
-                    data = np.random.randn(100).cumsum()
-                    df = pd.DataFrame(data, index=dates, columns=['Value'])
-                    st.line_chart(df)
-                    if st.button('Buy Stock',
-                            type='secondary',
-                            use_container_width=True):
-                         # add stock to tracked table for user
+            if st.button(stock['company'],
+                        type='primary',
+                        use_container_width=True):
+                logger.info('Wtf Josh?')
+                dates = pd.date_range('2023-01-01', periods=100)
+                data = np.random.randn(100).cumsum()
+                df = pd.DataFrame(data, index=dates, columns=['Value'])
+                st.line_chart(df)
+                if st.button('Buy Stock',
+                        type='secondary',
+                        use_container_width=True, on_click=handler):
+                        # add stock to tracked table for user
+                    
+                    unique_id = uuid.uuid4()
+                    payload = {
+                                'price': stock['curr_price'],
+                                'buy': 1,
+                                'stock_id': stock['id'],
+                                'investor_id': 1, #TODO: change to specific investor users
+                                'volume': 1,
+                                'date': dt.now().isoformat(),
+                                'id': str(unique_id),
+                        }
+                    logger.info(f'payload = {payload}')
+                    url = 'http://api:4000/s/track'
+                    
+                    response = requests.post(url, json=payload)
+    
+                    if response.status_code == 200:
+                        st.success('Stock successfully tracked!')
+                    else:
+                        st.error('Failed to track stock. Please try again.')
                         
-                        unique_id = uuid.uuid4()
-                        payload = {
-                                    'price': stock['curr_price'],
-                                    'buy': 1,
-                                    'stock_id': stock['id'],
-                                    'investor_id': 1, #TODO: change to specific investor users
-                                    'volume': 1,
-                                    'date': dt.now().isoformat(),
-                                    'id': str(unique_id),
-                         }
-                        
-                        url = 'http://api:4000/s/track'
-                        
-                        response = requests.post(url, json=payload)
-        
-                        if response.status_code == 200:
-                            st.success('Stock successfully tracked!')
-                        else:
-                            st.error('Failed to track stock. Please try again.')
-                         
 
         # response = requests.get(query)
         # logger.info('response = ', response)
@@ -77,10 +83,29 @@ else:
         if st.button(stock['company'],
                      type='primary',
                      use_container_width=True):
-            dates = pd.date_range('2023-01-01', periods=100)
-            data = np.random.randn(100).cumsum()
-            df = pd.DataFrame(data, index=dates, columns=['Value'])
-            st.line_chart(df)
+            payload = {
+                        'price': stock['curr_price'],
+                        'buy': 1,
+                        'stock_id': stock['id'],
+                        'investor_id': 1, #TODO: change to specific investor users
+                        'volume': 1,
+                        'date': dt.now().isoformat(),
+                        'id': 1,
+                }
+            logger.info(f'payload = {payload}')
+            url = 'http://api:4000/s/track'
+            
+            response = requests.post(url, json=payload)
+
+            logger.info('respose', response)
+            if response.status_code == 200:
+                st.success('Stock successfully tracked!')
+            else:
+                st.error('Failed to track stock. Please try again.')
+            # dates = pd.date_range('2023-01-01', periods=100)
+            # data = np.random.randn(100).cumsum()
+            # df = pd.DataFrame(data, index=dates, columns=['Value'])
+            # st.line_chart(df)
             if st.button('Buy Stock',
                             type='secondary',
                             use_container_width=True):
@@ -94,7 +119,7 @@ else:
                                     'investor_id': 1, #TODO: change to specific investor users
                                     'volume': 1,
                                     'date': dt.datetime(2024, 6, 5, 14, 30),
-                                    'id': str(unique_id),
+                                    'id': 1,
                          }
                         
                         url = 'http://api:4000/s/track'
@@ -105,6 +130,32 @@ else:
                             st.success('Stock successfully tracked!')
                         else:
                             st.error('Failed to track stock. Please try again.')
+
+
+    # if st.button('Buy Stock',
+    #                     type='secondary',
+    #                     use_container_width=True):
+    #                     # add stock to tracked table for user
+                    
+    #                 unique_id = uuid.uuid4()
+    #                 payload = {
+    #                             'price': stock['curr_price'],
+    #                             'buy': 1,
+    #                             'stock_id': stock['id'],
+    #                             'investor_id': 1, #TODO: change to specific investor users
+    #                             'volume': 1,
+    #                             'date': dt.now().isoformat(),
+    #                             'id': str(unique_id),
+    #                     }
+    #                 logger.info(f'payload = {payload}')
+    #                 url = 'http://api:4000/s/track'
+                    
+    #                 response = requests.post(url, json=payload)
+    
+    #                 if response.status_code == 200:
+    #                     st.success('Stock successfully tracked!')
+    #                 else:
+    #                     st.error('Failed to track stock. Please try again.')
 
 # set the header of the page
 # st.header('World Bank Data')
