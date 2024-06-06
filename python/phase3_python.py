@@ -34,6 +34,16 @@ predict = linreg_predict(X, Y, equation)
 
 brp['Adj Close Pred'] = predict['ypreds']
 
+def linear_regression(stock_df):
+    # Calculate the linear regression slope and intercept
+    X = np.array(list(range(1, len(stock_df) + 1)))
+    Y = np.array(stock_df['Adj Close'])
+    equation = line_of_best_fit(X, Y)
+    predict = linreg_predict(X, Y, equation)
+    stock_df['Adj Close Pred'] = predict['ypreds']
+
+    return stock_df
+
 
 # Plot the stock Adj Close values along with the calculated linear regression
 fig = go.Figure(data=[go.Candlestick(x=brp['Date'],
