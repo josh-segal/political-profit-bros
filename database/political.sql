@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS investor_order
     investor_id INT,
     volume FLOAT,
     date DATETIME,
-    id INT,
+    id INT AUTO_INCREMENT,
     PRIMARY KEY (id),
     FOREIGN KEY (stock_id) REFERENCES stock (id),
     FOREIGN KEY (investor_id) REFERENCES investor (id)

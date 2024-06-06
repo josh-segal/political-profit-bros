@@ -8,6 +8,8 @@ from backend.customers.customer_routes import customers
 from backend.products.products_routes import products
 from backend.stocks.stocks_routes import stocks
 from backend.investors.investor_routes import investors
+from backend.politicians.politician_routes import politicians
+from backend.managers.manger_routes import managers
 import os
 from dotenv import load_dotenv
 
@@ -64,6 +66,8 @@ def create_app():
     app.register_blueprint(products,    url_prefix='/p')
     app.register_blueprint(stocks,    url_prefix='/s')
     app.register_blueprint(investors,    url_prefix='/i')
+    app.register_blueprint(politicians,    url_prefix='/po')
+    app.register_blueprint(managers,    url_prefix='/m')
 
     # Don't forget to return the app object
     return app

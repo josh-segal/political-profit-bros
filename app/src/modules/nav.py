@@ -11,10 +11,13 @@ def AboutPageNav():
 
 #### ------------------------ Examples for Role of investor ------------------------
 def PolStratAdvHomeNav():
-    st.sidebar.page_link("pages/00_Investor_Home.py", label="Political Strategist Home", icon='👤')
+    st.sidebar.page_link("pages/00_Investor_Home.py", label="Investor Home", icon='👤')
 
 def StockSearchNav():
     st.sidebar.page_link("pages/01_Stock_Search.py", label="Stock Search", icon='🏦')
+
+def PoliticianSearchNav():
+    st.sidebar.page_link("pages/07_Politician_Search.py", label="Politician Search", icon='👨‍⚖️')
 
 def MapDemoNav():
     st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon='🗺️')
@@ -23,6 +26,12 @@ def PortfolioNav():
     st.sidebar.page_link("pages/05_Portfolio.py", label="My Portfolio", icon='🗺️')
 
 ## ------------------------ Examples for Role of usaid_worker ------------------------
+def editManagerNav():
+    st.sidebar.page_link("pages/14_Edit_Manager.py", label="Edit Manager", icon='👤')
+
+def managerHomeNav():
+    st.sidebar.page_link("pages/10_Manager_Home.py", label="Manager Home", icon='👤')
+
 def ApiTestNav():
     st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon='🛜')
 
@@ -34,8 +43,8 @@ def ClassificationNav():
 
 #### ------------------------ System Admin Role ------------------------
 def AdminPageNav():
-    st.sidebar.page_link("pages/20_Journalist_Home.py", label="System Admin", icon='🖥️')
-    st.sidebar.page_link("pages/21_ML_Model_Mgmt.py", label='ML Model Management', icon='🏢')
+    st.sidebar.page_link("pages/20_Journalist_Home.py", label="Journalist Home", icon='🖥️')
+    st.sidebar.page_link("pages/22_Model_Inference.py", label='Inference ML model', icon='🏢')
 
 
 # --------------------------------Links Function -----------------------------------------------
@@ -63,13 +72,18 @@ def SideBarLinks(show_home=False):
         if st.session_state['role'] == 'investor':
             PolStratAdvHomeNav()
             StockSearchNav()
+            PoliticianSearchNav()
             PortfolioNav()
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state['role'] == 'manager':
-            PredictionNav()
-            ApiTestNav() 
-            ClassificationNav()
+            # PredictionNav()
+            # ApiTestNav() 
+            # ClassificationNav()
+            managerHomeNav()
+            PoliticianSearchNav()
+            editManagerNav()
+            
         
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state['role'] == 'journalist':
