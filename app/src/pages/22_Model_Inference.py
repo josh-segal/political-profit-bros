@@ -158,15 +158,4 @@ def cross_validate(stock_df, test_size=0.3, random_state=3):
     st.plotly_chart(fig)
 
     st.write('hello')
-
-
-
-
- 
-
-
-
-
-
-
-
+    
