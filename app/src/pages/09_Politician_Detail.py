@@ -10,27 +10,28 @@ from datetime import datetime as dt
 
 SideBarLinks()
 
-st.write('politician Detail Page')
-politician = st.session_state.payload
-st.write(politician['name'])
+if st.session_state['role'] == 'investor':
 
-if st.button('Track politician',
-                        type='primary',
-                        use_container_width=True):
+    st.write('politician Detail Page')
+    politician = st.session_state.payload
+    st.write(politician['name'])
 
-    payload = {
-            'investor_id': 1, # TODO: figure out how to do this with 3 users
-                    'politician_id': politician['id'],
-                    'date': dt.now().isoformat(),
-    }
+    if st.button('Track politician',
+                            type='primary',
+                            use_container_width=True):
 
-    url = 'http://api:4000/po/track'
+        payload = {
+                'investor_id': 1, # TODO: figure out how to do this with 3 users
+                        'politician_id': politician['id'],
+                        'date': dt.now().isoformat(),
+        }
 
-    response = requests.post(url, json=payload)
+        url = 'http://api:4000/po/track'
 
-    logger.info('respose', response)
-    if response.status_code == 200:
-        st.success('politician successfully tracked!')
-    else:
-        st.error('Failed to track politician. Please try again.')
+        response = requests.post(url, json=payload)
 
+        logger.info('respose', response)
+        if response.status_code == 200:
+            st.success('politician successfully tracked!')
+        else:
+            st.error('Failed to track politician. Please try again.')

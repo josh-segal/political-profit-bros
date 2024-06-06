@@ -44,17 +44,27 @@ def put_tracked_stock ():
     the_data = request.json
     current_app.logger.info(f'the_data = {the_data}')
 
-    price = the_data['price']
-    buy = the_data['buy']
-    stock_id = the_data['stock_id']
+    # price = the_data['price']
+    # buy = the_data['buy']
+    # stock_id = the_data['stock_id']
+    # investor_id = the_data['investor_id']
+    # volume = the_data['volume']
+    # date = the_data['date']
+
+    # query = f"""
+    #         INSERT INTO investor_order (price, buy, stock_id, investor_id, volume, date)
+    #         VALUES ({price}, {buy}, {stock_id}, {investor_id}, {volume}, '{date}')
+    #         """
+
     investor_id = the_data['investor_id']
-    volume = the_data['volume']
+    stock_id = the_data['stock_id']
     date = the_data['date']
 
     query = f"""
-            INSERT INTO investor_order (price, buy, stock_id, investor_id, volume, date)
-            VALUES ({price}, {buy}, {stock_id}, {investor_id}, {volume}, '{date}')
+            INSERT INTO investor_stock (investor_id, stock_id, created_at)
+            VALUES ('{investor_id}', '{stock_id}', '{date}')
             """
+    
     current_app.logger.info(query)
 
     # Execute the query
@@ -63,6 +73,7 @@ def put_tracked_stock ():
     db.get_db().commit()
     
     return 'Success!'
+
 
 # @stocks.route('/product/<id>', methods=['GET'])
 # def get_product_detail (id):

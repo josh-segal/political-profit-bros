@@ -19,23 +19,33 @@ data = np.random.randn(100).cumsum()
 df = pd.DataFrame(data, index=dates, columns=['Value'])
 st.line_chart(df)
 
-volume = st.number_input("How many shares...", min_value=1, value=1, step=1)
-buy_sell = st.selectbox(
-    "Buy or Sell",
-    ("Buy", "Sell"))
+# volume = st.number_input("How many shares...", min_value=1, value=1, step=1)
+# buy_sell = st.selectbox(
+#     "Buy or Sell",
+#     ("Buy", "Sell"))
 
-if st.button('Buy Stock',
+# if st.button('Buy Stock',
+#                         type='primary',
+#                         use_container_width=True):
+#     buy_sell_value = 1 if buy_sell == "Buy" else 0
+
+#     payload = {
+#             'price': stock['curr_price'],
+#                     'buy': buy_sell_value,
+#                     'stock_id': stock['id'],
+#                     'investor_id': 1, #TODO: change to specific investor users
+#                     'volume': volume,
+#                     'date': dt.now().isoformat(),
+#     }
+
+if st.button('Track stock',
                         type='primary',
                         use_container_width=True):
-    buy_sell_value = 1 if buy_sell == "Buy" else 0
-
+    
     payload = {
-            'price': stock['curr_price'],
-                    'buy': buy_sell_value,
-                    'stock_id': stock['id'],
-                    'investor_id': 1, #TODO: change to specific investor users
-                    'volume': volume,
-                    'date': dt.now().isoformat(),
+            'investor_id': 1, # TODO: figure out how to do this with 3 users
+            'stock_id': stock['id'],
+            'date': dt.now().isoformat(),
     }
 
     url = 'http://api:4000/s/track'

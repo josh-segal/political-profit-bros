@@ -26,6 +26,12 @@ def PortfolioNav():
     st.sidebar.page_link("pages/05_Portfolio.py", label="My Portfolio", icon='🗺️')
 
 ## ------------------------ Examples for Role of usaid_worker ------------------------
+def editManagerNav():
+    st.sidebar.page_link("pages/14_Edit_Manager.py", label="Edit Manager", icon='👤')
+
+def managerHomeNav():
+    st.sidebar.page_link("pages/10_Manager_Home.py", label="Manager Home", icon='👤')
+
 def ApiTestNav():
     st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon='🛜')
 
@@ -71,9 +77,13 @@ def SideBarLinks(show_home=False):
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state['role'] == 'manager':
-            PredictionNav()
-            ApiTestNav() 
-            ClassificationNav()
+            # PredictionNav()
+            # ApiTestNav() 
+            # ClassificationNav()
+            managerHomeNav()
+            PoliticianSearchNav()
+            editManagerNav()
+            
         
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state['role'] == 'journalist':
