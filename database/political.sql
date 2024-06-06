@@ -206,8 +206,8 @@ VALUES
 
 INSERT INTO stock (curr_price, company, industry, id) 
 VALUES
-(10, 'apple', 'technology', 1),
-(100, 'Health House', 'BS', 2);
+(10, 'apple', 'technology', 11),
+(100, 'Health House', 'BS', 12);
 
 -- Insert two managers
 INSERT INTO manager (name, created_at, party, id)
@@ -216,8 +216,32 @@ VALUES ('John Doe', '2023-01-01 10:00:00', 'Independent', 1),
 
 -- Insert two politicians managed by the two managers
 INSERT INTO politician (name, party, state, chamber, manager_id, id)
-VALUES ('Alice Johnson', 'Independent', 'California', 'Senate', 1, 1),
-       ('Bob Brown', 'Democratic', 'Texas', 'House of Representatives', 2, 2);
+VALUES ('Alice Johnson', 'Independent', 'California', 'Senate', 1, 11),
+       ('Bob Brown', 'Democratic', 'Texas', 'House of Representatives', 2, 12);
+
+
+insert into stock (curr_price, company, industry, id) values (631.63, 'Blogtags', 'Electrical Products', 1);
+insert into stock (curr_price, company, industry, id) values (64.76, 'Quinu', 'n/a', 2);
+insert into stock (curr_price, company, industry, id) values (511.1, 'Devcast', 'Major Pharmaceuticals', 3);
+insert into stock (curr_price, company, industry, id) values (81.98, 'Browseblab', 'RETAIL: Building Materials', 4);
+insert into stock (curr_price, company, industry, id) values (734.73, 'Jaloo', 'Hotels/Resorts', 5);
+insert into stock (curr_price, company, industry, id) values (368.68, 'Dynava', 'Automotive Aftermarket', 6);
+insert into stock (curr_price, company, industry, id) values (953.09, 'Topicblab', 'Medical/Dental Instruments', 7);
+insert into stock (curr_price, company, industry, id) values (38.44, 'Trupe', 'Marine Transportation', 8);
+insert into stock (curr_price, company, industry, id) values (642.12, 'Tazzy', 'Oil & Gas Production', 9);
+insert into stock (curr_price, company, industry, id) values (196.63, 'Yozio', 'Business Services', 10);
+
+insert into politician (name, party, state, manager_id, id) values
+ ('Britni Gullick', 'Democrat', 'Indiana', 1, 1),
+ ('Jewell Ondrus', 'Republican', 'Georgia', 2, 2),
+ ('Hall MacAnespie', 'Democrat', 'Indiana', 1, 3),
+ ('Stepha Szabo', 'Democrat', 'Texas', 2, 4),
+ ('Guilbert Giovannoni', 'Democrat', 'California', 2, 5),
+ ('Brenda MacKaig', 'Democrat', 'Idaho', 2, 6),
+ ('Frieda Izak', 'Democrat', 'New York', 2, 7),
+ ('Jasmina Bohan', 'Democrat', 'Texas', 2, 8),
+ ('Nils Pehrsson', 'Democrat', 'District of Columbia', 1, 9),
+ ('Edward Woodgate', 'Democrat', 'California', 1, 10);
 
 
 
