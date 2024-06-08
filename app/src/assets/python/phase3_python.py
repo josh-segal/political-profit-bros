@@ -15,10 +15,7 @@ from phase3_python_functions import line_of_best_fit, linreg_predict
 # Read in the data
 politician_data = pd.read_csv('/Users/asun/DS 3000/CS 4973/political-profit-bros/python/politician_dataset.csv', index_col=0)
 
-# Sort values by Trade Value and only filter by Stocks
-"""
-politician_data.sort_values(by='Trade Value', ascending=False)[politician_data['Asset Type'] == 'Stock'].head(20)
-"""
+
 filtered_politician_data = politician_data[politician_data['Asset Type'] == 'Stock'].sort_values(by='Trade Value', ascending=False)
 print(filtered_politician_data.head(20))
 
