@@ -17,148 +17,63 @@ SideBarLinks()
 # st.write('This is a static image of our model inferencing in real-time, internet is too slow to build app again with needed dependencies to run model')
 # st.image('assets/lin_reg_stock_price.png')
 
+
 st.write('this shows up')
 
-# Read in the data
-politician_data = pd.read_csv('assets/python/politician_dataset.csv', index_col=0)
+name_input = st.text_input('Enter Stock', 'BRP')
+date_input = st.date_input('Enter Date Politician Bought/Sold', value=None)
 
-# Sort values by Trade Value and only filter by Stocks
-"""
-politician_data.sort_values(by='Trade Value', ascending=False)[politician_data['Asset Type'] == 'Stock'].head(20)
-"""
-filtered_politician_data = politician_data[politician_data['Asset Type'] == 'Stock'].sort_values(by='Trade Value', ascending=False)
-print(filtered_politician_data.head(20))
+if name_input and date_input:
 
+    date_str = date_input.strftime('%Y-%m-%d')
 
-# Analyzed that brp stock was sold > 1M value
-# Will analyze any significant stock price changes
-brp = yf.download(['BRP'], start='2024-03-10', end='2024-05-01').reset_index()
+    begin_date = date_input - timedelta(days=10)
+    begin_date_str = begin_date.strftime('%Y-%m-%d')
+
+    end_date = date_input + relativedelta(months=+1)
+    end_date_str = end_date.strftime('%Y-%m-%d')
 
 
-# Calculate the linear regression slope and intercept
-X = np.array(list(range(1, len(brp) + 1)))
-Y = np.array(brp['Adj Close'])
-equation = line_of_best_fit(X, Y)
-predict = linreg_predict(X, Y, equation)
+    # Analyzed that brp stock was sold > 1M value
+    # Will analyze any significant stock price changes
+    stock = yf.download([f'{name_input}'], start=begin_date_str, end=end_date_str).reset_index()
 
-brp['Adj Close Pred'] = predict['ypreds']
 
-# Plot the stock Adj Close values along with the calculated linear regression
-fig = go.Figure(data=[go.Candlestick(x=brp['Date'],
-                open=brp['Open'], high=brp['High'],
-                low=brp['Low'], close=brp['Close'])
-                      ])
-fig.add_trace(go.Scatter(x=brp['Date'], y=brp['Adj Close Pred'], mode='lines', name='Adj Close Prediction'))
-fig.update_layout(
-    title='BRP Stock Price Over time [Clifford Franklin (R)]',
-    yaxis_title='BRP Stock',
-    shapes = [dict(
-        x0='2024-03-21', x1='2024-03-21', y0=0, y1=1, xref='x', yref='paper',
-        line_width=2)],
-    annotations=[
-        dict(
-        x='2024-03-21', y=0.05, xref='x', yref='paper',
-        showarrow=False, xanchor='left', text='When stock was sold'),
-        dict(
-            x=0.97, y=0.95, xref='paper', yref='paper',
-            showarrow=False, xanchor='right', yanchor='top', 
-            text=f'y = {equation[1]:.3f}x + {equation[0]:.3f}, MSE = {predict["mse"]:.3f}, R^2 = {predict["r2"]:.3f}')
-
-        ]
-    )
-#fig.show()
-print(brp)
-
-def plot_linear_regression(stock_ticker, start_date='2024-03-10', end_date='2024-05-01'):
-
-    stock_df = yf.download([stock_ticker], start=start_date, end=end_date).reset_index()
     # Calculate the linear regression slope and intercept
-    X = np.array(list(range(1, len(stock_df) + 1)))
-    Y = np.array(stock_df['Adj Close'])
+    X = np.array(list(range(1, len(stock) + 1)))
+    Y = np.array(stock['Adj Close'])
     equation = line_of_best_fit(X, Y)
     predict = linreg_predict(X, Y, equation)
-    stock_df['Adj Close Pred'] = predict['ypreds']
 
+    stock['Adj_Close_Pred'] = predict['ypreds']
 
     # Plot the stock Adj Close values along with the calculated linear regression
-    fig = go.Figure(data=[go.Candlestick(x=stock_df['Date'],
-                    open=stock_df['Open'], high=stock_df['High'],
-                    low=stock_df['Low'], close=stock_df['Close'])
-                        ])
-    fig.add_trace(go.Scatter(x=stock_df['Date'], y=stock_df['Adj Close Pred'], mode='lines', name='Adj Close Prediction'))
+    fig = go.Figure(data=[
+        go.Candlestick(x=stock['Date'],
+                    open=stock['Open'], high=stock['High'],
+                    low=stock['Low'], close=stock['Close'])
+    ])
+    fig.add_trace(go.Scatter(x=stock['Date'], y=stock['Adj_Close_Pred'], mode='lines', line_color='red', name='Adj Close Prediction'))
     fig.update_layout(
-        title=f'{stock_ticker} Stock Price Over time',
-        yaxis_title=f'{stock_ticker} Stock',
-        shapes = [dict(
-            ### Fix!!!!
-            ###
-            x0='2024-03-21', x1='2024-03-21', y0=0, y1=1, xref='x', yref='paper',
-            line_width=2)],
+        title=f'{name_input} Stock Price Over time',
+        yaxis_title=f'{name_input} Stock',
+        shapes=[
+            dict(
+                x0=date_str, x1=date_str, y0=0, y1=1, xref='x', yref='paper',
+                line_width=2, line_color='blue'
+            )
+        ],
         annotations=[
             dict(
-            x='2024-03-21', y=0.05, xref='x', yref='paper',
-            showarrow=False, xanchor='left', text='When stock was sold'),
+                x=date_str, y=0.05, xref='x', yref='paper',
+                showarrow=False, xanchor='left', text='When stock was sold'
+            ),
             dict(
                 x=0.97, y=0.95, xref='paper', yref='paper',
                 showarrow=False, xanchor='right', yanchor='top', 
-                text=f'y = {equation[1]:.3f}x + {equation[0]:.3f}, MSE = {predict["mse"]:.3f}, R^2 = {predict["r2"]:.3f}')
-
-            ]
-        )
-    return fig
-#plot_linear_regression('BRP')
-    
-
-
-def test_model(stock_df, predict_stock):
-    # Checking Assumptions
-    # Checking for linearity and homoscedasticity
-    print('Checking for linearity and homoscedasticity...')
-    plt.scatter(stock_df['Date'], stock_df['resids'])
-    plt.xticks(rotation=45)
-    plt.xlabel('Date')
-    plt.ylabel('Adj Close Residuals')
-    plt.title('Residual plot vs Date')
-    plt.grid()
-    plt.show()
-    # Histogram of residuals
-    print('Plotting Historgram ...')
-    sns.histplot(predict_stock['resids'], kde=False, bins = 10)
-    plt.xlabel("residuals")
-    plt.title("histogram of residuals")
-    plt.grid()
-    plt.show()
-    # Checking for No Autocorrelation (plotting by order)
-    print('Checking for No Autocorrelation (plotting by order)...')
-    plt.scatter(range(len(stock_df['Date'])), predict_stock['resids'], alpha=0.8)
-    plt.xlabel("index")
-    plt.ylabel("Adj Close residuals")
-    plt.title("residual plot vs. order")
-    plt.grid()
-    plt.show()
-
-
-def cross_validate(stock_df, test_size=0.3, random_state=3):
-    # Test size 30%
-    x_value = np.array(list(range(1, len(stock_df) + 1)))
-    y_value = np.array(stock_df['Adj Close'])
-    crossval = train_test_split(x_value,
-                                y_value,
-                                test_size=test_size,
-                                random_state=random_state)
-
-    Xtrain, Xtest, ytrain, ytest = crossval
-    cross_equation = line_of_best_fit(Xtest, ytest)
-    cross_predict = linreg_predict(Xtest, ytest, cross_equation)
-    print(f'Mean Squared Error: {cross_predict["mse"]} \n'
-      f'R^2 score: {cross_predict["r2"]}')
-    
-    #test_model(brp, predict)
-    #cross_validate(brp)
-
-    fig = plot_linear_regression('BRP')
+                text=f'y = {equation[1]:.3f}x + {equation[0]:.3f}, MSE = {predict["mse"]:.3f}, R^2 = {predict["r2"]:.3f}'
+            )
+        ]
+    )
 
     st.plotly_chart(fig)
-
-    st.write('hello')
-    
