@@ -6,6 +6,7 @@
 from flask import Blueprint, request, jsonify, make_response, current_app
 import json
 from backend.db_connection import db
+import pandas as pd
 
 stocks = Blueprint('stocks', __name__)
 
@@ -16,7 +17,7 @@ def get_stocks():
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of stocks
-    cursor.execute('SELECT s.curr_price, s.company, s.industry, s.id FROM stock s LEFT JOIN stock_search_history ssh ON s.id = ssh.stock_id GROUP BY s.id ORDER BY count(ssh.stock_id) LIMIT 5')
+    cursor.execute('SELECT s.curr_price, s.company, s.ticker, s.id FROM stock s LEFT JOIN stock_search_history ssh ON s.id = ssh.stock_id GROUP BY s.id ORDER BY count(ssh.stock_id) LIMIT 5')
 
     # fetch all the data from the cursor
     theData = cursor.fetchall()
@@ -24,11 +25,29 @@ def get_stocks():
 
     return jsonify(theData)
 
+@stocks.route('/dylan', methods=['GET'])
+def stock ():
+    cursor = db.get_db().cursor()
+    cursor.execute("select concat(ticker, ' - ', company) as item from stock order by ticker")
+    theData = cursor.fetchall()
+    current_app.logger.info(f'GET /stocks: theData = {pd.DataFrame(theData).values}')
+    return jsonify(theData)
 
-@stocks.route('/<stock_name>', methods=['GET'])
+
+    # query = f"select concat(ticker, ' - ', company) from stock order by ticker;'"
+    # current_app.logger.info(query)
+
+    # cursor = db.get_db().cursor()
+    # cursor.execute(query)
+    # the_data = cursor.fetchall()
+
+    # return jsonify(thedata)
+
+
+@stocks.route('/stock_get/<stock_name>', methods=['GET'])
 def get_stock_detail (stock_name):
 
-    query = f"SELECT curr_price, company, industry, id FROM stock WHERE company = '{stock_name}'"
+    query = f"SELECT curr_price, company, ticker, id FROM stock WHERE company like '%{stock_name}' or ticker like '%{stock_name}%'"
     current_app.logger.info(query)
 
     cursor = db.get_db().cursor()
