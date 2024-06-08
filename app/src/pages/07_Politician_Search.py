@@ -8,7 +8,9 @@ import plotly.express as px
 from modules.nav import SideBarLinks
 import requests
 import logging
+logger = logging.getLogger()
 from datetime import datetime as dt
+import urllib.parse
 
 
 # Call the SideBarLinks from the nav module in the modules directory
@@ -31,29 +33,6 @@ if name_input:
              "Trade_Price", "Trade_Value"])
     except requests.exceptions.RequestException as e:
         st.error(f"An error occurred: {e}")
-
-
-
-
-
-"""
-
-search_query = st.text_input('Search for a politician...')
-
-
-
-if search_query:
-    results = requests.get(f'http://api:4000/po/{search_query}').json()
-    if results:
-        for politician in results:
-            if st.button(politician['name'],
-                        type='primary',
-                        use_container_width=True):
-                st.session_state.payload = politician
-                st.switch_page('pages/09_Politician_Detail.py')
-    else:
-        st.write('no politicians found... check spelling')
-        
     
 else:
     st.write("Trending Politicians:")
@@ -66,4 +45,3 @@ else:
                         use_container_width=True):
                 st.session_state.payload = politician
                 st.switch_page('pages/09_Politician_Detail.py')
-"""

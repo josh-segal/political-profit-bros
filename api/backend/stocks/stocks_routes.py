@@ -16,7 +16,7 @@ def get_stocks():
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of stocks
-    cursor.execute('SELECT s.curr_price, s.company, s.industry, s.id FROM stock s LEFT JOIN stock_search_history ssh ON s.id = ssh.stock_id GROUP BY s.id ORDER BY count(ssh.stock_id) LIMIT 5')
+    cursor.execute('SELECT s.curr_price, s.company, s.ticker, s.id FROM stock s LEFT JOIN stock_search_history ssh ON s.id = ssh.stock_id GROUP BY s.id ORDER BY count(ssh.stock_id) LIMIT 5')
 
     # fetch all the data from the cursor
     theData = cursor.fetchall()

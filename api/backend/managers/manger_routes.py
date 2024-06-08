@@ -83,7 +83,7 @@ def get_politician_portfolio(manager_id):
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of politicians
-    cursor.execute(f"SELECT DISTINCT p.name, p.party, p.state, p.manager_id, p.id, pm.candidate_opp FROM politician p JOIN politician_manager pm ON p.id = pm.politician_id WHERE pm.manager_id = '{manager_id}'")
+    cursor.execute(f"SELECT DISTINCT p.name, p.party, p.state, pm.manager_id, p.Politician_Id, pm.candidate_opp FROM politician p JOIN politician_manager pm ON p.Politician_Id = pm.politician_id WHERE pm.manager_id = '{manager_id}'")
 
     # fetch all the data from the cursor
     theData = cursor.fetchall()
