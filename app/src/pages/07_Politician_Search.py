@@ -16,9 +16,8 @@ import urllib.parse
 # Call the SideBarLinks from the nav module in the modules directory
 SideBarLinks()
 
-st.header("Type the Politician's first and last name")
 
-name_input = st.text_input('Politician Name', "Doris Matsui")
+name_input = st.text_input('Search for a politician...')
 
 if name_input:
     try:
@@ -40,7 +39,7 @@ else:
     # SQL query to grab 5 most searched politicians ... eventually
     results = requests.get(f'http://api:4000/po/politicians').json()
     for politician in results:
-            if st.button(politician['name'],
+            if st.button('🔥 ' + politician['name'],
                         type='primary',
                         use_container_width=True):
                 st.session_state.payload = politician

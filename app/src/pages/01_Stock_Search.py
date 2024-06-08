@@ -25,11 +25,12 @@ for s in stock:
 
 dropdown_list = pd.DataFrame(stock).values.astype(str)
 
-search = st.selectbox('Search for a stock...', stocks, index=None)
+search_query = st.selectbox('Search for a stock...', stocks, index=None)
 
-search_query = st.text_input('Search for a stock...')
+# search_query = st.text_input('Search for a stock...')
 
 if search_query:
+    search_query = (search_query.split(" ")[0])
     results = requests.get(f'http://api:4000/s/{search_query}').json()
     if results:
         for stock in results:
