@@ -10,7 +10,6 @@ import requests
 import logging
 logger = logging.getLogger()
 from datetime import datetime as dt
-import uuid
 
 
 # Call the SideBarLinks from the nav module in the modules directory

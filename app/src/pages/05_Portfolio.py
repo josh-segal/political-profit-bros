@@ -16,65 +16,135 @@ st.header('Portfolio')
 
 # You can access the session state to make a more customized/personalized app experience
 
-stock_pol = st.toggle("Politician / Stock Portfolio", value=True)
-
-if stock_pol:
+if st.session_state['role'] == 'investor':
 
     st.write(f"### Hi, {st.session_state['first_name']}. Here are the stocks you are tracking.")
 
-    results = requests.get(f'http://api:4000/i/stock_portfolio/{1}').json()
-    if results:
-        for stock in results:
-                    if st.button(stock['company'],
-                                type='primary',
-                                use_container_width=True):
-                        st.session_state.payload = stock
-                        st.switch_page('pages/08_Stock_Detail.py')  
+    stock_pol = st.toggle("Politician / Stock Portfolio", value=True)
 
-                    if st.button("untrack stock",
-                                 type='secondary',
-                                 use_container_width=True):
-                          stock_id = stock['id']
-                          user_id = 1
+    if stock_pol:
 
-                          payload = {
-                                 'stock_id': stock_id,
-                                 'user_id': user_id
-                                 }
-                          
-                          url = 'http://api:4000/i/delete_tracked_stock'
-                          response = requests.delete(url, json=payload)
-                          st.experimental_rerun()
+        results = requests.get(f'http://api:4000/i/stock_portfolio/{1}').json()
+        if results:
+            for stock in results:
+                        if st.button(stock['company'],
+                                    type='primary',
+                                    use_container_width=True):
+                            st.session_state.payload = stock
+                            st.switch_page('pages/08_Stock_Detail.py')  
 
+                        if st.button("untrack stock",
+                                    type='secondary',
+                                    use_container_width=True):
+                            stock_id = stock['id']
+                            user_id = 1
+
+                            payload = {
+                                    'stock_id': stock_id,
+                                    'user_id': user_id
+                                    }
+                            
+                            url = 'http://api:4000/i/delete_tracked_stock'
+                            response = requests.delete(url, json=payload)
+                            st.rerun()
+
+        else:
+            st.write('no stocks found... check spelling')
     else:
-        st.write('no stocks found... check spelling')
-else:
+
+        st.write(f"### Hi, {st.session_state['first_name']}. Here are the politicians you are tracking.")
+
+
+        results = requests.get(f'http://api:4000/po/politician_portfolio/{1}').json()
+        if results:
+            for politician in results:
+                        if st.button(politician['name'],
+                                    type='primary',
+                                    use_container_width=True):
+                            st.session_state.payload = politician
+                            st.switch_page('pages/09_Politician_Detail.py')  
+
+                        if st.button("untrack politician",
+                                    type='secondary',
+                                    use_container_width=True):
+                            politician_id = politician['id']
+                            user_id = 1
+
+                            payload = {
+                                    'politician_id': politician_id,
+                                    'user_id': user_id
+                                    }
+                            
+                            url = 'http://api:4000/i/delete_tracked_politician'
+                            response = requests.delete(url, json=payload)  
+                            st.rerun()     
+        else:
+            st.write('no politician found... check spelling')
+
+elif st.session_state['role'] == 'manager':
 
     st.write(f"### Hi, {st.session_state['first_name']}. Here are the politicians you are tracking.")
 
+    results = requests.get(f'http://api:4000/m/politician_portfolio/{3}').json()
 
-    results = requests.get(f'http://api:4000/po/politician_portfolio/{1}').json()
+    col1, col2 = st.columns(2)
+
+    response_container = st.empty()
+
+    with col1:
+         st.write("Candidate Politicians")
+    with col2:
+         st.write("Opponent Politicians")
+
     if results:
-        for politician in results:
-                    if st.button(politician['name'],
-                                type='primary',
-                                use_container_width=True):
-                        st.session_state.payload = politician
-                        st.switch_page('pages/09_Politician_Detail.py')  
-
-                    if st.button("untrack politician",
-                                 type='secondary',
-                                 use_container_width=True):
-                          politician_id = politician['id']
-                          user_id = 1
-
-                          payload = {
-                                 'politician_id': politician_id,
-                                 'user_id': user_id
-                                 }
-                          
-                          url = 'http://api:4000/i/delete_tracked_politician'
-                          response = requests.delete(url, json=payload)  
-                          st.experimental_rerun()     
-    else:
-        st.write('no politician found... check spelling')
+         for politician in results:
+            if politician['candidate_opp'] == 1:
+                with col1:
+                    innerCol1, innerCol2 = st.columns([2, 1])
+                    with innerCol1:
+                        if st.button(politician['name'], type='primary', use_container_width=True, key=f"{politician['id']}_name"):
+                            st.session_state.payload = politician
+                            st.switch_page('pages/09_Politician_Detail.py')
+                    with innerCol2:
+                        if st.button("x", type='secondary', use_container_width=True, key=f"{politician['id']}_untrack"):
+                            response_container.text(f"Untracking {politician['name']}...")
+                            politician_id = politician['id']
+                            user_id = 3
+                            candidate_opp = politician['candidate_opp']
+                            payload = {
+                                'politician_id': politician_id,
+                                'user_id': user_id,
+                                'candidate_opp': candidate_opp
+                            }
+                            url = 'http://api:4000/m/delete_tracked_politician'
+                            response = requests.delete(url, json=payload)
+                            if response.status_code == 200:
+                                response_container.text(f"Successfully untracked {politician['name']}.")
+                                st.rerun()
+                            else:
+                                response_container.text(f"Failed to untrack {politician['name']}.")
+            else:
+                with col2:
+                    innerCol1Bad, innerCol2Bad = st.columns([2, 1])
+                    with innerCol1Bad:
+                        if st.button(politician['name'], type='primary', use_container_width=True, key=f"{politician['id']}_name"):
+                            st.session_state.payload = politician
+                            st.switch_page('pages/09_Politician_Detail.py')
+                    with innerCol2Bad:
+                        if st.button("x", type='secondary', use_container_width=True, key=f"{politician['id']}_untrack"):
+                            response_container.text(f"Untracking {politician['name']}...")
+                            politician_id = politician['id']
+                            user_id = 3
+                            candidate_opp = politician['candidate_opp']
+                            payload = {
+                                'politician_id': politician_id,
+                                'user_id': user_id,
+                                'candidate_opp': candidate_opp
+                            }
+                            url = 'http://api:4000/m/delete_tracked_politician'
+                            response = requests.delete(url, json=payload)
+                            if response.status_code == 200:
+                                response_container.text(f"Successfully untracked {politician['name']}.")
+                                st.rerun()
+                            else:
+                                response_container.text(f"Failed to untrack {politician['name']}.")
