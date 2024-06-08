@@ -28,7 +28,7 @@ def get_stocks():
 @stocks.route('/<stock_name>', methods=['GET'])
 def get_stock_detail (stock_name):
 
-    query = f"SELECT curr_price, company, industry, id FROM stock WHERE company = '{stock_name}'"
+    query = f"SELECT curr_price, company id FROM stock WHERE company = '{stock_name}'"
     current_app.logger.info(query)
 
     cursor = db.get_db().cursor()

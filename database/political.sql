@@ -370,15 +370,6 @@ INSERT INTO manager (name, created_at, party, id) VALUES
 ('Tobe Elland', '2023-06-28', 'Unity Party', 49),
 ('Ruthanne Borkett', '2023-06-15', 'Progressive Party', 50);
 
--- politician generated data
- insert into politician (name, party, state, manager_id, id) values
- ('Britni Gullick', 'Democrat', 'Indiana', 1, 1),
- ('Jewell Ondrus', 'Republican', 'Georgia', 1, 2),
- ('Hall MacAnespie', 'Democrat', 'Indiana', 1, 3),
- ('Stepha Szabo', 'Democrat', 'Texas', 1, 4),
- ('Guilbert Giovannoni', 'Democrat', 'California', 1, 5);
-
-
 -- Sample data for journalist table
 insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Reta Runcie', '2022-08-29', 'Banks', 'Morning Herald Post', 'Florida', 'Progressive Party', 1);
 insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Scarface Van Dale', '2024-02-17', 'Electric Utilities: Central', 'Morning Herald Post', 'Texas', 'Equality Party', 2);
@@ -881,26 +872,26 @@ insert into politician_investor (created_at, investor_id, politician_id) values 
 insert into politician_investor (created_at, investor_id, politician_id) values ('2023-06-06', 19, 19);
 insert into politician_investor (created_at, investor_id, politician_id) values ('2023-08-08', 20, 20);
 
-insert into politician_manager (created_at, manager_id, politician_id) values ('2022-10-04', 1, 1);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2022-07-05', 2, 2);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2024-03-07', 3, 3);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2024-02-28', 4, 4);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2023-03-09', 5, 5);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2022-11-03', 6, 6);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2024-05-27', 7, 7);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2023-03-23', 8, 8);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2023-01-23', 9, 9);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2024-04-09', 10, 10);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2023-01-23', 11, 11);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2023-02-05', 12, 12);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2023-08-18', 13, 13);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2023-02-12', 14, 14);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2022-10-14', 15, 15);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2022-12-12', 16, 16);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2022-11-05', 17, 17);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2022-06-08', 18, 18);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2023-12-10', 19, 19);
-insert into politician_manager (created_at, manager_id, politician_id) values ('2022-11-02', 20, 20);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2022-10-04', 1, 1);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2022-07-05', 2, 2);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2024-03-07', 3, 3);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2024-02-28', 4, 4);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2023-03-09', 5, 5);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2022-11-03', 6, 6);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2024-05-27', 7, 7);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2023-03-23', 8, 8);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2023-01-23', 9, 9);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2024-04-09', 10, 10);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2023-01-23', 11, 11);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2023-02-05', 12, 12);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2023-08-18', 13, 13);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2023-02-12', 14, 14);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2022-10-14', 15, 15);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2022-12-12', 16, 16);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2022-11-05', 17, 17);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2022-06-08', 18, 18);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2023-12-10', 19, 19);
+-- insert into politician_manager (created_at, manager_id, politician_id) values ('2022-11-02', 20, 20);
 
 insert into politician_search_history (investor_id, politician_id, date, id) values (1, 1, '2022-06-26', 1);
 insert into politician_search_history (investor_id, politician_id, date, id) values (2, 2, '2023-04-19', 2);

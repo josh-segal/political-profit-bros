@@ -25,7 +25,7 @@ if name_input:
         # URL encode the name_input to handle spaces and special characters
         encoded_name = urllib.parse.quote(name_input)
         logger.info(f'encoded_name: {encoded_name}')
-        response = requests.get(f'http://api:4000/po/politicians/{encoded_name}') 
+        response = requests.get(f'http://api:4000/po/{encoded_name}') 
         logger.info(f'byebyebyebye{response}')
         results = response.json()
         st.dataframe(results, column_order=["Name", "Politician_id", "Party", "Chamber", "State", "Asset_Type", \

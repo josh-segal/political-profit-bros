@@ -29,13 +29,15 @@ if st.session_state['role'] == 'investor':
             for stock in results:
                         if st.button(stock['company'],
                                     type='primary',
-                                    use_container_width=True):
+                                    use_container_width=True,
+                                    key=f"{stock['id']}_name"):
                             st.session_state.payload = stock
                             st.switch_page('pages/08_Stock_Detail.py')  
 
                         if st.button("untrack stock",
                                     type='secondary',
-                                    use_container_width=True):
+                                    use_container_width=True,
+                                    key=f"{stock['id']}_untrack"):
                             stock_id = stock['id']
                             user_id = 1
 
