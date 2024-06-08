@@ -9,11 +9,6 @@ from modules.nav import SideBarLinks
 import requests
 import logging
 from datetime import datetime as dt
-import uuid
-import urllib.parse
-
-
-logger = logging.getLogger()
 
 
 # Call the SideBarLinks from the nav module in the modules directory

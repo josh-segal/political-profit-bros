@@ -14,7 +14,7 @@ def get_politicians():
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of politicians
-    cursor.execute('SELECT p.name, p.party, p.state, p.chamber, p.manager_id, p.id FROM politician p LEFT JOIN politician_search_history psh ON p.id = psh.politician_id GROUP BY p.id ORDER BY count(psh.politician_id) LIMIT 5')
+    cursor.execute('SELECT p.name, p.party, p.state, p.manager_id, p.id FROM politician p LEFT JOIN politician_search_history psh ON p.id = psh.politician_id GROUP BY p.id ORDER BY count(psh.politician_id) LIMIT 5')
 
     # fetch all the data from the cursor
     theData = cursor.fetchall()
@@ -28,7 +28,7 @@ def get_politicians():
 @politicians.route('/<politician_name>', methods=['GET'])
 def get_stock_detail (politician_name):
 
-    query = f"SELECT p.name, p.party, p.state, p.chamber, p.manager_id, p.id FROM politician p WHERE name = '{politician_name}'"
+    query = f"SELECT p.name, p.party, p.state, p.manager_id, p.id FROM politician p WHERE name = '{politician_name}'"
     current_app.logger.info(query)
 
     cursor = db.get_db().cursor()
@@ -70,7 +70,7 @@ def get_politician_portfolio(investor_id):
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of stocks
-    cursor.execute(f"SELECT DISTINCT p.name, p.party, p.state, p.chamber, p.manager_id, p.id FROM politician p JOIN politician_investor po ON p.id = po.politician_id WHERE investor_id = '{investor_id}'")
+    cursor.execute(f"SELECT DISTINCT p.name, p.party, p.state, p.manager_id, p.id FROM politician p JOIN politician_investor po ON p.id = po.politician_id WHERE investor_id = '{investor_id}'")
 
     # fetch all the data from the cursor
     theData = cursor.fetchall()

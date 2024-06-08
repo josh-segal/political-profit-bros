@@ -39,7 +39,6 @@ CREATE TABLE IF NOT EXISTS politician_list
     name VARCHAR(50) NOT NULL,
     party VARCHAR(50),
     state VARCHAR(50),
-    chamber VARCHAR(80),
     manager_id INT,
     id INT,
     PRIMARY KEY (id),
@@ -171,6 +170,7 @@ CREATE TABLE IF NOT EXISTS politician_manager
     created_at DATETIME,
     manager_id INT,
     politician_id INT,
+    candidate_opp TINYINT(1),
     PRIMARY KEY (manager_id, politician_id),
     FOREIGN KEY (manager_id) REFERENCES manager (id),
     FOREIGN KEY (politician_id) REFERENCES politician_list (id)
@@ -369,6 +369,15 @@ INSERT INTO manager (name, created_at, party, id) VALUES
 ('Caritta Diben', '2024-03-15', 'Progressive Party', 48),
 ('Tobe Elland', '2023-06-28', 'Unity Party', 49),
 ('Ruthanne Borkett', '2023-06-15', 'Progressive Party', 50);
+
+-- politician generated data
+ insert into politician (name, party, state, manager_id, id) values
+ ('Britni Gullick', 'Democrat', 'Indiana', 1, 1),
+ ('Jewell Ondrus', 'Republican', 'Georgia', 1, 2),
+ ('Hall MacAnespie', 'Democrat', 'Indiana', 1, 3),
+ ('Stepha Szabo', 'Democrat', 'Texas', 1, 4),
+ ('Guilbert Giovannoni', 'Democrat', 'California', 1, 5);
+
 
 -- Sample data for journalist table
 insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Reta Runcie', '2022-08-29', 'Banks', 'Morning Herald Post', 'Florida', 'Progressive Party', 1);

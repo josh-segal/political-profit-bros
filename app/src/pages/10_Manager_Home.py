@@ -14,7 +14,23 @@ st.write('')
 st.write('')
 st.write('### What would you like to do today?')
 
-if st.button('Edit Manager Profile', 
+
+
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button('Edit Manager Profile', 
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/14_Edit_Manager.py')
+        st.switch_page('pages/14_Edit_Manager.py')
+with col2:
+    if st.button('Search Politician Database', 
+             type='primary',
+             use_container_width=True):
+      st.switch_page('pages/07_Politician_Search.py')
+with col3:
+    if st.button('View My Portfolio', 
+             type='primary',
+             use_container_width=True):
+      st.switch_page('pages/05_Portfolio.py')
