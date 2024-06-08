@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.metrics import r2_score
+import yfinance as yf
 
 
 def add_bias_column(X):
@@ -69,3 +70,41 @@ def linreg_predict(Xnew, ynew, m):
                   'r2':r2
                  }
     return dictionary
+
+def plot_linear_regression(stock_ticker, start_date='2024-03-10', end_date='2024-05-01'):
+
+    stock_df = yf.download([stock_ticker], start=start_date, end=end_date).reset_index()
+    # Calculate the linear regression slope and intercept
+    X = np.array(list(range(1, len(stock_df) + 1)))
+    Y = np.array(stock_df['Adj Close'])
+    equation = line_of_best_fit(X, Y)
+    predict = linreg_predict(X, Y, equation)
+    stock_df['Adj Close Pred'] = predict['ypreds']
+
+
+    # Plot the stock Adj Close values along with the calculated linear regression
+    fig = go.Figure(data=[go.Candlestick(x=stock_df['Date'],
+                    open=stock_df['Open'], high=stock_df['High'],
+                    low=stock_df['Low'], close=stock_df['Close'])
+                        ])
+    fig.add_trace(go.Scatter(x=stock_df['Date'], y=stock_df['Adj Close Pred'], mode='lines', name='Adj Close Prediction'))
+    fig.update_layout(
+        title=f'{stock_ticker} Stock Price Over time',
+        yaxis_title=f'{stock_ticker} Stock',
+        shapes = [dict(
+            ### Fix!!!!
+            ###
+            x0='2024-03-21', x1='2024-03-21', y0=0, y1=1, xref='x', yref='paper',
+            line_width=2)],
+        annotations=[
+            dict(
+            x='2024-03-21', y=0.05, xref='x', yref='paper',
+            showarrow=False, xanchor='left', text='When stock was sold'),
+            dict(
+                x=0.97, y=0.95, xref='paper', yref='paper',
+                showarrow=False, xanchor='right', yanchor='top', 
+                text=f'y = {equation[1]:.3f}x + {equation[0]:.3f}, MSE = {predict["mse"]:.3f}, R^2 = {predict["r2"]:.3f}')
+
+            ]
+        )
+    return fig

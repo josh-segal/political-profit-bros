@@ -1,9 +1,12 @@
 from flask import Blueprint, request, jsonify, make_response, current_app
 import json
+import pymysql
 from backend.db_connection import db
+import pandas as pd
 
 politicians = Blueprint('politicians', __name__)
 
+"""
 # Get all the politicians from the database
 @politicians.route('/politicians', methods=['GET'])
 def get_politicians():
@@ -19,7 +22,9 @@ def get_politicians():
 
     return jsonify(theData)
 
+"""
 
+"""
 @politicians.route('/<politician_name>', methods=['GET'])
 def get_stock_detail (politician_name):
 
@@ -31,6 +36,7 @@ def get_stock_detail (politician_name):
     the_data = cursor.fetchall()
 
     return jsonify(the_data)
+"""
 
 
 @politicians.route('/track', methods=['POST'])
@@ -57,6 +63,7 @@ def put_tracked_politician ():
     return 'Success!'
 
 
+"""
 @politicians.route('/politician_portfolio/<investor_id>', methods=['GET'])
 def get_politician_portfolio(investor_id):
     # get a cursor object from the database
@@ -72,3 +79,34 @@ def get_politician_portfolio(investor_id):
     # the column headers. 
 
     return jsonify(theData)
+"""
+
+# Get all customers from the DB based on name
+@politicians.route('/politicians/<name>', methods=['GET'])
+def get_politicians(name):
+    current_app.logger.info('politicians_routes.py: GET /politicians/<name> route')
+    cursor = db.get_db().cursor()
+    # Use parameterized query to prevent SQL injection and handle string inputs correctly
+    current_app.logger.info(f'politician name = {name}')
+    query = f"SELECT * FROM politician WHERE name like '%{name}%'"
+    cursor.execute(query)
+    current_app.logger.info(f'Query: {query}')
+    theData = cursor.fetchall()
+    current_app.logger.info(f'fetchall: {theData}')
+   
+    return jsonify(theData)
+
+    """
+    current_app.logger.info('GET /customers/<userID> route')
+    cursor = db.get_db().cursor()
+    cursor.execute('select id, first_name, last_name from customers where id = {0}'.format(userID))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+    """

@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS manager
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS politician
+
+CREATE TABLE IF NOT EXISTS politician_list
 (
     name VARCHAR(50) NOT NULL,
     party VARCHAR(50),
@@ -45,6 +46,26 @@ CREATE TABLE IF NOT EXISTS politician
     FOREIGN KEY (manager_id) REFERENCES manager (id)
 );
 
+CREATE TABLE IF NOT EXISTS politician (
+    txId VARCHAR(255),
+    Name VARCHAR(255),
+    Politician_Id VARCHAR(255),
+    Party VARCHAR(255),
+    Chamber VARCHAR(255),
+    State VARCHAR(255),
+    Asset_Type VARCHAR(255),
+    Issuer VARCHAR(255),
+    Ticker VARCHAR(255),
+    Issuer_Country VARCHAR(255),
+    Type VARCHAR(255),
+    Date_Traded DATE,
+    Date_Published DATE,
+    Trade_Size FLOAT,
+    Trade_Price FLOAT,
+    Trade_Value INT,
+    PRIMARY KEY (txId)
+);
+
 CREATE TABLE IF NOT EXISTS legislation
 (
     title VARCHAR(80),
@@ -52,7 +73,6 @@ CREATE TABLE IF NOT EXISTS legislation
     pass TINYINT(1),
     active TINYINT(1),
     sector VARCHAR(80),
-    # multi-value attribute politician-ids
     id INT,
     PRIMARY KEY (id)
 );
@@ -61,7 +81,7 @@ CREATE TABLE IF NOT EXISTS stock
 (
     curr_price FLOAT,
     company VARCHAR(80),
-    industry VARCHAR(80),
+    ticker VARCHAR(10),
     id INT,
     PRIMARY KEY (id)
 );
@@ -77,7 +97,7 @@ CREATE TABLE IF NOT EXISTS politician_order
     id INT,
     PRIMARY KEY (id),
     FOREIGN KEY (stock_id) REFERENCES stock (id),
-    FOREIGN KEY (politician_id) REFERENCES politician (id)
+    FOREIGN KEY (politician_id) REFERENCES politician_list (id)
 );
 
 CREATE TABLE IF NOT EXISTS investor_order
@@ -88,7 +108,7 @@ CREATE TABLE IF NOT EXISTS investor_order
     investor_id INT,
     volume FLOAT,
     date DATETIME,
-    id INT AUTO_INCREMENT,
+    id INT,
     PRIMARY KEY (id),
     FOREIGN KEY (stock_id) REFERENCES stock (id),
     FOREIGN KEY (investor_id) REFERENCES investor (id)
@@ -102,7 +122,7 @@ CREATE TABLE IF NOT EXISTS politician_search_history
   id INT,
   PRIMARY KEY (id),
   FOREIGN KEY (investor_id) REFERENCES investor (id),
-  FOREIGN KEY (politician_id) REFERENCES politician (id)
+  FOREIGN KEY (politician_id) REFERENCES politician_list (id)
 );
 
 CREATE TABLE IF NOT EXISTS stock_search_history
@@ -133,7 +153,7 @@ CREATE TABLE IF NOT EXISTS journalist_politician
     politician_id INT,
     PRIMARY KEY (journalist_id, politician_id),
     FOREIGN KEY (journalist_id) REFERENCES journalist (id),
-    FOREIGN KEY (politician_id) REFERENCES politician (id)
+    FOREIGN KEY (politician_id) REFERENCES politician_list (id)
 );
 
 CREATE TABLE IF NOT EXISTS politician_legislation
@@ -143,7 +163,7 @@ CREATE TABLE IF NOT EXISTS politician_legislation
     politician_id INT,
     PRIMARY KEY (legislation_id, politician_id),
     FOREIGN KEY (legislation_id) REFERENCES legislation (id),
-    FOREIGN KEY (politician_id) REFERENCES politician (id)
+    FOREIGN KEY (politician_id) REFERENCES politician_list (id)
 );
 
 CREATE TABLE IF NOT EXISTS politician_manager
@@ -153,7 +173,7 @@ CREATE TABLE IF NOT EXISTS politician_manager
     politician_id INT,
     PRIMARY KEY (manager_id, politician_id),
     FOREIGN KEY (manager_id) REFERENCES manager (id),
-    FOREIGN KEY (politician_id) REFERENCES politician (id)
+    FOREIGN KEY (politician_id) REFERENCES politician_list (id)
 );
 
 CREATE TABLE IF NOT EXISTS politician_investor
@@ -163,7 +183,7 @@ CREATE TABLE IF NOT EXISTS politician_investor
     politician_id INT,
     PRIMARY KEY (investor_id, politician_id),
     FOREIGN KEY (investor_id) REFERENCES investor (id),
-    FOREIGN KEY (politician_id) REFERENCES politician (id)
+    FOREIGN KEY (politician_id) REFERENCES politician_list (id)
 );
 
 CREATE TABLE IF NOT EXISTS investor_stock
@@ -192,161 +212,110 @@ CREATE TABLE IF NOT EXISTS legislation_politician_ids
     politician_id INT,
     PRIMARY KEY (legislation_id, politician_id),
     FOREIGN KEY (legislation_id) REFERENCES legislation (id),
-    FOREIGN KEY (politician_id) REFERENCES politician (id)
+    FOREIGN KEY (politician_id) REFERENCES politician_list (id)
 );
 
 -- Sample data for investor table
- INSERT INTO investor (name, created_at, amount_invested, id) VALUES 
- ('Killian Denison', '2023-04-22', '20613.71', '1'),
- ('Bertine McNamee', '2024-05-10', '97644.82', '2'),
- ('Raymond Ridwood', '2024-03-12', '92940.34', '3'),
- ('Cherish Kleinhaus', '2022-06-26', '56882.53', '4'),
- ('Cass Houchen', '2023-03-04', '19486.81', '5'),
- ('Tristam McGeorge', '2022-07-15', '91052.7', '6'),
- ('Morgen Olner', '2023-11-03', '74990.09', '7'),
- ('Derby Prator', '2023-01-25', '91439.57', '8'),
- ('Dave Hasel', '2024-01-14', '61939.68', '9'),
- ('Giorgia McGonigal', '2022-11-08', '23792.6', '10'),
- ('Malorie Bullers', '2023-09-22', '56391.02', '11'),
- ('Kathryn Dobbing', '2023-02-26', '65047.85', '12'),
- ('Elysee Citrine', '2022-06-29', '46483.24', '13'),
- ('Cloe Jellybrand', '2024-01-20', '22215.74', '14'),
- ('Randie Extence', '2022-06-06', '54219.1', '15'),
- ('Edan McLardie', '2023-03-31', '17468.0', '16'),
- ('Lulita Berge', '2022-07-19', '21352.75', '17'),
- ('Illa Buddington', '2024-01-27', '62503.6', '18'),
- ('Daphene Menloe', '2024-04-09', '40988.62', '19'),
- ('Fair Beere', '2023-03-05', '95549.14', '20'),
- ('Vladimir Josifovitz', '2023-03-17', '69682.27', '21'),
- ('Lishe Elldred', '2023-05-27', '77107.9', '22'),
- ('Jameson Wisdom', '2023-11-01', '66593.28', '23'),
- ('Chrystal Schettini', '2022-10-06', '65963.13', '24'),
- ('Ilse Le Frank', '2023-09-12', '36722.97', '25'),
- ('Byram Lugg', '2023-09-10', '5643.14', '26'),
- ('Gussie Warlaw', '2023-10-31', '25971.71', '27'),
- ('Rowen Sandey', '2023-07-17', '28936.39', '28'),
- ('Britney Lamlin', '2023-03-06', '22304.14', '29'),
- ('Cassius Tribble', '2023-07-10', '17560.58', '30'),
- ('Teodor Lindop', '2023-02-05', '86998.63', '31'),
- ('Vally McGriffin', '2023-02-14', '99611.22', '32'),
- ('Hester Butchers', '2023-05-12', '93636.33', '33'),
- ('Germain Oneal', '2023-05-13', '50985.32', '34'),
- ('Abbott Elvins', '2022-09-18', '74701.27', '35'),
- ('Blanch Amber', '2024-03-24', '9211.14', '36'),
- ('Lauretta Nineham', '2022-12-31', '49832.28', '37'),
- ('Milka O Mulderrig', '2022-06-18', '62946.62', '38'),
- ('Holly Stovell', '2022-09-28', '26459.97', '39'),
- ('Mel Grishakin', '2024-01-26', '59882.61', '40'),
- ('Arabela Coppen', '2022-06-30', '66113.04', '41'),
- ('Mikey Gormley', '2022-12-13', '88244.67', '42'),
- ('Aimee Armstrong', '2022-08-08', '31908.66', '43'),
- ('Venita Songust', '2024-03-21', '85430.0', '44'),
- ('Abeu Vida', '2022-08-27', '71962.8', '45'),
- ('Karilynn Fitzsimons', '2024-02-01', '41674.17', '46'),
- ('Rae Ortells', '2022-07-01', '12697.48', '47'),
- ('Constantin Duck', '2022-10-22', '85153.45', '48'),
- ('Ferne Heistermann', '2023-07-20', '33388.13', '49'),
- ('Halette Agg', '2024-03-07', '14430.85', '50'),
- ('Leesa Reynoldson', '2023-12-25', '23769.18', '51'),
- ('Blondie McColm', '2023-10-09', '90792.56', '52'),
- ('Cherlyn Seggie', '2022-11-17', '92821.91', '53'),
- ('Hunfredo McMillan', '2022-07-05', '31921.95', '54'),
- ('Malchy Cassella', '2023-06-24', '30368.84', '55'),
- ('Zacharias Meader', '2022-10-06', '10592.28', '56'),
- ('Victoria MacNelly', '2022-07-14', '96575.25', '57'),
- ('Lula Woofenden', '2022-06-04', '44141.6', '58'),
- ('Dasi Terlinden', '2023-11-02', '8373.29', '59'),
- ('Velvet Lufkin', '2023-03-30', '8383.47', '60'),
- ('Antonin Livings', '2024-05-14', '30067.49', '61'),
- ('Isiahi Skydall', '2023-02-20', '89937.7', '62'),
- ('Katlin Cockren', '2023-03-21', '98429.67', '63'),
- ('Iorgo Philliskirk', '2023-07-25', '89509.1', '64'),
- ('Marilyn Brattell', '2023-05-31', '95561.06', '65'),
- ('My Lissemore', '2023-12-31', '10095.7', '66'),
- ('Joelle Arman', '2023-03-20', '32459.52', '67'),
- ('Lionello Elcome', '2022-06-09', '41206.84', '68'),
- ('Frazier Scurfield', '2023-11-29', '45800.05', '69'),
- ('Kay Teggin', '2023-08-02', '36802.87', '70'),
- ('Elvira Kolushev', '2023-05-20', '57932.29', '71'),
- ('Jessey Abrahmer', '2023-08-24', '36167.69', '72'),
- ('Vail Cassey', '2023-10-10', '26358.79', '73'),
- ('Dominique Reddish', '2022-11-27', '45324.17', '74'),
- ('Harriott MacSween', '2023-02-17', '66578.85', '75'),
- ('Quinn Jewsbury', '2022-10-12', '11059.94', '76'),
- ('Antone McDowell', '2023-12-23', '12027.03', '77'),
- ('Gabriele Vedekhov', '2022-11-14', '23692.38', '78'),
- ('Ferguson Gammel', '2022-12-30', '35545.67', '79'),
- ('Gauthier Joy', '2024-04-07', '38104.49', '80'),
- ('Anne-corinne Fassman', '2023-01-05', '50769.34', '81'),
- ('Marji Beartup', '2022-10-04', '7324.91', '82'),
- ('Yulma Steart', '2023-07-30', '96807.14', '83'),
- ('Poul Nelane', '2023-04-27', '63328.66', '84'),
- ('Sloane Lundie', '2022-09-06', '32417.54', '85'),
- ('Bernie Guymer', '2022-10-09', '67988.57', '86'),
- ('Cherice Goly', '2023-08-05', '98734.87', '87'),
- ('Linet Weald', '2022-11-14', '23444.03', '88'),
- ('Emery Schlagh', '2023-04-02', '44333.47', '89'),
- ('Zebedee Clausius', '2023-03-19', '19543.26', '90'),
- ('Raina Assante', '2023-05-27', '78665.48', '91'),
- ('Jeffy Stockell', '2023-01-28', '92609.75', '92'),
- ('Mil Imlock', '2024-03-31', '92750.49', '93'),
- ('Artemis Bisset', '2024-02-16', '21705.42', '94'),
- ('Kalli Batson', '2024-04-18', '87924.71', '95'),
- ('Corenda Sibbering', '2023-12-24', '50610.59', '96'),
- ('Tedi Caldeyroux', '2022-09-15', '38185.4', '97'),
- ('Letisha Sandom', '2023-11-16', '18937.87', '98'),
- ('Cherilynn Havile', '2022-12-16', '47734.65', '99'),
- ('Erich Hamilton', '2023-02-17', '5877.8', '100'),
- ('Pattin Rankling', '2023-07-15', '93434.03', '101'),
- ('Kerry Liversedge', '2022-11-03', '37086.19', '102'),
- ('Lida Baggett', '2023-07-27', '37390.92', '103'),
- ('Herschel Feveryear', '2023-12-12', '98032.95', '104'),
- ('Iorgos Blaxlande', '2024-04-06', '44034.84', '105'),
- ('Mel Kobke', '2022-08-05', '21491.69', '106'),
- ('Hilliard Cordova', '2022-08-11', '11713.59', '107'),
- ('Mitchel Bossingham', '2022-08-20', '69580.23', '108'),
- ('Vinny Ridesdale', '2022-06-14', '17225.49', '109'),
- ('Kasper Whannel', '2023-07-18', '55105.14', '110'),
- ('Renell Robinet', '2022-10-11', '14115.73', '111'),
- ('Anna-maria Thirlwell', '2022-06-05', '89605.09', '112'),
- ('Cam Gallifont', '2022-06-10', '37691.23', '113'),
- ('Rollie Heaney', '2024-01-05', '61562.69', '114'),
- ('Angeli Youthed', '2023-06-18', '85674.39', '115'),
- ('Addia Gouldthorp', '2023-01-15', '94868.0', '116'),
- ('Myrta Binch', '2023-02-07', '36439.38', '117'),
- ('Phillip Handscombe', '2024-02-01', '29780.72', '118'),
- ('Leroi Fosdyke', '2022-09-13', '34449.98', '119'),
- ('Maxim Sturdy', '2023-03-26', '90177.14', '120'),
- ('Blanch Olander', '2023-06-14', '24876.82', '121'),
- ('Iggy Farenden', '2023-02-15', '76825.0', '122'),
- ('Joachim Davley', '2024-05-31', '23467.19', '123'),
- ('Salvador Acreman', '2023-07-01', '15457.16', '124'),
- ('Gradey Parriss', '2022-12-12', '49563.47', '125'),
- ('Joice Kitchenside', '2024-02-12', '30432.56', '126'),
- ('Dalia Kinder', '2023-08-07', '60251.51', '127'),
- ('Abeu Liccardo', '2024-05-17', '38817.15', '128'),
- ('Armstrong Pavlik', '2023-05-14', '60679.81', '129'),
- ('Blinni Revey', '2024-04-30', '77499.89', '130'),
- ('April Neve', '2023-12-17', '11557.92', '131'),
- ('Jacky Spore', '2023-10-17', '81335.56', '132'),
- ('Holmes Meiklejohn', '2024-02-23', '94648.22', '133'),
- ('Cullie Burrill', '2022-12-06', '70598.52', '134'),
- ('Edgardo McKniely', '2023-11-13', '69991.97', '135'),
- ('Joel Beardshaw', '2023-08-09', '13457.59', '136'),
- ('Baxy Copo', '2024-01-14', '73610.54', '137'),
- ('Emiline Hefferon', '2023-12-25', '63160.02', '138'),
- ('Bobinette Huddlestone', '2023-06-18', '67604.69', '139'),
- ('Brigid Grimmer', '2023-06-19', '44022.18', '140'),
- ('Vance Brislawn', '2022-11-04', '18452.91', '141'),
- ('Dwayne Radloff', '2023-03-12', '10684.22', '142'),
- ('Chen Fassman', '2022-06-11', '98364.34', '143'),
- ('Lonna Hedges', '2023-08-02', '34236.84', '144'),
- ('Halimeda Wilsdon', '2024-05-21', '71017.49', '145'),
- ('Blinni Burhouse', '2023-09-11', '61597.94', '146'),
- ('Demetrius Jacobsson', '2023-05-17', '36674.48', '147'),
- ('Lorant Frayling', '2023-01-23', '30789.42', '148'),
- ('Nevins Paullin', '2023-09-24', '26108.43', '149'),
- ('Shandy Collison', '2022-10-07', '64467.35', '150');
+insert into investor (name, created_at, amount_invested, id) values ('Bertina Robeiro', '2024-01-02', 39068.19, 1);
+insert into investor (name, created_at, amount_invested, id) values ('Birgit Kuller', '2023-01-01', 47542.44, 2);
+insert into investor (name, created_at, amount_invested, id) values ('Ricard Eastgate', '2022-08-26', 26107.25, 3);
+insert into investor (name, created_at, amount_invested, id) values ('Daniel Littlepage', '2022-07-10', 16705.29, 4);
+insert into investor (name, created_at, amount_invested, id) values ('Jeri Lonsbrough', '2023-01-14', 99222.96, 5);
+insert into investor (name, created_at, amount_invested, id) values ('Hercule Benyon', '2023-04-08', 89922.41, 6);
+insert into investor (name, created_at, amount_invested, id) values ('Kelli Stocking', '2023-03-14', 64525.58, 7);
+insert into investor (name, created_at, amount_invested, id) values ('Kelila Bartoszinski', '2024-03-18', 21102.16, 8);
+insert into investor (name, created_at, amount_invested, id) values ('Keith Landrean', '2023-09-20', 49096.22, 9);
+insert into investor (name, created_at, amount_invested, id) values ('Jerald Tewelson', '2023-11-26', 84208.73, 10);
+insert into investor (name, created_at, amount_invested, id) values ('Bidget Hradsky', '2023-07-15', 42985.83, 11);
+insert into investor (name, created_at, amount_invested, id) values ('Marcus Dawid', '2022-12-30', 37983.5, 12);
+insert into investor (name, created_at, amount_invested, id) values ('Chic Watting', '2022-06-19', 58316.63, 13);
+insert into investor (name, created_at, amount_invested, id) values ('Buiron Banck', '2023-12-05', 24328.62, 14);
+insert into investor (name, created_at, amount_invested, id) values ('Nickolai Ferrierio', '2022-09-15', 40848.4, 15);
+insert into investor (name, created_at, amount_invested, id) values ('Betta Swinfen', '2024-03-21', 95923.14, 16);
+insert into investor (name, created_at, amount_invested, id) values ('Carmella Pocknell', '2023-04-28', 41667.52, 17);
+insert into investor (name, created_at, amount_invested, id) values ('Nessy Wollacott', '2024-01-15', 88487.57, 18);
+insert into investor (name, created_at, amount_invested, id) values ('Noah Tackle', '2023-04-09', 34906.01, 19);
+insert into investor (name, created_at, amount_invested, id) values ('Allie Duprey', '2024-06-03', 23661.61, 20);
+insert into investor (name, created_at, amount_invested, id) values ('Dorita Plaister', '2023-03-31', 92433.07, 21);
+insert into investor (name, created_at, amount_invested, id) values ('Nathanial Flaherty', '2022-12-21', 92204.47, 22);
+insert into investor (name, created_at, amount_invested, id) values ('Nata Marriott', '2023-05-05', 11461.73, 23);
+insert into investor (name, created_at, amount_invested, id) values ('Almeda Sesons', '2024-04-16', 65974.56, 24);
+insert into investor (name, created_at, amount_invested, id) values ('Nell Aaronsohn', '2023-01-02', 2712.31, 25);
+insert into investor (name, created_at, amount_invested, id) values ('Zonnya Skirling', '2023-03-19', 64855.82, 26);
+insert into investor (name, created_at, amount_invested, id) values ('Judah Ryott', '2023-05-16', 27515.22, 27);
+insert into investor (name, created_at, amount_invested, id) values ('Cosmo Winters', '2023-03-30', 94638.37, 28);
+insert into investor (name, created_at, amount_invested, id) values ('Catrina Plummer', '2023-02-13', 86029.76, 29);
+insert into investor (name, created_at, amount_invested, id) values ('Levi Finnimore', '2022-10-13', 15276.34, 30);
+insert into investor (name, created_at, amount_invested, id) values ('Jeramie Goulthorp', '2024-04-24', 25080.16, 31);
+insert into investor (name, created_at, amount_invested, id) values ('George MacPadene', '2024-03-01', 35698.06, 32);
+insert into investor (name, created_at, amount_invested, id) values ('Kerk Tonsley', '2023-01-10', 22759.07, 33);
+insert into investor (name, created_at, amount_invested, id) values ('Catherina Bidder', '2022-10-11', 64394.32, 34);
+insert into investor (name, created_at, amount_invested, id) values ('Josselyn Aleksashin', '2023-04-18', 99913.04, 35);
+insert into investor (name, created_at, amount_invested, id) values ('Michel Lory', '2023-07-23', 36067.48, 36);
+insert into investor (name, created_at, amount_invested, id) values ('Clementina Hellsdon', '2023-01-15', 88620.88, 37);
+insert into investor (name, created_at, amount_invested, id) values ('Viv Fumagall', '2023-12-18', 94357.81, 38);
+insert into investor (name, created_at, amount_invested, id) values ('Hans Djekovic', '2022-07-17', 87120.4, 39);
+insert into investor (name, created_at, amount_invested, id) values ('Hewitt Gare', '2023-08-03', 8326.08, 40);
+insert into investor (name, created_at, amount_invested, id) values ('Aprilette Cellone', '2022-06-11', 64643.74, 41);
+insert into investor (name, created_at, amount_invested, id) values ('Reinwald Bendtsen', '2024-05-31', 97529.5, 42);
+insert into investor (name, created_at, amount_invested, id) values ('Micheil Wingatt', '2022-12-17', 17473.96, 43);
+insert into investor (name, created_at, amount_invested, id) values ('Vladimir Borland', '2024-05-26', 29061.39, 44);
+insert into investor (name, created_at, amount_invested, id) values ('Anallise Righy', '2022-11-23', 8288.64, 45);
+insert into investor (name, created_at, amount_invested, id) values ('Max Harvie', '2022-06-22', 25314.52, 46);
+insert into investor (name, created_at, amount_invested, id) values ('Beatrix Liccardo', '2022-07-06', 84437.89, 47);
+insert into investor (name, created_at, amount_invested, id) values ('Prue Staries', '2023-06-26', 97738.21, 48);
+insert into investor (name, created_at, amount_invested, id) values ('Mick Aspinal', '2022-06-29', 71384.69, 49);
+insert into investor (name, created_at, amount_invested, id) values ('Kelly Heale', '2023-01-25', 6610.95, 50);
+insert into investor (name, created_at, amount_invested, id) values ('Hiram Bridgeland', '2023-11-21', 60087.89, 51);
+insert into investor (name, created_at, amount_invested, id) values ('Nat Kleinsmuntz', '2023-01-18', 72491.54, 52);
+insert into investor (name, created_at, amount_invested, id) values ('Maison Presidey', '2023-06-16', 73913.61, 53);
+insert into investor (name, created_at, amount_invested, id) values ('Taryn Marte', '2023-03-27', 91496.65, 54);
+insert into investor (name, created_at, amount_invested, id) values ('Nichol Adams', '2022-08-03', 69666.91, 55);
+insert into investor (name, created_at, amount_invested, id) values ('Manfred Whipp', '2023-03-22', 43030.6, 56);
+insert into investor (name, created_at, amount_invested, id) values ('Boone Paulsson', '2024-03-10', 46916.02, 57);
+insert into investor (name, created_at, amount_invested, id) values ('Steve Vedyashkin', '2023-01-10', 77977.95, 58);
+insert into investor (name, created_at, amount_invested, id) values ('Darline Quidenham', '2024-05-06', 23536.61, 59);
+insert into investor (name, created_at, amount_invested, id) values ('Beckie Lavender', '2022-09-24', 19541.25, 60);
+insert into investor (name, created_at, amount_invested, id) values ('Kara-lynn Kores', '2023-02-21', 25079.59, 61);
+insert into investor (name, created_at, amount_invested, id) values ('Chane Pepler', '2023-03-19', 68314.11, 62);
+insert into investor (name, created_at, amount_invested, id) values ('Packston Hubbart', '2023-11-17', 77267.26, 63);
+insert into investor (name, created_at, amount_invested, id) values ('Jacquenette Hendrich', '2023-03-01', 91416.74, 64);
+insert into investor (name, created_at, amount_invested, id) values ('Putnam Glasman', '2024-01-10', 41009.09, 65);
+insert into investor (name, created_at, amount_invested, id) values ('June Follett', '2022-10-26', 95043.32, 66);
+insert into investor (name, created_at, amount_invested, id) values ('Anette Chaster', '2022-12-05', 89670.39, 67);
+insert into investor (name, created_at, amount_invested, id) values ('Hewitt Cabble', '2023-06-15', 43945.87, 68);
+insert into investor (name, created_at, amount_invested, id) values ('Creighton Juanico', '2022-10-31', 8663.11, 69);
+insert into investor (name, created_at, amount_invested, id) values ('Maxine Shropsheir', '2023-09-18', 18868.61, 70);
+insert into investor (name, created_at, amount_invested, id) values ('Nathanael Prowting', '2022-07-29', 22529.35, 71);
+insert into investor (name, created_at, amount_invested, id) values ('Clementina Bour', '2023-07-11', 23314.96, 72);
+insert into investor (name, created_at, amount_invested, id) values ('Dunc Waterman', '2023-04-12', 9591.15, 73);
+insert into investor (name, created_at, amount_invested, id) values ('Consuelo Peller', '2024-05-21', 30207.57, 74);
+insert into investor (name, created_at, amount_invested, id) values ('Lisa Menelaws', '2023-04-28', 33511.4, 75);
+insert into investor (name, created_at, amount_invested, id) values ('Kristine Pretsel', '2022-07-22', 13760.22, 76);
+insert into investor (name, created_at, amount_invested, id) values ('Donavon Lippiatt', '2023-11-26', 63099.07, 77);
+insert into investor (name, created_at, amount_invested, id) values ('Kippy Craddock', '2023-12-12', 59036.01, 78);
+insert into investor (name, created_at, amount_invested, id) values ('Aldridge Hailwood', '2024-04-23', 29531.21, 79);
+insert into investor (name, created_at, amount_invested, id) values ('Paolina Kingett', '2024-02-27', 72605.54, 80);
+insert into investor (name, created_at, amount_invested, id) values ('Fredrika Hews', '2023-07-04', 16093.34, 81);
+insert into investor (name, created_at, amount_invested, id) values ('Kathye Uppett', '2023-05-25', 93397.24, 82);
+insert into investor (name, created_at, amount_invested, id) values ('Vaughan Bendall', '2023-03-12', 18439.11, 83);
+insert into investor (name, created_at, amount_invested, id) values ('Shurlock Ewbanke', '2022-07-25', 71650.05, 84);
+insert into investor (name, created_at, amount_invested, id) values ('Barth Zuker', '2023-12-25', 79602.29, 85);
+insert into investor (name, created_at, amount_invested, id) values ('Ringo Trowel', '2023-07-04', 75392.43, 86);
+insert into investor (name, created_at, amount_invested, id) values ('Fawne Huskinson', '2024-03-31', 45960.13, 87);
+insert into investor (name, created_at, amount_invested, id) values ('Brina MacCheyne', '2022-09-14', 71142.62, 88);
+insert into investor (name, created_at, amount_invested, id) values ('Jemima Ashmole', '2023-06-07', 81578.82, 89);
+insert into investor (name, created_at, amount_invested, id) values ('Nissy Remer', '2022-08-03', 79915.78, 90);
+insert into investor (name, created_at, amount_invested, id) values ('Susannah Corselles', '2023-04-30', 54342.13, 91);
+insert into investor (name, created_at, amount_invested, id) values ('Cobby Philipps', '2023-05-18', 33962.19, 92);
+insert into investor (name, created_at, amount_invested, id) values ('Misti Jeffery', '2023-12-06', 26800.36, 93);
+insert into investor (name, created_at, amount_invested, id) values ('Ciel Leppo', '2023-04-15', 73128.23, 94);
+insert into investor (name, created_at, amount_invested, id) values ('Binni Sapson', '2023-12-12', 87207.18, 95);
+insert into investor (name, created_at, amount_invested, id) values ('Hale Lougheid', '2023-06-27', 67506.06, 96);
+insert into investor (name, created_at, amount_invested, id) values ('Kally Harome', '2023-04-26', 80868.83, 97);
+insert into investor (name, created_at, amount_invested, id) values ('Gwynne Cabera', '2023-08-17', 92095.72, 98);
+insert into investor (name, created_at, amount_invested, id) values ('Witty Fabb', '2024-05-20', 63987.72, 99);
+insert into investor (name, created_at, amount_invested, id) values ('Bev Kimbley', '2022-11-03', 97886.15, 100);
 
 -- Sample data for manager table
 INSERT INTO manager (name, created_at, party, id) VALUES
@@ -402,917 +371,589 @@ INSERT INTO manager (name, created_at, party, id) VALUES
 ('Ruthanne Borkett', '2023-06-15', 'Progressive Party', 50);
 
 -- Sample data for journalist table
-INSERT INTO journalist (name, created_at, expert_industry, company, state, party, id) VALUES 
-('Carlota Cunah', '2023-03-27', 'Oil & Gas Production', 'Morning Star Tribune', 'Colorado', 'Unity Party', '1'),
-('Yorker Elliott', '2023-04-19', 'Farming/Seeds/Milling', 'Morning Herald Post', 'Alabama', 'Liberty Party', '2'),
-('Margeaux Cyples', '2023-03-18', 'Major Banks', 'The Sunday Times', 'District of Columbia', 'Equality Party', '3'),
-('Roxie Boumphrey', '2024-01-20', 'n/a', 'The Weekly Observer', 'Texas', 'Progressive Party', '4'),
-('Sallyann Bygott', '2023-03-02', 'Publishing', 'Daily Sun Chronicle', 'Nevada', 'Equality Party', '5'),
-('Betta Sighart', '2023-12-07', 'Oil & Gas Production', 'City Times Herald', 'Florida', 'Unity Party', '6'),
-('Brantley Hughes', '2023-07-21', 'Major Banks', 'The Sunday Times', 'Texas', 'Equality Party', '7'),
-('Kelley Daw', '2023-08-06', 'Other Specialty Stores', 'Evening News Sentinel', 'Minnesota', 'Justice Party', '8'),
-('Boyce Wyndham', '2023-01-03', 'Investment Bankers/Brokers/Service', 'Daily Sun Chronicle', 'Nebraska', 'Equality Party', '9'),
-('Mendel Canet', '2023-09-14', 'Marine Transportation', 'Daily Sun Chronicle', 'Texas', 'Liberty Party', '10'),
-('Aurelie Hoble', '2022-07-21', 'Hotels/Resorts', 'The Weekly Observer', 'Tennessee', 'Justice Party', '11'),
-('Mikaela Dunnan', '2023-09-05', 'Business Services', 'The Sunday Times', 'Florida', 'Progressive Party', '12'),
-('Janaye Coverley', '2023-07-19', 'Integrated oil Companies', 'Morning Herald Post', 'West Virginia', 'Unity Party', '13'),
-('Horatius Gardener', '2023-10-21', 'Beverages (Production/Distribution)', 'Daily Sun Chronicle', 'District of Columbia', 'Unity Party', '14'),
-('Bertram Hearmon', '2024-01-08', 'Marine Transportation', 'Evening News Sentinel', 'Maryland', 'Unity Party', '15'),
-('Marieann Guiett', '2023-06-18', 'RETAIL: Building Materials', 'Evening News Sentinel', 'Minnesota', 'Justice Party', '16'),
-('Addie Halgarth', '2022-11-08', 'Metal Fabrications', 'Evening News Sentinel', 'New York', 'Unity Party', '17'),
-('Aloysius Ricciardi', '2022-09-14', 'Movies/Entertainment', 'Sunrise News Journal', 'Texas', 'Equality Party', '18'),
-('Jacintha Sothern', '2022-11-14', 'Commercial Banks', 'Morning Star Tribune', 'New York', 'Progressive Party', '19'),
-('Bobby Cleere', '2023-01-12', 'n/a', 'Daily Sun Chronicle', 'Missouri', 'Justice Party', '20'),
-('Sheffield Luca', '2023-04-17', 'Auto Parts:O.E.M.', 'Evening News Sentinel', 'Florida', 'Equality Party', '21'),
-('Aharon Haresnaip', '2024-06-01', 'Hospital/Nursing Management', 'City Times Herald', 'Alabama', 'Liberty Party', '22'),
-('Ashleigh McCutcheon', '2023-06-07', 'Major Banks', 'Sunrise News Journal', 'New York', 'Justice Party', '23'),
-('Dareen Shakelady', '2022-11-10', 'n/a', 'Morning Star Tribune', 'Missouri', 'Liberty Party', '24'),
-('May Burston', '2023-06-13', 'Home Furnishings', 'Metro News Express', 'California', 'Unity Party', '25'),
-('Felicio Padginton', '2022-10-27', 'Real Estate Investment Trusts', 'Metro News Express', 'Tennessee', 'Liberty Party', '26'),
-('Marys Mellenby', '2023-01-15', 'n/a', 'Morning Star Tribune', 'Alaska', 'Progressive Party', '27'),
-('Elsy Goscar', '2023-02-15', 'n/a', 'Sunrise News Journal', 'Louisiana', 'Liberty Party', '28'),
-('Baron Penniell', '2023-06-28', 'Oil & Gas Production', 'Morning Star Tribune', 'Massachusetts', 'Liberty Party', '29'),
-('Tobe Falkner', '2023-02-04', 'Meat/Poultry/Fish', 'The Weekly Observer', 'Massachusetts', 'Equality Party', '30'),
-('Neile Studdard', '2023-09-11', 'Home Furnishings', 'The Sunday Times', 'Florida', 'Unity Party', '31'),
-('Claude Grattan', '2023-12-15', 'Restaurants', 'Sunrise News Journal', 'Florida', 'Unity Party', '32'),
-('Ki Mayston', '2022-10-18', 'Industrial Machinery/Components', 'Sunrise News Journal', 'Washington', 'Liberty Party', '33'),
-('Torrence Aldren', '2023-11-24', 'n/a', 'Evening News Sentinel', 'Virginia', 'Equality Party', '34'),
-('Paola OClery', '2023-05-15', 'Business Services', 'Morning Star Tribune', 'Virginia', 'Liberty Party', '35'),
-('Rozelle Hurst', '2024-02-11', 'n/a', 'Daily Sun Chronicle', 'Tennessee', 'Justice Party', '36'),
-('Lyell Malyj', '2022-07-28', 'Property-Casualty Insurers', 'Evening News Sentinel', 'New York', 'Liberty Party', '37'),
-('Eliot Windley', '2022-11-09', 'Computer Software: Prepackaged Software', 'Sunrise News Journal', 'Pennsylvania', 'Equality Party', '38'),
-('Tory Wynrehame', '2023-12-08', 'EDP Services', 'Morning Star Tribune', 'Arkansas', 'Liberty Party', '39'),
-('Giraud Caldera', '2024-03-15', 'Electric Utilities: Central', 'Daily Sun Chronicle', 'Florida', 'Unity Party', '40'),
-('Field Gerardeaux', '2022-06-21', 'Transportation Services', 'The Daily Gazette', 'Colorado', 'Equality Party', '41'),
-('Aime De Minico', '2022-12-27', 'Television Services', 'The Daily Gazette', 'Florida', 'Equality Party', '42'),
-('Dacy Emmanueli', '2024-04-12', 'Electrical Products', 'City Times Herald', 'Pennsylvania', 'Progressive Party', '43'),
-('Sindee Treby', '2022-11-08', 'Industrial Machinery/Components', 'Sunrise News Journal', 'California', 'Progressive Party', '44'),
-('Jackson Widger', '2022-11-16', 'Business Services', 'City Times Herald', 'Texas', 'Equality Party', '45'),
-('Pieter Dishman', '2023-04-21', 'Clothing/Shoe/Accessory Stores', 'Sunrise News Journal', 'District of Columbia', 'Equality Party', '46'),
-('Lisabeth Hooke', '2024-04-25', 'Business Services', 'The Weekly Observer', 'Illinois', 'Equality Party', '47'),
-('Binky Ravenhill', '2024-02-29', 'Real Estate Investment Trusts', 'The Weekly Observer', 'New York', 'Liberty Party', '48'),
-('Lilla Scanlin', '2022-09-08', 'Advertising', 'Morning Star Tribune', 'Texas', 'Liberty Party', '49'),
-('Kelsi Lawee', '2024-05-01', 'Biotechnology: Commercial Physical & Biological Resarch', 'The Daily Gazette', 'Massachusetts', 'Liberty Party', '50'),
-('Glynn Varfolomeev', '2023-04-01', 'Other Consumer Services', 'Metro News Express', 'New York', 'Unity Party', '51'),
-('Giffie Saye', '2024-01-21', 'Biotechnology: Laboratory Analytical Instruments', 'City Times Herald', 'Colorado', 'Progressive Party', '52'),
-('Jillene Pilgram', '2023-08-07', 'Business Services', 'Metro News Express', 'Minnesota', 'Liberty Party', '53'),
-('Keeley Bonehill', '2023-03-14', 'Broadcasting', 'Metro News Express', 'New York', 'Equality Party', '54'),
-('Jabez Cartmail', '2023-11-12', 'Oil & Gas Production', 'Sunrise News Journal', 'Oregon', 'Unity Party', '55'),
-('Avram Boome', '2023-02-10', 'n/a', 'Metro News Express', 'Georgia', 'Progressive Party', '56'),
-('Lelah Bezemer', '2024-01-06', 'Radio And Television Broadcasting And Communications Equipment', 'Morning Star Tribune', 'District of Columbia', 'Equality Party', '57'),
-('Cinda Bolley', '2023-06-28', 'Electric Utilities: Central', 'Morning Herald Post', 'Texas', 'Unity Party', '58'),
-('Eleanor Seyfart', '2023-12-10', 'n/a', 'Daily Sun Chronicle', 'California', 'Justice Party', '59'),
-('Isabella Duer', '2022-09-16', 'Telecommunications Equipment', 'Sunrise News Journal', 'New York', 'Unity Party', '60'),
-('Marisa Messam', '2022-11-30', 'n/a', 'City Times Herald', 'Texas', 'Liberty Party', '61'),
-('Layney Toffoloni', '2024-03-23', 'Specialty Insurers', 'Daily Sun Chronicle', 'Pennsylvania', 'Unity Party', '62'),
-('Brad Cholton', '2022-11-03', 'Major Pharmaceuticals', 'The Sunday Times', 'New York', 'Liberty Party', '63'),
-('Loretta Ward', '2023-12-01', 'n/a', 'Evening News Sentinel', 'New York', 'Unity Party', '64'),
-('Rois Issitt', '2023-09-22', 'Books', 'Daily Sun Chronicle', 'Indiana', 'Progressive Party', '65'),
-('Harp Skeath', '2024-02-09', 'Industrial Machinery/Components', 'Morning Herald Post', 'Texas', 'Liberty Party', '66'),
-('Margaretta Purbrick', '2024-04-17', 'Marine Transportation', 'The Sunday Times', 'Oregon', 'Justice Party', '67'),
-('Wheeler Dwyer', '2023-01-30', 'Retail: Computer Software & Peripheral Equipment', 'The Daily Gazette', 'California', 'Justice Party', '68'),
-('Eleanora Hydes', '2022-09-21', 'n/a', 'City Times Herald', 'Colorado', 'Liberty Party', '69'),
-('Marijn Linger', '2023-07-17', 'Property-Casualty Insurers', 'The Daily Gazette', 'Florida', 'Unity Party', '70'),
-('Babita Rallinshaw', '2023-11-09', 'Major Banks', 'Sunrise News Journal', 'Nevada', 'Justice Party', '71'),
-('Cleopatra Attwood', '2023-03-02', 'Savings Institutions', 'Evening News Sentinel', 'Ohio', 'Liberty Party', '72'),
-('Jonell Petford', '2023-08-05', 'Semiconductors', 'Sunrise News Journal', 'Connecticut', 'Unity Party', '73'),
-('Reggy Starr', '2023-10-05', 'n/a', 'Sunrise News Journal', 'California', 'Justice Party', '74'),
-('Waneta Parmenter', '2022-09-24', 'Television Services', 'Sunrise News Journal', 'California', 'Equality Party', '75'),
-('Pauly Rapp', '2023-09-18', 'Medical/Nursing Services', 'Morning Herald Post', 'Nevada', 'Justice Party', '76'),
-('Katina Llorens', '2023-10-03', 'n/a', 'The Daily Gazette', 'California', 'Liberty Party', '77'),
-('Emilie Rought', '2024-03-01', 'Investment Managers', 'The Weekly Observer', 'Florida', 'Progressive Party', '78'),
-('Sile Calfe', '2023-07-28', 'n/a', 'Evening News Sentinel', 'Tennessee', 'Progressive Party', '79'),
-('Sansone Heikkinen', '2022-07-03', 'Clothing/Shoe/Accessory Stores', 'The Daily Gazette', 'Arizona', 'Unity Party', '80'),
-('Holly Bortolussi', '2023-02-24', 'Semiconductors', 'The Weekly Observer', 'Florida', 'Unity Party', '81'),
-('Bonny MacCourt', '2024-03-26', 'n/a', 'City Times Herald', 'New York', 'Progressive Party', '82'),
-('Gus Taysbil', '2024-04-08', 'Semiconductors', 'The Daily Gazette', 'California', 'Equality Party', '83'),
-('Thibaut Sichardt', '2023-11-08', 'Investment Managers', 'City Times Herald', 'Maryland', 'Liberty Party', '84'),
-('Hugh Orme', '2023-08-29', 'n/a', 'Sunrise News Journal', 'California', 'Equality Party', '85'),
-('Skippie Vertigan', '2023-11-28', 'Major Pharmaceuticals', 'The Weekly Observer', 'Texas', 'Unity Party', '86'),
-('Vasili Gibbons', '2023-03-15', 'Business Services', 'Daily Sun Chronicle', 'California', 'Progressive Party', '87'),
-('Frasco Sweynson', '2023-09-23', 'Marine Transportation', 'The Sunday Times', 'Hawaii', 'Liberty Party', '88'),
-('Cathe Fagence', '2024-04-15', 'Biotechnology: Electromedical & Electrotherapeutic Apparatus', 'Sunrise News Journal', 'Florida', 'Unity Party', '89'),
-('Nedda Hammett', '2024-01-10', 'Business Services', 'Sunrise News Journal', 'North Carolina', 'Progressive Party', '90'),
-('Murray Norledge', '2023-09-03', 'Major Banks', 'Sunrise News Journal', 'California', 'Justice Party', '91'),
-('Sarah Roblou', '2022-08-11', 'n/a', 'Daily Sun Chronicle', 'Arizona', 'Justice Party', '92'),
-('Asher Normansell', '2023-12-27', 'n/a', 'Daily Sun Chronicle', 'Kentucky', 'Equality Party', '93'),
-('Karyn Drever', '2024-02-29', 'Electric Utilities: Central', 'Morning Star Tribune', 'Massachusetts', 'Liberty Party', '94'),
-('Ami Belli', '2024-04-28', 'Air Freight/Delivery Services', 'Metro News Express', 'California', 'Liberty Party', '95'),
-('Nickie McSherry', '2023-08-17', 'Investment Managers', 'Evening News Sentinel', 'Minnesota', 'Justice Party', '96'),
-('Hattie Leeb', '2022-12-01', 'Major Banks', 'The Daily Gazette', 'Texas', 'Progressive Party', '97'),
-('Deborah Skarr', '2023-11-11', 'n/a', 'The Daily Gazette', 'Virginia', 'Justice Party', '98'),
-('Zerk Provis', '2022-11-26', 'Computer Software: Programming, Data Processing', 'Evening News Sentinel', 'Florida', 'Equality Party', '99'),
-('Thoma Fowley', '2023-11-03', 'EDP Services', 'City Times Herald', 'Virginia', 'Equality Party', '100');
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Reta Runcie', '2022-08-29', 'Banks', 'Morning Herald Post', 'Florida', 'Progressive Party', 1);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Scarface Van Dale', '2024-02-17', 'Electric Utilities: Central', 'Morning Herald Post', 'Texas', 'Equality Party', 2);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Tiff Stirgess', '2023-04-27', 'n/a', 'Metro News Express', 'Louisiana', 'Equality Party', 3);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Riobard Sturgeon', '2023-01-22', 'Biotechnology: Commercial Physical & Biological Resarch', 'The Sunday Times', 'District of Columbia', 'Equality Party', 4);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Anthea Selby', '2024-03-09', 'Major Pharmaceuticals', 'The Daily Gazette', 'Texas', 'Justice Party', 5);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Herbert Demongeot', '2023-02-02', 'n/a', 'Metro News Express', 'Alabama', 'Unity Party', 6);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Kayne Perri', '2024-03-13', 'Military/Government/Technical', 'Metro News Express', 'Texas', 'Equality Party', 7);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Sutherland Mosen', '2023-01-07', 'Homebuilding', 'Metro News Express', 'Arizona', 'Unity Party', 8);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Tess Boulde', '2023-11-14', 'Semiconductors', 'The Weekly Observer', 'Iowa', 'Justice Party', 9);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Rubetta Basile', '2023-02-01', 'n/a', 'Morning Herald Post', 'Colorado', 'Liberty Party', 10);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Olenka Bartalini', '2023-07-08', 'n/a', 'The Weekly Observer', 'District of Columbia', 'Progressive Party', 11);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Ivar Wilcher', '2022-09-30', 'Power Generation', 'Daily Sun Chronicle', 'New York', 'Progressive Party', 12);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Leoine Hardeman', '2024-02-14', 'Broadcasting', 'Morning Star Tribune', 'Texas', 'Equality Party', 13);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Teena Schwieso', '2024-05-05', 'n/a', 'The Daily Gazette', 'Florida', 'Progressive Party', 14);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Augustine Bolf', '2023-05-28', 'Electric Utilities: Central', 'Morning Herald Post', 'Texas', 'Liberty Party', 15);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Joel Lintot', '2023-08-23', 'Oil & Gas Production', 'The Weekly Observer', 'California', 'Unity Party', 16);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Danit Wilber', '2023-01-17', 'Major Banks', 'Metro News Express', 'Florida', 'Progressive Party', 17);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Juana Buret', '2023-04-15', 'Savings Institutions', 'Morning Star Tribune', 'California', 'Unity Party', 18);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Wald Volage', '2022-10-28', 'Real Estate Investment Trusts', 'Daily Sun Chronicle', 'Michigan', 'Justice Party', 19);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Kristan Simkovitz', '2022-07-14', 'Major Banks', 'Morning Star Tribune', 'Arizona', 'Progressive Party', 20);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Joaquin Shone', '2024-04-29', 'Oil & Gas Production', 'Sunrise News Journal', 'Wisconsin', 'Unity Party', 21);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Christoph Robertson', '2022-11-18', 'n/a', 'The Sunday Times', 'Louisiana', 'Justice Party', 22);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Hannis Kelley', '2023-09-10', 'Clothing/Shoe/Accessory Stores', 'Daily Sun Chronicle', 'California', 'Unity Party', 23);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Belva Eldrett', '2023-04-22', 'n/a', 'The Daily Gazette', 'Iowa', 'Progressive Party', 24);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Alexandr McVeigh', '2023-11-14', 'Real Estate Investment Trusts', 'Morning Herald Post', 'Massachusetts', 'Unity Party', 25);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Beverlie Fifield', '2024-03-17', 'Investment Bankers/Brokers/Service', 'Sunrise News Journal', 'Ohio', 'Liberty Party', 26);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Aubert North', '2022-12-01', 'Telecommunications Equipment', 'Evening News Sentinel', 'California', 'Justice Party', 27);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Alethea Cisar', '2023-07-21', 'Other Specialty Stores', 'Evening News Sentinel', 'California', 'Unity Party', 28);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Maggy Branch', '2023-05-07', 'Biotechnology: Laboratory Analytical Instruments', 'Evening News Sentinel', 'Indiana', 'Liberty Party', 29);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Dewie Brecher', '2022-07-04', 'Medical Specialities', 'City Times Herald', 'Kentucky', 'Unity Party', 30);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Tanya Sugar', '2024-04-17', 'n/a', 'Evening News Sentinel', 'Alabama', 'Equality Party', 31);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Rebecka Adamovitz', '2024-05-21', 'Hospital/Nursing Management', 'Metro News Express', 'North Carolina', 'Liberty Party', 32);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Arney Keasy', '2023-01-21', 'n/a', 'Sunrise News Journal', 'Indiana', 'Unity Party', 33);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Garrot Clavering', '2024-03-30', 'Natural Gas Distribution', 'The Weekly Observer', 'Ohio', 'Liberty Party', 34);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Marchall Minter', '2022-10-18', 'Biotechnology: In Vitro & In Vivo Diagnostic Substances', 'The Daily Gazette', 'Colorado', 'Unity Party', 35);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Casandra Compston', '2023-01-15', 'Business Services', 'Metro News Express', 'Minnesota', 'Equality Party', 36);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Thorin Greenwell', '2022-06-26', 'Precious Metals', 'Metro News Express', 'Minnesota', 'Equality Party', 37);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Elston Duffan', '2022-08-11', 'n/a', 'Sunrise News Journal', 'Ohio', 'Justice Party', 38);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Anderea Braunston', '2023-10-23', 'Auto Manufacturing', 'The Daily Gazette', 'Texas', 'Unity Party', 39);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Ramsey Wealleans', '2024-02-29', 'n/a', 'The Sunday Times', 'California', 'Progressive Party', 40);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Andreana Mumm', '2022-09-15', 'Semiconductors', 'Morning Star Tribune', 'Nevada', 'Equality Party', 41);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Marja Pinyon', '2024-04-01', 'n/a', 'City Times Herald', 'California', 'Liberty Party', 42);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Serene Lammers', '2022-11-16', 'n/a', 'Morning Star Tribune', 'Indiana', 'Progressive Party', 43);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Marcy Rawls', '2024-04-28', 'Restaurants', 'Morning Herald Post', 'Indiana', 'Progressive Party', 44);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Sebastian Haliburn', '2023-01-27', 'Major Pharmaceuticals', 'Metro News Express', 'District of Columbia', 'Unity Party', 45);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Gabriell Benedikt', '2023-10-07', 'Newspapers/Magazines', 'The Weekly Observer', 'Alabama', 'Equality Party', 46);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Brook Iskowitz', '2023-02-03', 'Telecommunications Equipment', 'Daily Sun Chronicle', 'Maryland', 'Equality Party', 47);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Calli Heinritz', '2024-01-16', 'Biotechnology: In Vitro & In Vivo Diagnostic Substances', 'Daily Sun Chronicle', 'California', 'Unity Party', 48);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Brandy West', '2024-03-07', 'n/a', 'The Weekly Observer', 'New York', 'Justice Party', 49);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Fonz Adamov', '2022-12-26', 'Clothing/Shoe/Accessory Stores', 'Daily Sun Chronicle', 'Louisiana', 'Unity Party', 50);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Em Rotter', '2024-03-17', 'Marine Transportation', 'Metro News Express', 'Texas', 'Progressive Party', 51);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Kaylee Dumphreys', '2023-07-01', 'Military/Government/Technical', 'Daily Sun Chronicle', 'Florida', 'Equality Party', 52);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Emeline Maymand', '2023-02-07', 'Forest Products', 'Daily Sun Chronicle', 'Virginia', 'Justice Party', 53);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('D''arcy Kareman', '2024-01-31', 'Containers/Packaging', 'Sunrise News Journal', 'Missouri', 'Progressive Party', 54);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Victoria Hoyt', '2022-08-01', 'n/a', 'Morning Star Tribune', 'California', 'Equality Party', 55);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Caritta Avramovsky', '2024-05-05', 'n/a', 'Evening News Sentinel', 'Michigan', 'Justice Party', 56);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Xylina Bettanay', '2023-11-26', 'Restaurants', 'Daily Sun Chronicle', 'Utah', 'Equality Party', 57);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Mickey Bester', '2024-04-12', 'Medical/Nursing Services', 'Morning Herald Post', 'Missouri', 'Unity Party', 58);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Hersh Beart', '2023-03-23', 'Medical/Nursing Services', 'City Times Herald', 'California', 'Equality Party', 59);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Dani Frammingham', '2023-09-24', 'Major Banks', 'Morning Herald Post', 'Texas', 'Progressive Party', 60);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Giselbert Busek', '2022-12-24', 'n/a', 'The Daily Gazette', 'Arkansas', 'Equality Party', 61);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Maribel Laxson', '2024-03-23', 'Investment Managers', 'City Times Herald', 'Colorado', 'Progressive Party', 62);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Abel Currey', '2022-07-05', 'n/a', 'Morning Star Tribune', 'Texas', 'Equality Party', 63);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Kevin Suatt', '2023-05-01', 'Real Estate Investment Trusts', 'Morning Herald Post', 'Louisiana', 'Equality Party', 64);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Fons Hylands', '2023-10-20', 'n/a', 'Morning Star Tribune', 'District of Columbia', 'Progressive Party', 65);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Maure Meindl', '2024-01-23', 'Industrial Specialties', 'City Times Herald', 'California', 'Progressive Party', 66);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Eduino Bonnin', '2024-04-19', 'Homebuilding', 'The Weekly Observer', 'South Carolina', 'Unity Party', 67);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Karney Tunaclift', '2024-04-03', 'Auto Parts:O.E.M.', 'Morning Star Tribune', 'Colorado', 'Justice Party', 68);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Katharyn Massimo', '2022-09-26', 'Major Banks', 'City Times Herald', 'California', 'Unity Party', 69);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Nettle Heggison', '2024-04-23', 'Major Pharmaceuticals', 'Evening News Sentinel', 'South Dakota', 'Progressive Party', 70);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Farris Tant', '2022-11-02', 'Oil & Gas Production', 'The Weekly Observer', 'Texas', 'Liberty Party', 71);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Norris Sammes', '2023-10-03', 'Specialty Chemicals', 'City Times Herald', 'North Carolina', 'Progressive Party', 72);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Melantha Knowller', '2023-07-25', 'Other Consumer Services', 'The Sunday Times', 'California', 'Equality Party', 73);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Dulci Ramiro', '2022-11-29', 'Beverages (Production/Distribution)', 'Morning Herald Post', 'New Mexico', 'Justice Party', 74);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Andy Normabell', '2024-03-28', 'Packaged Foods', 'Daily Sun Chronicle', 'Kansas', 'Unity Party', 75);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Diego Pedwell', '2023-09-15', 'Automotive Aftermarket', 'Morning Herald Post', 'Texas', 'Justice Party', 76);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Corby Clancey', '2023-12-03', 'Finance: Consumer Services', 'Metro News Express', 'California', 'Progressive Party', 77);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Diannne Deddum', '2023-08-02', 'n/a', 'Metro News Express', 'Texas', 'Liberty Party', 78);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Jenny de Almeida', '2024-04-08', 'Clothing/Shoe/Accessory Stores', 'Evening News Sentinel', 'California', 'Progressive Party', 79);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Gretel Aleksic', '2024-04-29', 'n/a', 'The Weekly Observer', 'Texas', 'Progressive Party', 80);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Del Jeduch', '2023-09-21', 'Major Banks', 'Metro News Express', 'Louisiana', 'Unity Party', 81);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Rosa Jozaitis', '2022-12-16', 'Major Banks', 'The Daily Gazette', 'Wisconsin', 'Unity Party', 82);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Randall Gallienne', '2024-03-09', 'Apparel', 'Daily Sun Chronicle', 'Colorado', 'Justice Party', 83);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Cleopatra Larmour', '2024-05-08', 'n/a', 'Sunrise News Journal', 'Louisiana', 'Liberty Party', 84);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Julietta Heistermann', '2023-03-22', 'Professional Services', 'The Daily Gazette', 'Florida', 'Unity Party', 85);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Otes Roseburgh', '2022-08-04', 'Beverages (Production/Distribution)', 'Evening News Sentinel', 'South Carolina', 'Progressive Party', 86);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Camala McGahern', '2023-01-28', 'Medical/Dental Instruments', 'The Daily Gazette', 'Illinois', 'Unity Party', 87);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Alvira Aggas', '2022-11-19', 'n/a', 'The Weekly Observer', 'Minnesota', 'Equality Party', 88);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Odessa Pren', '2023-12-24', 'n/a', 'The Daily Gazette', 'Nevada', 'Justice Party', 89);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Howey Gorges', '2023-10-11', 'Oil & Gas Production', 'Morning Herald Post', 'Indiana', 'Liberty Party', 90);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Kellsie Sellars', '2023-05-27', 'Building Products', 'Evening News Sentinel', 'Texas', 'Progressive Party', 91);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Gonzalo Kettlewell', '2023-11-11', 'Trucking Freight/Courier Services', 'The Sunday Times', 'California', 'Unity Party', 92);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Dwight Tolemache', '2024-05-24', 'n/a', 'The Weekly Observer', 'Montana', 'Progressive Party', 93);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Lowrance Grangier', '2023-08-19', 'Banks', 'Morning Herald Post', 'Tennessee', 'Liberty Party', 94);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Margalit Bartkiewicz', '2022-06-12', 'Power Generation', 'Sunrise News Journal', 'Tennessee', 'Progressive Party', 95);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Ola Noury', '2022-11-09', 'n/a', 'Daily Sun Chronicle', 'Colorado', 'Progressive Party', 96);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Shandra Prigmore', '2023-11-11', 'Computer Software: Prepackaged Software', 'Morning Herald Post', 'Rhode Island', 'Unity Party', 97);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Zebedee Ormston', '2023-01-22', 'n/a', 'Morning Star Tribune', 'Illinois', 'Unity Party', 98);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Zonda Faccini', '2023-12-05', 'Medical/Dental Instruments', 'The Sunday Times', 'Illinois', 'Unity Party', 99);
+insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Cosetta Glynn', '2023-11-01', 'Major Pharmaceuticals', 'Daily Sun Chronicle', 'California', 'Unity Party', 100);
+
+insert into stock (curr_price, company, ticker, id) values (472.91, 'Barings Participation Investors', 'MPV', 1);
+insert into stock (curr_price, company, ticker, id) values (356.17, 'PennantPark Investment Corporation', 'PNTA.CL', 2);
+insert into stock (curr_price, company, ticker, id) values (677.63, 'GDS Holdings Limited', 'GDS', 3);
+insert into stock (curr_price, company, ticker, id) values (497.91, 'NMI Holdings Inc', 'NMIH', 4);
+insert into stock (curr_price, company, ticker, id) values (282.79, 'Tocagen Inc.', 'TOCA', 5);
+insert into stock (curr_price, company, ticker, id) values (765.84, 'Ocera Therapeutics, Inc.', 'OCRX', 6);
+insert into stock (curr_price, company, ticker, id) values (765.34, 'AllianzGI Convertible & Income Fund II', 'NCZ', 7);
+insert into stock (curr_price, company, ticker, id) values (812.29, 'CECO Environmental Corp.', 'CECE', 8);
+insert into stock (curr_price, company, ticker, id) values (420.56, 'Mannatech, Incorporated', 'MTEX', 9);
+insert into stock (curr_price, company, ticker, id) values (995.03, 'Mattel, Inc.', 'MAT', 10);
+insert into stock (curr_price, company, ticker, id) values (445.53, 'Aldeyra Therapeutics, Inc.', 'ALDX', 11);
+insert into stock (curr_price, company, ticker, id) values (498.27, 'Taylor Morrison Home Corporation', 'TMHC', 12);
+insert into stock (curr_price, company, ticker, id) values (327.47, 'Amaya Inc.', 'AYA', 13);
+insert into stock (curr_price, company, ticker, id) values (80.73, 'Philip Morris International Inc', 'PM', 14);
+insert into stock (curr_price, company, ticker, id) values (359.67, 'Bridgford Foods Corporation', 'BRID', 15);
+insert into stock (curr_price, company, ticker, id) values (902.06, 'PowerShares DWA Energy Momentum Portfolio', 'PXI', 16);
+insert into stock (curr_price, company, ticker, id) values (36.63, 'Rocket Fuel Inc.', 'FUEL', 17);
+insert into stock (curr_price, company, ticker, id) values (555.84, 'IDACORP, Inc.', 'IDA', 18);
+insert into stock (curr_price, company, ticker, id) values (346.73, 'Ocular Therapeutix, Inc.', 'OCUL', 19);
+insert into stock (curr_price, company, ticker, id) values (997.5, 'Seadrill Partners LLC', 'SDLP', 20);
+insert into stock (curr_price, company, ticker, id) values (289.94, 'China Life Insurance Company Limited', 'LFC', 21);
+insert into stock (curr_price, company, ticker, id) values (78.42, 'iShares iBoxx $ High Yield ex Oil & Gas Corporate Bond ETF', 'HYXE', 22);
+insert into stock (curr_price, company, ticker, id) values (365.54, 'Advanced Emissions Solutions, Inc.', 'ADES', 23);
+insert into stock (curr_price, company, ticker, id) values (846.53, 'Planet Fitness, Inc.', 'PLNT', 24);
+insert into stock (curr_price, company, ticker, id) values (505.16, 'FIRST REPUBLIC BANK', 'FRC^C', 25);
+insert into stock (curr_price, company, ticker, id) values (976.97, 'Flaherty & Crumrine Total Return Fund Inc', 'FLC', 26);
+insert into stock (curr_price, company, ticker, id) values (225.77, 'The Navigators Group, Inc.', 'NAVG', 27);
+insert into stock (curr_price, company, ticker, id) values (549.49, 'Frankly, Inc.', 'FKLYU', 28);
+insert into stock (curr_price, company, ticker, id) values (934.34, 'Ormat Technologies, Inc.', 'ORA', 29);
+insert into stock (curr_price, company, ticker, id) values (149.66, 'Pimco Corporate & Income Stategy Fund', 'PCN', 30);
+insert into stock (curr_price, company, ticker, id) values (228.46, 'Janus Henderson Group plc', 'JHG', 31);
+insert into stock (curr_price, company, ticker, id) values (814.65, 'LINE Corporation', 'LN', 32);
+insert into stock (curr_price, company, ticker, id) values (128.77, 'Orchid Island Capital, Inc.', 'ORC', 33);
+insert into stock (curr_price, company, ticker, id) values (66.05, 'NICE Ltd', 'NICE', 34);
+insert into stock (curr_price, company, ticker, id) values (204.46, 'New York Mortgage Trust, Inc.', 'NYMTO', 35);
+insert into stock (curr_price, company, ticker, id) values (12.52, 'Tableau Software, Inc.', 'DATA', 36);
+insert into stock (curr_price, company, ticker, id) values (131.26, 'Bank of America Corporation', 'BAC^Y', 37);
+insert into stock (curr_price, company, ticker, id) values (696.72, 'Tuttle Tactical Management U.S. Core ETF', 'TUTT', 38);
+insert into stock (curr_price, company, ticker, id) values (352.29, 'Upland Software, Inc.', 'UPLD', 39);
+insert into stock (curr_price, company, ticker, id) values (407.96, 'Invesco Mortgage Capital Inc.', 'IVR^A', 40);
+insert into stock (curr_price, company, ticker, id) values (809.04, 'Kayne Anderson Acquisition Corp.', 'KAAC', 41);
+insert into stock (curr_price, company, ticker, id) values (490.3, 'Rosetta Genomics Ltd.', 'ROSG', 42);
+insert into stock (curr_price, company, ticker, id) values (563.5, 'Weatherford International plc', 'WFT', 43);
+insert into stock (curr_price, company, ticker, id) values (300.4, 'Cedar Fair, L.P.', 'FUN', 44);
+insert into stock (curr_price, company, ticker, id) values (489.57, 'Scudder Strategic Municiple Income Trust', 'KSM', 45);
+insert into stock (curr_price, company, ticker, id) values (367.77, 'Southern California Edison Company', 'SCE^H', 46);
+insert into stock (curr_price, company, ticker, id) values (947.31, 'Dreyfus Municipal Bond Infrastructure Fund, Inc.', 'DMB', 47);
+insert into stock (curr_price, company, ticker, id) values (351.72, 'Canadian Natural Resources Limited', 'CNQ', 48);
+insert into stock (curr_price, company, ticker, id) values (146.47, 'PVH Corp.', 'PVH', 49);
+insert into stock (curr_price, company, ticker, id) values (160.2, 'Vanguard Total International Stock ETF', 'VXUS', 50);
+insert into stock (curr_price, company, ticker, id) values (208.14, 'Eaton Vance Risk-Managed Diversified Equity Income Fund', 'ETJ', 51);
+insert into stock (curr_price, company, ticker, id) values (910.0, 'Rambus, Inc.', 'RMBS', 52);
+insert into stock (curr_price, company, ticker, id) values (96.48, 'Neurocrine Biosciences, Inc.', 'NBIX', 53);
+insert into stock (curr_price, company, ticker, id) values (480.65, 'Weyerhaeuser Company', 'WY', 54);
+insert into stock (curr_price, company, ticker, id) values (185.76, 'Sportsman''s Warehouse Holdings, Inc.', 'SPWH', 55);
+insert into stock (curr_price, company, ticker, id) values (368.7, 'Microsoft Corporation', 'MSFT', 56);
+insert into stock (curr_price, company, ticker, id) values (106.77, 'Interactive Brokers Group, Inc.', 'IBKR', 57);
+insert into stock (curr_price, company, ticker, id) values (973.8, 'Modern Media Acquisition Corp.', 'MMDMU', 58);
+insert into stock (curr_price, company, ticker, id) values (919.08, 'RSP Permian, Inc.', 'RSPP', 59);
+insert into stock (curr_price, company, ticker, id) values (47.23, 'American Express Company', 'AXP', 60);
+insert into stock (curr_price, company, ticker, id) values (692.49, 'Navistar International Corporation', 'NAV^D', 61);
+insert into stock (curr_price, company, ticker, id) values (58.79, 'Nuveen Select Tax Free Income Portfolio III', 'NXR', 62);
+insert into stock (curr_price, company, ticker, id) values (614.85, 'Microvision, Inc.', 'MVIS', 63);
+insert into stock (curr_price, company, ticker, id) values (256.29, 'Flaherty & Crumrine Total Return Fund Inc', 'FLC', 64);
+insert into stock (curr_price, company, ticker, id) values (408.15, 'Scudder Strategic Income Trust', 'KST', 65);
+insert into stock (curr_price, company, ticker, id) values (685.73, 'First Trust South Korea AlphaDEX Fund', 'FKO', 66);
+insert into stock (curr_price, company, ticker, id) values (338.33, 'Gores Holdings II, Inc.', 'GSHT', 67);
+insert into stock (curr_price, company, ticker, id) values (251.76, 'Winmark Corporation', 'WINA', 68);
+insert into stock (curr_price, company, ticker, id) values (792.09, 'PowerShares BuyBack Achievers Portfolio', 'PKW', 69);
+insert into stock (curr_price, company, ticker, id) values (450.2, 'Diodes Incorporated', 'DIOD', 70);
+insert into stock (curr_price, company, ticker, id) values (240.32, 'Playa Hotels & Resorts N.V.', 'PLYAW', 71);
+insert into stock (curr_price, company, ticker, id) values (83.77, 'CSW Industrials, Inc.', 'CSWI', 72);
+insert into stock (curr_price, company, ticker, id) values (67.17, 'City Office REIT, Inc.', 'CIO', 73);
+insert into stock (curr_price, company, ticker, id) values (160.61, 'Helen of Troy Limited', 'HELE', 74);
+insert into stock (curr_price, company, ticker, id) values (98.15, 'Gabelli Dividend', 'GDV^D', 75);
+insert into stock (curr_price, company, ticker, id) values (325.71, 'Pathfinder Bancorp, Inc.', 'PBHC', 76);
+insert into stock (curr_price, company, ticker, id) values (352.81, 'Eltek Ltd.', 'ELTK', 77);
+insert into stock (curr_price, company, ticker, id) values (816.91, 'National General Holdings Corp', 'NGHCO', 78);
+insert into stock (curr_price, company, ticker, id) values (923.82, 'Endurance International Group Holdings, Inc.', 'EIGI', 79);
+insert into stock (curr_price, company, ticker, id) values (468.59, 'Iridium Communications Inc', 'IRDM', 80);
+insert into stock (curr_price, company, ticker, id) values (990.08, 'VeriSign, Inc.', 'VRSN', 81);
+insert into stock (curr_price, company, ticker, id) values (559.31, 'Heartland Financial USA, Inc.', 'HTLF', 82);
+insert into stock (curr_price, company, ticker, id) values (995.19, 'Catalyst Pharmaceuticals, Inc.', 'CPRX', 83);
+insert into stock (curr_price, company, ticker, id) values (983.79, 'Goldman Sachs Group, Inc. (The)', 'GS^C', 84);
+insert into stock (curr_price, company, ticker, id) values (772.91, 'Asia Pacific Wire & Cable Corporation Limited', 'APWC', 85);
+insert into stock (curr_price, company, ticker, id) values (947.78, 'Moog Inc.', 'MOG.A', 86);
+insert into stock (curr_price, company, ticker, id) values (795.06, 'Aflac Incorporated', 'AFSD', 87);
+insert into stock (curr_price, company, ticker, id) values (153.57, 'Dynagas LNG Partners LP', 'DLNG', 88);
+insert into stock (curr_price, company, ticker, id) values (354.93, 'Semiconductor  Manufacturing International Corporation', 'SMI', 89);
+insert into stock (curr_price, company, ticker, id) values (525.24, 'CoBiz Financial Inc.', 'COBZ', 90);
+insert into stock (curr_price, company, ticker, id) values (964.62, 'WPP plc', 'WPPGY', 91);
+insert into stock (curr_price, company, ticker, id) values (379.45, 'Realty Income Corporation', 'O', 92);
+insert into stock (curr_price, company, ticker, id) values (979.34, 'Cempra, Inc.', 'CEMP', 93);
+insert into stock (curr_price, company, ticker, id) values (220.75, 'Dreyfus Strategic Municipals, Inc.', 'LEO', 94);
+insert into stock (curr_price, company, ticker, id) values (844.5, 'Diageo plc', 'DEO', 95);
+insert into stock (curr_price, company, ticker, id) values (349.98, 'First Trust Large Cap Growth AlphaDEX Fund', 'FTC', 96);
+insert into stock (curr_price, company, ticker, id) values (778.86, 'Triumph Group, Inc.', 'TGI', 97);
+insert into stock (curr_price, company, ticker, id) values (205.77, 'Delaware Enhanced Global Dividend', 'DEX', 98);
+insert into stock (curr_price, company, ticker, id) values (988.13, 'Hi-Crush Partners LP', 'HCLP', 99);
+insert into stock (curr_price, company, ticker, id) values (780.26, 'China Jo-Jo Drugstores, Inc.', 'CJJD', 100);
+
 
 -- Sample data for investor_order table
- insert into investor_order (price, buy, stock_id, investor_id, volume, date, id) values
- (51162, 0, 'SBPH', 89, 21.77, '2023-06-27', 1),
- (18686, 1, 'OREX', 110, 5.92, '2023-11-24', 2),
- (83341, 0, 'CHCI', 118, 27.16, '2022-10-31', 3),
- (30599, 0, 'HAS', 9, 27.83, '2024-04-02', 4),
- (81941, 0, 'CBRL', 108, 27.15, '2023-01-19', 5),
- (94406, 1, 'GAB^H', 16, 24.8, '2023-11-08', 6),
- (57576, 1, 'MAS', 101, 4.13, '2022-08-26', 7),
- (82904, 1, 'RDWR', 103, 25.37, '2024-04-11', 8),
- (86369, 0, 'SKYS', 28, 17.84, '2022-12-29', 9),
- (27535, 1, 'KLIC', 57, 2.98, '2024-03-13', 10),
- (11345, 1, 'BLRX', 132, 23.92, '2022-09-24', 11),
- (73095, 0, 'ELEC', 26, 14.07, '2023-05-06', 12),
- (37832, 1, 'IMKTA', 19, 13.48, '2023-11-16', 13),
- (76062, 0, 'EBR', 114, 19.31, '2022-11-18', 14),
- (2581, 0, 'SPWH', 103, 10.22, '2022-09-17', 15),
- (74876, 1, 'BWLD', 14, 27.54, '2024-04-07', 16),
- (46238, 1, 'ED', 111, 11.36, '2024-05-26', 17),
- (6323, 1, 'RTNB', 102, 4.57, '2022-07-04', 18),
- (66576, 0, 'SAR', 62, 14.01, '2023-09-11', 19),
- (65484, 1, 'GNCA', 80, 20.53, '2023-10-30', 20),
- (49736, 1, 'MYOV', 143, 7.75, '2023-07-25', 21),
- (61325, 1, 'Q', 144, 12.48, '2023-12-22', 22),
- (97906, 0, 'MCR', 96, 26.7, '2023-11-01', 23),
- (80353, 0, 'BKD', 127, 22.24, '2023-09-15', 24),
- (19743, 1, 'MOTAW', 99, 29.74, '2023-02-08', 25),
- (80633, 1, 'TRMR', 81, 14.52, '2023-03-10', 26),
- (21604, 0, 'GCP', 121, 24.3, '2022-06-09', 27),
- (92992, 1, 'MAA^I', 80, 11.38, '2024-01-18', 28),
- (73668, 1, 'CCD', 115, 7.22, '2022-11-05', 29),
- (18835, 1, 'AGIIL', 129, 16.82, '2022-11-14', 30),
- (53734, 0, 'EBF', 55, 28.22, '2023-10-03', 31),
- (41931, 1, 'CYBE', 95, 21.36, '2023-08-20', 32),
- (13410, 1, 'ITEK', 43, 8.66, '2023-08-13', 33),
- (69216, 0, 'HMLP', 86, 14.27, '2022-12-07', 34),
- (52530, 0, 'SPSC', 126, 26.56, '2024-04-26', 35),
- (48684, 1, 'ALXN', 139, 9.12, '2023-06-18', 36),
- (21866, 0, 'MIME', 47, 14.85, '2023-11-07', 37),
- (96974, 1, 'AES', 48, 5.73, '2023-07-21', 38),
- (9077, 1, 'BMTC', 28, 11.27, '2024-05-14', 39),
- (65486, 1, 'GHM', 110, 13.59, '2024-05-03', 40),
- (83202, 1, 'SOJA', 95, 24.34, '2023-07-13', 41),
- (59267, 1, 'AAXN', 100, 22.93, '2023-08-12', 42),
- (81581, 1, 'ASMB', 50, 22.63, '2023-07-27', 43),
- (75945, 0, 'BEBE', 33, 23.8, '2023-08-16', 44),
- (90661, 1, 'AFI', 63, 9.34, '2022-06-14', 45),
- (15612, 1, 'NXR', 18, 1.29, '2023-04-23', 46),
- (13325, 1, 'ALL^D', 140, 3.54, '2023-03-02', 47),
- (9571, 1, 'CCV', 5, 8.52, '2022-09-25', 48),
- (89408, 1, 'GS^N', 95, 17.52, '2023-03-27', 49),
- (39899, 1, 'CMCM', 29, 20.61, '2024-05-08', 50),
- (70014, 1, 'FTA', 125, 6.8, '2024-03-27', 51),
- (48824, 0, 'MORE', 63, 29.74, '2024-03-02', 52),
- (84413, 0, 'WFC^R', 147, 23.82, '2023-04-20', 53),
- (71086, 0, 'ROKA', 108, 23.17, '2023-04-03', 54),
- (32992, 0, 'STI^E', 110, 14.65, '2022-11-25', 55),
- (53031, 1, 'EMD', 15, 27.04, '2022-10-12', 56),
- (57801, 0, 'MCN', 80, 22.71, '2024-01-18', 57),
- (42433, 0, 'FTAI', 14, 7.81, '2024-04-19', 58),
- (2165, 1, 'AMSF', 131, 27.86, '2023-10-29', 59),
- (5608, 0, 'SNES', 101, 3.6, '2023-09-16', 60),
- (88090, 0, 'NUV', 29, 20.84, '2024-05-15', 61),
- (30846, 0, 'MAR', 103, 16.42, '2023-02-24', 62),
- (12889, 1, 'KTH', 87, 4.6, '2023-04-30', 63),
- (52632, 1, 'VRTS', 31, 20.61, '2024-05-30', 64),
- (66115, 1, 'CNIT', 119, 4.15, '2023-04-22', 65),
- (76018, 1, 'KEP', 119, 3.13, '2024-03-20', 66),
- (80095, 1, 'NTEST.B', 115, 9.65, '2023-12-05', 67),
- (40644, 1, 'BGT', 74, 7.89, '2022-08-15', 68),
- (22384, 0, 'ASET', 4, 3.86, '2022-09-21', 69),
- (91230, 1, 'ASPS', 41, 14.77, '2023-10-15', 70),
- (64226, 0, 'NLY^E', 9, 8.33, '2023-03-09', 71),
- (3641, 0, 'ALSK', 113, 24.12, '2023-08-27', 72),
- (54620, 0, 'RGA', 103, 1.32, '2024-05-03', 73),
- (66459, 1, 'ROK', 128, 26.1, '2022-07-16', 74),
- (55381, 1, 'NVLS', 36, 24.11, '2023-08-10', 75),
- (41918, 1, 'MTD', 14, 18.13, '2024-06-04', 76),
- (91504, 1, 'UBP', 124, 16.97, '2024-05-12', 77),
- (93182, 1, 'DDD', 85, 15.79, '2023-09-30', 78),
- (37024, 1, 'NYMT', 30, 21.77, '2023-11-29', 79),
- (76354, 0, 'AXAS', 125, 13.35, '2022-07-12', 80),
- (94827, 1, 'FWONA', 141, 23.2, '2024-05-04', 81),
- (16506, 0, 'AIMC', 79, 6.09, '2022-09-01', 82),
- (16674, 0, 'SLRC', 60, 29.77, '2022-09-04', 83),
- (51034, 1, 'AQB', 142, 17.49, '2023-10-21', 84),
- (4645, 0, 'HMSY', 128, 4.83, '2024-03-21', 85),
- (59107, 0, 'ABTX', 128, 8.81, '2023-08-17', 86),
- (16894, 1, 'WPXP', 116, 20.95, '2022-11-10', 87),
- (79034, 0, 'BANF', 77, 20.24, '2022-12-04', 88),
- (46609, 0, 'ABIL', 106, 15.92, '2022-10-08', 89),
- (29154, 1, 'SPLP^A', 106, 3.34, '2023-11-07', 90),
- (83917, 0, 'HAL', 139, 3.95, '2023-02-25', 91),
- (2210, 1, 'EVLMC', 65, 6.02, '2023-08-25', 92),
- (46883, 1, 'TKR', 10, 3.62, '2023-02-15', 93),
- (10935, 1, 'FTLB', 65, 22.67, '2023-06-24', 94),
- (63027, 0, 'FHB', 57, 12.32, '2023-09-13', 95),
- (73625, 0, 'AQB', 57, 21.99, '2023-01-02', 96),
- (36043, 1, 'BDXA', 26, 13.53, '2023-05-30', 97),
- (8192, 0, 'PNRA', 132, 17.73, '2023-09-17', 98),
- (68058, 0, 'WRD', 86, 26.47, '2023-04-15', 99),
- (33813, 1, 'PKG', 79, 17.02, '2023-08-23', 100),
- (36795, 1, 'CALA', 125, 19.94, '2022-07-20', 101),
- (90366, 0, 'FTK', 38, 11.5, '2023-01-11', 102),
- (52265, 1, 'GS^C', 44, 26.09, '2024-02-13', 103),
- (83524, 1, 'BHK', 3, 5.9, '2023-05-04', 104),
- (18979, 1, 'SGU', 123, 14.84, '2023-10-09', 105),
- (47773, 0, 'LMNR', 99, 1.63, '2023-11-02', 106),
- (46665, 1, 'FWONK', 94, 14.51, '2024-04-11', 107),
- (39181, 0, 'ERIC', 126, 25.37, '2024-04-01', 108),
- (26937, 1, 'TTP', 42, 16.89, '2022-10-17', 109),
- (25196, 0, 'SJR', 70, 29.02, '2023-07-03', 110),
- (43745, 1, 'HSNI', 84, 7.9, '2024-04-26', 111),
- (84613, 0, 'MDC', 29, 8.0, '2023-12-31', 112),
- (57425, 0, 'CBT', 129, 10.02, '2024-01-31', 113),
- (2526, 0, 'PKX', 119, 22.63, '2022-12-27', 114),
- (69735, 0, 'SJM', 5, 5.68, '2024-05-26', 115),
- (37523, 0, 'CBRL', 28, 14.7, '2023-03-10', 116),
- (24190, 1, 'BHACR', 138, 17.36, '2022-06-15', 117),
- (59858, 0, 'HQL', 150, 10.17, '2022-08-18', 118),
- (3818, 1, 'DSL', 22, 17.2, '2023-07-24', 119),
- (3162, 0, 'BRK.B', 120, 14.79, '2024-03-12', 120),
- (87123, 0, 'TRPX', 91, 27.24, '2022-07-28', 121),
- (2475, 0, 'AGNCP', 76, 19.96, '2022-10-24', 122),
- (56533, 0, 'MTEX', 148, 13.8, '2023-02-19', 123),
- (96321, 1, 'HTZ', 36, 16.99, '2024-04-29', 124),
- (65823, 0, 'SNGX', 44, 22.02, '2022-11-09', 125),
- (9423, 0, 'EARN', 102, 23.31, '2022-12-27', 126),
- (44759, 0, 'STZ', 136, 4.95, '2023-11-26', 127),
- (76032, 1, 'SONC', 90, 19.05, '2023-05-02', 128),
- (50853, 0, 'HBK', 97, 28.2, '2022-09-24', 129),
- (33587, 1, 'DWIN', 68, 9.58, '2022-09-23', 130),
- (71055, 0, 'NCOM', 72, 22.08, '2023-10-24', 131),
- (9224, 0, 'AEG', 38, 6.52, '2023-03-20', 132),
- (9433, 1, 'COF^G', 84, 27.03, '2023-06-17', 133),
- (27793, 1, 'FEMB', 117, 15.15, '2022-10-27', 134),
- (44101, 0, 'FMCIU', 123, 9.78, '2023-09-19', 135),
- (71491, 0, 'CLDR', 43, 4.39, '2023-04-04', 136),
- (75341, 1, 'RCM', 137, 15.69, '2023-05-31', 137),
- (85526, 1, 'VVC', 60, 15.32, '2024-02-24', 138),
- (94640, 0, 'UCTT', 70, 18.09, '2023-07-17', 139),
- (27225, 0, 'PG', 115, 29.38, '2023-10-12', 140),
- (98420, 0, 'CNFR', 19, 25.79, '2023-01-11', 141),
- (48078, 1, 'GCVRZ', 123, 11.61, '2022-11-30', 142),
- (91040, 1, 'GEF.B', 87, 25.2, '2023-07-23', 143),
- (81622, 1, 'FEX', 30, 12.18, '2023-09-21', 144),
- (29165, 0, 'SSW', 93, 1.11, '2024-03-18', 145),
- (76329, 1, 'CFX', 93, 22.06, '2022-10-24', 146),
- (68846, 0, 'SRAX', 78, 5.76, '2024-02-29', 147),
- (22841, 1, 'CYTX', 137, 9.72, '2023-08-05', 148),
- (83266, 1, 'LGF.A', 119, 21.47, '2022-09-20', 149),
- (54506, 0, 'TISA', 60, 23.11, '2023-05-30', 150),
- (48910, 1, 'LENS', 72, 26.74, '2023-06-16', 151),
- (66372, 0, 'KEG', 18, 25.91, '2023-02-24', 152),
- (80620, 1, 'NTRI', 82, 25.82, '2024-04-22', 153),
- (93620, 1, 'DQ', 29, 7.04, '2022-08-01', 154),
- (14015, 0, 'POWL', 125, 6.64, '2023-01-26', 155),
- (84971, 0, 'TSLF', 114, 16.58, '2022-06-14', 156),
- (93702, 1, 'EPD', 20, 9.76, '2022-09-23', 157),
- (53310, 1, 'MUJ', 46, 26.02, '2022-12-14', 158),
- (27110, 0, 'ALGT', 90, 4.47, '2023-08-20', 159),
- (71193, 0, 'YTRA', 124, 14.41, '2022-06-16', 160),
- (9138, 0, 'WPC', 60, 21.52, '2023-09-10', 161),
- (5382, 1, 'GLADO', 11, 20.24, '2024-05-27', 162),
- (98892, 0, 'VICL', 96, 24.75, '2023-06-28', 163),
- (69950, 0, 'SMBK', 90, 2.05, '2022-07-18', 164),
- (88589, 0, 'NHA', 148, 7.21, '2023-02-11', 165),
- (4334, 1, 'HXL', 95, 12.68, '2022-11-15', 166),
- (59584, 0, 'HP', 48, 22.29, '2024-03-12', 167),
- (24253, 1, 'LM', 56, 16.35, '2023-08-19', 168),
- (54504, 1, 'OPOF', 149, 12.95, '2024-05-24', 169),
- (15108, 1, 'AXTA', 26, 1.71, '2024-04-12', 170),
- (83222, 1, 'DWIN', 87, 14.7, '2022-10-03', 171),
- (54648, 0, 'HVBC', 15, 29.38, '2023-10-15', 172),
- (27252, 1, 'PSXP', 87, 4.85, '2023-08-10', 173),
- (40274, 1, 'PYS', 112, 15.94, '2023-01-23', 174),
- (91846, 0, 'RWLK', 21, 13.51, '2023-01-14', 175),
- (7497, 1, 'OTTR', 20, 6.38, '2023-04-19', 176),
- (32848, 0, 'CVG', 128, 9.13, '2023-11-07', 177),
- (25927, 0, 'ATOS', 41, 23.2, '2023-01-06', 178),
- (51715, 0, 'IDCC', 72, 1.52, '2023-09-12', 179),
- (33436, 0, 'ICLR', 65, 13.45, '2023-08-13', 180),
- (98907, 0, 'ASGN', 16, 6.69, '2023-07-02', 181),
- (93702, 0, 'GAM', 67, 22.97, '2023-02-19', 182),
- (11857, 0, 'ORMP', 58, 21.32, '2023-03-31', 183),
- (68753, 0, 'EXLS', 6, 12.79, '2023-07-23', 184),
- (78951, 1, 'DCT', 123, 21.05, '2023-03-06', 185),
- (9037, 1, 'RFT', 2, 11.47, '2024-03-20', 186),
- (61393, 0, 'YPF', 69, 28.96, '2023-11-24', 187),
- (54818, 1, 'DSLV', 85, 27.19, '2022-07-23', 188),
- (55480, 1, 'MRIN', 22, 5.73, '2023-11-10', 189),
- (35795, 1, 'TLP', 52, 17.47, '2023-08-09', 190),
- (31386, 0, 'CB', 20, 2.87, '2022-12-13', 191),
- (37081, 0, 'SRRA', 147, 10.3, '2022-11-19', 192),
- (74326, 1, 'RNVAZ', 88, 26.43, '2022-12-22', 193),
- (60238, 1, 'RADA', 123, 11.06, '2022-09-29', 194),
- (98835, 1, 'SOJA', 70, 6.57, '2023-03-31', 195),
- (88266, 1, 'KCG', 56, 20.64, '2024-01-16', 196),
- (6409, 0, 'TCF^C', 81, 5.33, '2022-12-24', 197),
- (47586, 0, 'NVAX', 118, 12.27, '2024-02-19', 198),
- (29370, 1, 'SAM', 126, 25.74, '2023-01-25', 199),
- (24554, 1, 'HCC', 86, 19.01, '2024-03-09', 200),
- (92789, 0, 'BYBK', 108, 27.24, '2022-06-30', 201),
- (97136, 1, 'TILE', 70, 29.25, '2022-08-24', 202),
- (44526, 1, 'BITA', 34, 17.38, '2022-06-07', 203),
- (85924, 0, 'ICFI', 69, 1.64, '2023-06-05', 204),
- (28135, 1, 'BNY', 104, 9.48, '2022-08-21', 205),
- (88150, 0, 'SNP', 127, 20.12, '2023-07-04', 206),
- (38778, 0, 'SNHNL', 10, 13.37, '2023-05-03', 207),
- (30546, 1, 'CNCR', 74, 2.22, '2022-10-04', 208),
- (76207, 1, 'MP^D', 108, 29.55, '2023-09-03', 209),
- (82074, 1, 'SWN', 18, 1.26, '2024-02-09', 210),
- (47055, 0, 'TCX', 38, 17.02, '2024-02-13', 211),
- (83694, 1, 'SHLD', 106, 5.78, '2023-01-25', 212),
- (89988, 1, 'BAS', 30, 8.88, '2022-11-25', 213),
- (15642, 0, 'LPNT', 56, 19.0, '2023-03-03', 214),
- (32490, 1, 'GARS', 29, 24.0, '2023-08-06', 215),
- (79622, 0, 'WVE', 66, 22.5, '2024-02-09', 216),
- (30199, 1, 'NS^A', 91, 15.85, '2024-04-11', 217),
- (57953, 0, 'WINS', 112, 19.98, '2022-07-15', 218),
- (90836, 0, 'LTRX', 54, 2.98, '2024-03-11', 219),
- (66818, 0, 'BORN', 130, 7.25, '2022-10-14', 220),
- (92972, 0, 'BXS', 96, 10.88, '2022-09-04', 221),
- (16256, 0, 'DOX', 138, 14.84, '2023-06-11', 222),
- (48859, 0, 'TAP', 86, 23.53, '2023-08-30', 223),
- (95482, 1, 'GLW', 71, 25.46, '2023-11-19', 224),
- (85615, 0, 'WBB', 92, 27.86, '2024-02-24', 225),
- (33145, 1, 'INBK', 26, 24.98, '2023-01-16', 226),
- (80060, 1, 'COLB', 126, 7.33, '2023-10-17', 227),
- (10798, 1, 'UBP^G', 106, 22.38, '2023-01-18', 228),
- (63733, 0, 'SSL', 121, 21.39, '2024-05-18', 229),
- (69847, 1, 'EVA', 42, 7.35, '2022-11-29', 230),
- (9363, 0, 'FGB', 39, 28.67, '2023-09-04', 231),
- (67428, 1, 'VJET', 107, 16.91, '2022-07-21', 232),
- (10567, 1, 'ASYS', 91, 22.61, '2023-11-05', 233),
- (7116, 0, 'AZRX', 23, 17.39, '2022-07-20', 234),
- (59193, 1, 'MSFT', 120, 14.19, '2023-01-01', 235),
- (33859, 1, 'LMFA', 7, 20.69, '2024-03-30', 236),
- (93180, 1, 'GEVO', 68, 14.05, '2022-06-21', 237),
- (6422, 0, 'ESGU', 57, 17.4, '2024-05-06', 238),
- (64641, 1, 'DLBS', 47, 18.96, '2023-03-03', 239),
- (80135, 0, 'DLR^I', 19, 17.27, '2024-02-26', 240),
- (84519, 0, 'AHPAW', 8, 13.35, '2023-09-05', 241),
- (24634, 0, 'HMLP', 121, 4.81, '2023-12-14', 242),
- (15690, 0, 'NYMX', 38, 15.96, '2023-11-12', 243),
- (93513, 1, 'BXMX', 129, 5.27, '2022-09-22', 244),
- (11568, 0, 'DXGE', 150, 23.8, '2024-01-15', 245),
- (17876, 0, 'EOI', 13, 2.09, '2024-04-03', 246),
- (75186, 0, 'GTY', 39, 23.06, '2022-06-28', 247),
- (82861, 1, 'SDT', 106, 26.85, '2022-08-05', 248),
- (73458, 0, 'WPG^H', 13, 6.65, '2022-08-10', 249),
- (51823, 1, 'PLW', 30, 27.43, '2022-08-22', 250),
- (92443, 1, 'IHG', 138, 27.82, '2023-10-26', 251),
- (51643, 0, 'SYT', 73, 1.67, '2022-07-18', 252),
- (68955, 0, 'TTPH', 70, 6.91, '2022-08-29', 253),
- (95552, 1, 'GPRK', 139, 25.15, '2023-05-11', 254),
- (93679, 0, 'NERV', 135, 2.74, '2023-03-04', 255),
- (59117, 0, 'AGM^A', 50, 27.81, '2023-01-28', 256),
- (15348, 0, 'QDEL', 10, 25.69, '2023-12-08', 257),
- (23199, 0, 'WSBC', 44, 10.59, '2022-12-09', 258),
- (42430, 1, 'HBI', 39, 10.98, '2024-04-16', 259),
- (52600, 0, 'PSCI', 98, 27.55, '2023-05-23', 260),
- (3889, 1, 'MN', 74, 2.41, '2024-04-27', 261),
- (628, 1, 'HMN', 58, 2.4, '2024-03-13', 262),
- (38978, 0, 'PDCE', 73, 26.22, '2024-04-16', 263),
- (78570, 0, 'NYT', 36, 9.32, '2022-06-18', 264),
- (16561, 0, 'ED', 136, 29.6, '2024-04-22', 265),
- (45395, 1, 'SGH', 25, 25.32, '2023-09-22', 266),
- (41365, 1, 'XRX', 124, 10.8, '2023-05-26', 267),
- (59243, 0, 'NEOG', 109, 5.1, '2022-08-20', 268),
- (28349, 0, 'UBSI', 106, 23.58, '2024-03-21', 269),
- (61382, 1, 'WTI', 61, 29.53, '2022-11-19', 270),
- (64225, 1, 'ALSN', 122, 2.42, '2023-01-15', 271),
- (22827, 0, 'SPSC', 87, 16.8, '2023-06-28', 272),
- (14787, 0, 'NYCB^A', 25, 24.29, '2023-04-06', 273),
- (15910, 0, 'BA', 117, 1.57, '2023-09-21', 274),
- (16481, 1, 'JAG', 7, 17.34, '2022-12-24', 275),
- (33499, 0, 'EHT', 42, 15.27, '2023-04-25', 276),
- (93506, 0, 'PJT', 119, 21.56, '2023-01-28', 277),
- (63831, 1, 'SVBI', 97, 29.04, '2023-11-18', 278),
- (95068, 0, 'AXSM', 130, 25.82, '2023-09-18', 279),
- (68841, 0, 'CHEK', 48, 14.72, '2024-04-04', 280),
- (68681, 1, 'LB', 99, 18.35, '2024-03-24', 281),
- (41418, 0, 'MS^E', 67, 9.73, '2023-09-01', 282),
- (12410, 1, 'PTLA', 64, 12.47, '2023-08-08', 283),
- (87482, 1, 'NMM', 141, 4.27, '2023-11-08', 284),
- (897, 1, 'EXG', 108, 27.29, '2023-06-12', 285),
- (51600, 1, 'TCMD', 13, 25.2, '2023-10-21', 286),
- (29258, 1, 'NAUH', 118, 5.12, '2023-05-11', 287),
- (60612, 0, 'AHP^B', 54, 15.67, '2023-08-28', 288),
- (62724, 1, 'HGT', 126, 20.2, '2024-01-22', 289),
- (318, 0, 'TITN', 59, 8.81, '2023-07-22', 290),
- (11955, 1, 'SAM', 131, 25.79, '2023-08-09', 291),
- (82919, 0, 'VKTXW', 108, 10.11, '2023-09-13', 292),
- (55078, 0, 'GUT^A', 94, 14.09, '2024-05-11', 293),
- (97187, 1, 'MYOS', 40, 12.14, '2022-10-27', 294),
- (18808, 0, 'VSLR', 140, 10.22, '2023-02-12', 295),
- (51329, 1, 'CIM^A', 102, 1.88, '2022-08-15', 296),
- (79584, 1, 'PIY', 92, 6.69, '2023-11-13', 297),
- (34476, 1, 'IRET', 57, 15.11, '2023-03-21', 298),
- (68394, 1, 'RPRX', 48, 28.2, '2023-10-02', 299),
- (9859, 1, 'IAG', 120, 6.68, '2022-07-24', 300),
- (67666, 1, 'YUM', 140, 1.07, '2023-03-23', 301),
- (80891, 1, 'SANM', 106, 17.26, '2022-10-01', 302),
- (95604, 0, 'GNMK', 73, 1.64, '2024-05-21', 303),
- (69204, 1, 'PSA^S', 89, 6.54, '2023-06-20', 304),
- (81349, 0, 'PHT', 34, 25.14, '2023-05-08', 305),
- (21349, 0, 'CARS', 2, 2.73, '2024-05-05', 306),
- (45176, 1, 'DLTR', 47, 3.81, '2023-05-01', 307),
- (94694, 0, 'MS^A', 89, 12.34, '2023-03-27', 308),
- (87043, 1, 'OKE', 107, 3.09, '2023-01-20', 309),
- (62400, 0, 'ELF', 41, 23.77, '2023-10-14', 310),
- (74714, 0, 'SJT', 34, 15.27, '2024-01-26', 311),
- (27776, 0, 'INSG', 74, 20.7, '2023-12-22', 312),
- (77213, 0, 'MDT', 50, 3.22, '2024-01-08', 313),
- (88980, 1, 'CLCT', 120, 28.43, '2023-07-23', 314),
- (25987, 0, 'FPF', 26, 2.0, '2023-09-06', 315),
- (29455, 0, 'RFAP', 58, 19.09, '2023-12-07', 316),
- (818, 0, 'ARCO', 82, 11.98, '2022-07-06', 317),
- (75842, 1, 'HEP', 118, 10.27, '2024-04-22', 318),
- (59401, 0, 'RAND', 5, 15.15, '2022-06-23', 319),
- (76559, 0, 'Q', 130, 23.94, '2022-10-28', 320),
- (40649, 1, 'FRAC', 109, 14.16, '2024-03-09', 321),
- (38243, 1, 'VBF', 133, 14.04, '2023-10-29', 322),
- (24029, 1, 'CLACU', 81, 9.1, '2022-11-26', 323),
- (67455, 1, 'WB', 76, 5.35, '2022-08-30', 324),
- (16411, 0, 'MATX', 67, 29.24, '2023-04-30', 325),
- (91207, 0, 'EACQ', 137, 8.93, '2022-06-10', 326),
- (36143, 1, 'NODK', 141, 14.13, '2023-09-20', 327),
- (18853, 1, 'BAX', 63, 24.88, '2024-03-06', 328),
- (91967, 1, 'FCFP', 108, 8.6, '2023-12-06', 329),
- (69107, 0, 'MCY', 29, 9.23, '2024-03-07', 330),
- (79754, 0, 'TRU', 77, 19.3, '2024-04-11', 331),
- (19466, 1, 'ATXI', 113, 27.0, '2023-08-05', 332),
- (33632, 0, 'SEIC', 27, 7.1, '2023-07-18', 333),
- (86334, 0, 'PAACW', 31, 1.86, '2023-09-17', 334),
- (8506, 0, 'HTHT', 6, 27.92, '2023-05-12', 335),
- (84006, 0, 'AMH', 66, 1.25, '2023-09-11', 336),
- (49496, 1, 'DL', 39, 2.42, '2023-01-30', 337),
- (59023, 0, 'WDC', 12, 12.2, '2023-12-23', 338),
- (57536, 0, 'GARS', 19, 4.41, '2022-11-19', 339),
- (23994, 1, 'AMSF', 26, 2.78, '2023-04-23', 340),
- (53703, 0, 'EAE', 80, 22.56, '2023-12-31', 341),
- (32753, 0, 'HOV', 36, 8.48, '2023-05-05', 342),
- (17519, 1, 'MTSL', 101, 5.38, '2022-12-29', 343),
- (11956, 1, 'GLDD', 113, 16.77, '2023-08-05', 344),
- (34635, 0, 'OMED', 110, 11.23, '2023-10-11', 345),
- (93065, 0, 'MMP', 104, 18.08, '2023-05-02', 346),
- (86885, 1, 'CORR^A', 117, 8.91, '2024-03-27', 347),
- (26841, 1, 'NW^C', 113, 2.94, '2023-01-02', 348),
- (6734, 1, 'ANCX', 135, 6.87, '2023-10-14', 349),
- (61980, 0, 'BELFB', 15, 10.73, '2022-12-24', 350),
- (42608, 1, 'FTD', 72, 9.37, '2022-10-10', 351),
- (77900, 0, 'CLNT', 94, 21.77, '2023-02-05', 352),
- (65184, 1, 'ALRM', 148, 23.44, '2023-10-25', 353),
- (75867, 1, 'PME', 85, 5.07, '2022-10-09', 354),
- (79739, 0, 'SAGE', 118, 1.15, '2024-03-28', 355),
- (65153, 1, 'BKMU', 90, 11.98, '2023-11-03', 356),
- (66495, 0, 'GDL', 104, 4.84, '2023-04-01', 357),
- (90082, 1, 'ADRO', 90, 6.64, '2023-11-27', 358),
- (83064, 1, 'DOOR', 51, 21.12, '2023-09-21', 359),
- (33886, 0, 'CRT', 124, 16.04, '2024-01-04', 360),
- (15628, 1, 'MATR', 117, 6.83, '2023-10-05', 361),
- (16005, 0, 'CLRBW', 21, 16.74, '2022-10-09', 362),
- (21022, 1, 'UBP^F', 23, 15.45, '2023-09-07', 363),
- (27496, 1, 'MHO', 118, 9.32, '2022-07-10', 364),
- (89759, 1, 'URI', 77, 17.89, '2023-09-13', 365),
- (2277, 0, 'STLRW', 121, 16.5, '2023-01-26', 366),
- (25561, 1, 'LUV', 52, 15.41, '2023-09-29', 367),
- (59274, 0, 'AOSL', 76, 5.58, '2023-05-03', 368),
- (63493, 1, 'OTTR', 27, 29.75, '2023-12-21', 369),
- (43419, 0, 'CSB', 54, 13.56, '2024-03-15', 370),
- (71616, 1, 'EMR', 119, 24.25, '2023-07-29', 371),
- (59319, 0, 'ITUB', 100, 6.36, '2022-06-09', 372),
- (38142, 1, 'SFL', 112, 9.48, '2023-08-30', 373),
- (30581, 0, 'GHC', 49, 21.75, '2022-08-22', 374),
- (71500, 1, 'JYNT', 48, 16.03, '2022-10-12', 375),
- (80510, 1, 'NGHCN', 32, 12.05, '2023-05-03', 376),
- (50051, 1, 'OTEL', 105, 1.05, '2023-08-23', 377),
- (25053, 0, 'EDN', 118, 17.73, '2023-04-22', 378),
- (31998, 0, 'HEQ', 88, 23.88, '2024-04-29', 379),
- (25665, 0, 'PTHN', 138, 21.72, '2023-05-07', 380),
- (98460, 1, 'OPTT', 134, 21.32, '2023-07-05', 381),
- (45057, 1, 'AIY', 66, 13.03, '2024-01-16', 382),
- (49069, 1, 'ZBIO', 6, 23.32, '2022-12-11', 383),
- (55836, 1, 'AVGO', 51, 27.91, '2022-07-23', 384),
- (39102, 0, 'BDE', 22, 9.5, '2022-06-23', 385),
- (73346, 0, 'FHY', 59, 2.43, '2023-01-23', 386),
- (24424, 1, 'TESO', 137, 17.4, '2023-11-20', 387),
- (58366, 0, 'BSTC', 72, 27.91, '2023-09-11', 388),
- (64660, 1, 'SRLP', 125, 10.46, '2023-12-06', 389),
- (95266, 0, 'STLD', 89, 25.02, '2024-05-30', 390),
- (18632, 0, 'ENLK', 80, 11.0, '2022-11-12', 391),
- (18731, 1, 'IMPV', 43, 21.36, '2023-11-08', 392),
- (47762, 0, 'PSXP', 1, 4.89, '2023-07-24', 393),
- (72176, 0, 'FSM', 86, 21.03, '2023-05-13', 394),
- (66434, 0, 'OTEL', 6, 3.54, '2022-09-04', 395),
- (35921, 1, 'SEM', 61, 14.15, '2022-12-17', 396),
- (3520, 1, 'KPTI', 53, 25.32, '2024-02-06', 397),
- (72843, 1, 'ALDW', 17, 16.59, '2023-06-18', 398),
- (26379, 0, 'HPF', 47, 17.59, '2022-11-30', 399),
- (34010, 0, 'PCMI', 119, 21.56, '2022-10-13', 400),
- (30906, 0, 'KKR', 34, 18.12, '2023-07-30', 401),
- (7251, 0, 'ALB', 68, 13.45, '2023-01-17', 402),
- (17588, 1, 'RELX', 144, 29.31, '2024-05-24', 403),
- (68683, 1, 'ZPIN', 79, 12.17, '2024-02-21', 404),
- (32805, 0, 'AVXL', 79, 20.28, '2023-08-16', 405),
- (48503, 0, 'FRGI', 99, 29.24, '2022-09-13', 406),
- (9370, 1, 'BERY', 61, 8.89, '2022-11-14', 407),
- (23033, 0, 'OLLI', 72, 8.71, '2023-09-16', 408),
- (73208, 0, 'TUSK', 94, 7.9, '2023-10-01', 409),
- (44874, 0, 'GME', 119, 26.88, '2022-10-03', 410),
- (5740, 0, 'FMSA', 139, 28.17, '2023-09-06', 411),
- (14170, 1, 'YTRA', 142, 3.14, '2022-10-06', 412),
- (62200, 1, 'USAP', 130, 6.52, '2023-11-14', 413),
- (45113, 0, 'KBR', 14, 16.14, '2024-04-03', 414),
- (79856, 1, 'ACC', 141, 8.81, '2024-03-16', 415),
- (65580, 1, 'MBOT', 20, 2.04, '2024-02-11', 416),
- (10426, 0, 'BXS', 111, 4.68, '2023-12-28', 417),
- (94254, 1, 'YERR', 133, 4.08, '2023-08-08', 418),
- (20850, 0, 'MUS', 4, 26.32, '2022-09-27', 419),
- (37669, 1, 'CTIC', 46, 6.3, '2024-05-20', 420),
- (5588, 1, 'AXL', 29, 21.4, '2023-05-17', 421),
- (94692, 0, 'RST', 75, 8.43, '2023-04-19', 422),
- (27068, 1, 'LOAN', 39, 27.65, '2023-05-04', 423),
- (62884, 1, 'IRET', 80, 26.81, '2023-01-25', 424),
- (96872, 0, 'EVTC', 103, 28.73, '2023-09-07', 425),
- (78572, 0, 'MLNX', 38, 24.93, '2022-12-29', 426),
- (87693, 0, 'CLIR', 143, 22.68, '2024-04-19', 427),
- (6362, 1, 'AMX', 87, 18.26, '2024-05-03', 428),
- (45953, 0, 'KALV', 94, 1.7, '2024-04-16', 429),
- (68988, 1, 'CHSCN', 110, 13.94, '2023-08-06', 430),
- (82284, 1, 'HBMD', 49, 6.26, '2023-08-31', 431),
- (60577, 0, 'XPER', 55, 3.21, '2024-03-13', 432),
- (22926, 1, 'SCM', 108, 14.9, '2024-05-11', 433),
- (7098, 0, 'SBGL', 24, 23.58, '2024-02-28', 434),
- (59136, 0, 'DELTW', 149, 11.84, '2023-06-03', 435),
- (13287, 0, 'S', 28, 22.34, '2022-10-23', 436),
- (85026, 0, 'MLHR', 143, 15.67, '2024-05-03', 437),
- (12392, 1, 'SNOW', 138, 23.3, '2024-02-26', 438),
- (1627, 1, 'CPK', 96, 15.86, '2022-07-05', 439),
- (96245, 0, 'COE', 39, 3.08, '2024-04-21', 440),
- (34803, 1, 'IART', 11, 3.71, '2022-09-20', 441),
- (53875, 0, 'KMDA', 54, 23.94, '2024-03-16', 442),
- (65009, 1, 'JPM^F', 80, 2.97, '2023-10-11', 443),
- (3264, 1, 'ASRVP', 1, 27.18, '2022-12-04', 444),
- (85936, 1, 'TCX', 125, 9.0, '2023-06-20', 445),
- (28674, 1, 'CYCC', 9, 9.21, '2023-07-11', 446),
- (23223, 1, 'CLNS^D', 135, 3.43, '2023-04-12', 447),
- (31175, 1, 'FSAM', 105, 27.22, '2023-11-08', 448),
- (58375, 0, 'NHA', 143, 13.96, '2023-05-09', 449),
- (64385, 1, 'FSS', 77, 26.55, '2023-10-03', 450),
- (33510, 0, 'DRH', 104, 15.86, '2023-05-07', 451),
- (40765, 0, 'CLRO', 30, 5.56, '2022-06-08', 452),
- (71690, 1, 'STAG^C', 137, 21.8, '2022-07-10', 453),
- (52327, 1, 'IMOS', 62, 26.56, '2022-09-23', 454),
- (35405, 0, 'GPIA', 142, 28.1, '2022-10-25', 455),
- (77009, 1, 'USLM', 3, 7.58, '2024-04-27', 456),
- (95878, 1, 'BRCD', 37, 17.69, '2023-08-28', 457),
- (45790, 0, 'SNDR', 36, 26.68, '2023-04-22', 458),
- (12566, 1, 'PVAC', 47, 28.43, '2023-10-12', 459),
- (24429, 0, 'CSA', 100, 25.89, '2022-07-12', 460),
- (4274, 1, 'SHLO', 83, 6.48, '2023-04-10', 461),
- (12151, 0, 'ARTX', 147, 24.28, '2024-01-17', 462),
- (78020, 1, 'AVY', 109, 27.2, '2024-04-20', 463),
- (37617, 1, 'OFG^B', 131, 6.18, '2022-12-31', 464),
- (40763, 1, 'LBTYA', 117, 17.37, '2023-08-14', 465),
- (23990, 0, 'CGG', 111, 8.11, '2023-10-22', 466),
- (91765, 0, 'MCD', 137, 9.93, '2023-10-23', 467),
- (90852, 0, 'NMM', 115, 14.81, '2023-10-07', 468),
- (681, 1, 'TCO', 4, 1.5, '2023-05-07', 469),
- (86192, 1, 'ESV', 9, 10.74, '2023-10-21', 470),
- (77389, 1, 'HL', 129, 11.56, '2024-01-31', 471),
- (63059, 0, 'MBRX', 25, 22.3, '2022-09-25', 472),
- (98935, 1, 'CST', 99, 8.9, '2022-09-15', 473),
- (82754, 0, 'NMI', 54, 12.14, '2023-09-18', 474),
- (62457, 0, 'BTZ', 129, 21.89, '2023-11-11', 475),
- (85746, 1, 'DRA', 81, 11.98, '2023-08-26', 476),
- (57159, 0, 'AJX', 129, 29.43, '2022-12-20', 477),
- (20322, 0, 'LCAHU', 122, 7.13, '2023-07-11', 478),
- (93235, 1, 'SLM', 138, 10.58, '2022-11-30', 479),
- (77266, 1, 'TCO^J', 72, 6.54, '2023-08-19', 480),
- (19422, 1, 'ETW', 14, 4.19, '2024-05-28', 481),
- (60475, 0, 'MEOH', 12, 29.42, '2024-03-03', 482),
- (41422, 1, 'ASML', 47, 6.52, '2024-02-16', 483),
- (42991, 0, 'TNP^E', 78, 4.91, '2023-08-19', 484),
- (29405, 0, 'CIZ', 113, 22.71, '2024-02-24', 485),
- (66710, 0, 'EIG', 131, 2.97, '2023-06-02', 486),
- (29214, 0, 'GNL', 15, 12.09, '2023-08-29', 487),
- (41025, 0, 'AMH^A', 80, 15.94, '2022-11-18', 488),
- (57570, 0, 'TVPT', 104, 25.18, '2023-04-14', 489),
- (55095, 0, 'ONCE', 8, 25.26, '2022-12-18', 490),
- (60941, 1, 'MTU', 42, 13.06, '2022-10-07', 491),
- (91772, 0, 'DDR^A', 150, 14.81, '2024-02-09', 492),
- (65105, 0, 'ONTX', 119, 9.7, '2023-03-27', 493),
- (90208, 1, 'KAACU', 28, 8.18, '2024-03-16', 494),
- (8974, 1, 'IDXX', 1, 6.71, '2022-10-28', 495),
- (49421, 1, 'MS^E', 59, 18.51, '2023-11-24', 496),
- (49464, 0, 'HNI', 43, 25.26, '2022-12-18', 497),
- (59135, 0, 'SWNC', 110, 15.46, '2022-06-10', 498),
- (48584, 0, 'TPIV', 71, 3.76, '2023-06-17', 499),
- (92732, 0, 'SB^C', 70, 2.69, '2023-08-19', 500);
+insert into investor_order (price, buy, stock_id, investor_id, volume, date, id) values
+ (51162, 0, 1, 1, 21.77, '2023-06-27', 1),
+ (18686, 1, 2, 2, 5.92, '2023-11-24', 2),
+ (83341, 0, 3, 3, 27.16, '2022-10-31', 3),
+ (30599, 0, 4, 4, 27.83, '2024-04-02', 4),
+ (81941, 0, 5, 5, 27.15, '2023-01-19', 5),
+ (94406, 1, 6, 6, 24.8, '2023-11-08', 6),
+ (57576, 1, 7, 7, 4.13, '2022-08-26', 7),
+ (82904, 1, 8, 8, 25.37, '2024-04-11', 8),
+ (86369, 0, 9, 9, 17.84, '2022-12-29', 9),
+ (27535, 1, 10, 10, 2.98, '2024-03-13', 10),
+ (11345, 1, 11, 11, 23.92, '2022-09-24', 11),
+ (73095, 0, 12, 12, 14.07, '2023-05-06', 12),
+ (37832, 1, 13, 13, 13.48, '2023-11-16', 13),
+ (76062, 0, 14, 14, 19.31, '2022-11-18', 14),
+ (2581, 0, 15, 15, 10.22, '2022-09-17', 15),
+ (74876, 1, 16, 16, 27.54, '2024-04-07', 16),
+ (46238, 1, 17, 17, 11.36, '2024-05-26', 17),
+ (6323, 1, 18, 18, 4.57, '2022-07-04', 18),
+ (66576, 0, 19, 19, 14.01, '2023-09-11', 19),
+ (65484, 1, 20, 20, 20.53, '2023-10-30', 20),
+ (49736, 1, 21, 21, 7.75, '2023-07-25', 21);
+
+insert into politician_list (name, party, state, manager_id, id) values
+ ('Britni Gullick', 'Democrat', 'Indiana', 33, 1),
+ ('Jewell Ondrus', 'Republican', 'Georgia', 2, 2),
+ ('Hall MacAnespie', 'Democrat', 'Indiana', 35, 3),
+ ('Stepha Szabo', 'Democrat', 'Texas', 33, 4),
+ ('Guilbert Giovannoni', 'Democrat', 'California', 14, 5),
+ ('Brenda MacKaig', 'Democrat', 'Idaho', 6, 6),
+ ('Frieda Izak', 'Democrat', 'New York', 43, 7),
+ ('Jasmina Bohan', 'Democrat', 'Texas', 22, 8),
+ ('Nils Pehrsson', 'Democrat', 'District of Columbia', 37, 9),
+ ('Edward Woodgate', 'Democrat', 'California', 20, 10),
+ ('Gordon Glandfield', 'Republican', 'Virginia', 4, 11),
+ ('Adler Upcott', 'Republican', 'Connecticut', 17, 12),
+ ('Samaria Bance', 'Republican', 'New York', 39, 13),
+ ('Darya Tarry', 'Democrat', 'Georgia', 3, 14),
+ ('Jason Mamwell', 'Democrat', 'Kansas', 20, 15),
+ ('Eula Aumerle', 'Democrat', 'Florida', 40, 16),
+ ('Joline Ritch', 'Republican', 'Kansas', 12, 17),
+ ('Venus Dykes', 'Democrat', 'Pennsylvania', 30, 18),
+ ('Kacy Hallward', 'Democrat', 'Texas', 32, 19),
+ ('Jere Forbes', 'Democrat', 'Utah', 1, 20),
+ ('Yetty Polglase', 'Republican', 'Oklahoma', 37, 21),
+ ('Percival Standell', 'Republican', 'California', 13, 22),
+ ('Silva Whatson', 'Republican', 'Florida', 10, 23),
+ ('Zonnya Twallin', 'Republican', 'South Carolina', 34, 24),
+ ('Miguela Oldham', 'Democrat', 'Minnesota', 42, 25),
+ ('Billye Swetland', 'Republican', 'Alabama', 6, 26),
+ ('Cacilie Goullee', 'Republican', 'Texas', 41, 27),
+ ('Keith O''Corr', 'Democrat', 'Indiana', 31, 28),
+ ('Orsa Pilkington', 'Republican', 'Colorado', 38, 29),
+ ('Neile Pfeffel', 'Republican', 'Oregon', 22, 30),
+ ('Harcourt Catterick', 'Republican', 'Kentucky', 20, 31),
+ ('Sax Whithorn', 'Republican', 'West Virginia', 12, 32),
+ ('Constancia Knutton', 'Democrat', 'Florida', 19, 33),
+ ('Loree Cranna', 'Republican', 'Georgia', 18, 34),
+ ('Marcile Cabrara', 'Republican', 'Pennsylvania', 8, 35),
+ ('Cynthia Leeming', 'Democrat', 'Alabama', 4, 36),
+ ('Daniele Shaw', 'Republican', 'Florida', 42, 37),
+ ('Nehemiah Turnbull', 'Republican', 'California', 45, 38),
+ ('Christiana Cobbe', 'Democrat', 'Connecticut', 25, 39),
+ ('Nicolina Tweddell', 'Republican', 'Pennsylvania', 36, 40),
+ ('Lesley Bravey', 'Democrat', 'California', 31, 41),
+ ('Vivyan Doumic', 'Republican', 'California', 40, 42),
+ ('Ulrich Jodkowski', 'Democrat', 'Ohio', 28, 43),
+ ('Waldemar Stancer', 'Republican', 'California', 7, 44),
+ ('Idell Serot', 'Republican', 'Florida', 25, 45),
+ ('Ursola Sawell', 'Democrat', 'Kentucky', 7, 46),
+ ('Lana Tattersdill', 'Democrat', 'Michigan', 23, 47),
+ ('Vivian Alway', 'Republican', 'Florida', 34, 48),
+ ('Sybille Luetkemeyers', 'Democrat', 'Ohio', 47, 49),
+ ('Paolina Rospars', 'Republican', 'Virginia', 35, 50),
+ ('Alyse Urion', 'Republican', 'California', 14, 51),
+ ('Ruthann Gaven', 'Democrat', 'Ohio', 20, 52),
+ ('Johnath Chadbourn', 'Republican', 'North Carolina', 9, 53),
+ ('Darnell Greenacre', 'Democrat', 'New York', 25, 54),
+ ('Avigdor Clougher', 'Democrat', 'Virginia', 13, 55),
+ ('Elora Pauel', 'Democrat', 'Connecticut', 7, 56),
+ ('Julianne Milroy', 'Democrat', 'Connecticut', 38, 57),
+ ('Ida Bownass', 'Democrat', 'Tennessee', 37, 58),
+ ('Angelico Ambrosoli', 'Democrat', 'Ohio', 4, 59),
+ ('Gunar Sammon', 'Republican', 'District of Columbia', 26, 60),
+ ('Francisco Molder', 'Republican', 'California', 6, 61),
+ ('Tabbie Clout', 'Republican', 'Tennessee', 19, 62),
+ ('Bernete Cunliffe', 'Democrat', 'Indiana', 15, 63),
+ ('Dugald Pretor', 'Democrat', 'Illinois', 20, 64),
+ ('Vernor Doran', 'Democrat', 'Florida', 3, 65),
+ ('Kirstyn Castilljo', 'Republican', 'North Carolina', 15, 66),
+ ('Bunni Golbourn', 'Republican', 'Virginia', 45, 67),
+ ('Bobinette Owens', 'Democrat', 'Vermont', 36, 68),
+ ('Consalve Lecky', 'Republican', 'Michigan', 30, 69),
+ ('Danyette Jerdan', 'Democrat', 'California', 4, 70),
+ ('Trixie Crisp', 'Republican', 'California', 41, 71),
+ ('Niki Ferrero', 'Democrat', 'Texas', 22, 72),
+ ('Charyl Parres', 'Democrat', 'Idaho', 42, 73),
+ ('Violet Beggini', 'Democrat', 'California', 23, 74),
+ ('Abey Trustram', 'Republican', 'Florida', 20, 75),
+ ('Berrie Bownd', 'Democrat', 'Pennsylvania', 9, 76),
+ ('Minne Sollime', 'Democrat', 'Texas', 29, 77),
+ ('Stuart Schooling', 'Democrat', 'Florida', 17, 78),
+ ('Hiram Penberthy', 'Democrat', 'Illinois', 41, 79),
+ ('Gunther Farnworth', 'Republican', 'Oklahoma', 50, 80),
+ ('Lothario Thow', 'Republican', 'Texas', 44, 81),
+ ('Georgie Loffill', 'Republican', 'Pennsylvania', 44, 82),
+ ('Elsy Alldread', 'Democrat', 'South Dakota', 50, 83),
+ ('Ciel Wardrope', 'Republican', 'South Carolina', 25, 84),
+ ('Freeland Pinshon', 'Democrat', 'Maryland', 7, 85),
+ ('Jolynn Wittman', 'Democrat', 'New York', 2, 86),
+ ('Ruben Wilding', 'Republican', 'Louisiana', 43, 87),
+ ('Erin Grime', 'Democrat', 'Michigan', 26, 88),
+ ('Cordie Littlecote', 'Democrat', 'Florida', 31, 89),
+ ('Lindon Shiel', 'Republican', 'Colorado', 11, 90),
+ ('Sigismond Ianizzi', 'Democrat', 'Utah', 27, 91),
+ ('Alvinia Silkston', 'Democrat', 'West Virginia', 25, 92),
+ ('Bryon Mulroy', 'Republican', 'Florida', 43, 93),
+ ('Dorice McKaile', 'Republican', 'Arizona', 25, 94),
+ ('Luigi Wallbutton', 'Democrat', 'Missouri', 21, 95),
+ ('Chad Christaeas', 'Republican', 'Florida', 19, 96),
+ ('Krissie Habbal', 'Republican', 'Oklahoma', 28, 97),
+ ('Gilli Stutely', 'Republican', 'Missouri', 9, 98),
+ ('Pincas Saket', 'Republican', 'New York', 17, 99),
+ ('Rutherford Bjorkan', 'Democrat', 'Texas', 11, 100);
+
+-- REPLACE Sample data for politician_order table
+ insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (201.43, 1, 1, 1, 38, '2023-12-17', 1);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (492.96, 1, 2, 2, 51, '2023-08-22', 2);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (694.57, 0, 3, 3, 98, '2023-09-30', 3);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (26.59, 0, 4, 4, 29, '2024-01-18', 4);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (743.84, 0, 5, 5, 71, '2024-03-13', 5);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (822.39, 0, 6, 6, 56, '2023-10-08', 6);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (314.11, 1, 7, 7, 64, '2023-07-28', 7);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (437.94, 0, 8, 8, 75, '2024-05-18', 8);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (809.23, 1, 9, 9, 84, '2023-09-15', 9);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (274.81, 1, 10, 10, 58, '2024-01-24', 10);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (769.48, 0, 11, 11, 2, '2024-03-31', 11);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (367.72, 0, 12, 12, 82, '2023-10-05', 12);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (607.22, 1, 13, 13, 13, '2024-03-31', 13);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (448.8, 0, 14, 14, 44, '2023-07-09', 14);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (533.08, 1, 15, 15, 81, '2023-11-29', 15);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (703.07, 1, 16, 16, 37, '2023-09-16', 16);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (107.12, 0, 17, 17, 51, '2023-10-26', 17);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (166.94, 0, 18, 18, 27, '2023-08-17', 18);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (38.89, 0, 19, 19, 12, '2024-05-02', 19);
+insert into politician_order (price, buy, stock_id, politician_id, volume, date, id) values (363.77, 1, 20, 20, 90, '2024-02-03', 20);
 
 -- Sample data for investor_politician_order table
- insert into investor_politician_order (created_at, investor_id, politician_order_id) values
- ('2022-12-23', 34, 1),
- ('2022-07-23', 94, 2),
- ('2023-07-22', 43, 3),
- ('2023-01-04', 79, 4),
- ('2022-10-06', 45, 5),
- ('2023-08-11', 36, 6),
- ('2023-02-24', 68, 7),
- ('2022-08-28', 130, 8),
- ('2024-04-24', 3, 9),
- ('2024-02-27', 34, 10),
- ('2024-01-12', 6, 11),
- ('2022-06-19', 65, 12),
- ('2024-05-23', 25, 13),
- ('2022-12-15', 9, 14),
- ('2024-04-18', 75, 15),
- ('2023-06-17', 145, 16),
- ('2024-03-04', 48, 17),
- ('2023-05-30', 46, 18),
- ('2023-01-26', 11, 19),
- ('2022-06-22', 126, 20),
- ('2023-03-15', 127, 21),
- ('2022-10-08', 21, 22),
- ('2024-03-05', 11, 23),
- ('2022-08-01', 114, 24),
- ('2023-11-11', 143, 25),
- ('2024-02-24', 145, 26),
- ('2023-08-04', 113, 27),
- ('2024-02-27', 32, 28),
- ('2024-01-12', 30, 29),
- ('2023-03-27', 134, 30),
- ('2023-11-06', 42, 31),
- ('2023-07-19', 61, 32),
- ('2023-06-22', 90, 33),
- ('2024-02-11', 49, 34),
- ('2023-06-29', 100, 35),
- ('2023-08-24', 117, 36),
- ('2024-03-19', 133, 37),
- ('2023-03-15', 131, 38),
- ('2022-12-08', 125, 39),
- ('2023-08-10', 30, 40),
- ('2023-10-20', 60, 41),
- ('2024-05-22', 5, 42),
- ('2022-06-16', 99, 43),
- ('2022-08-09', 29, 44),
- ('2023-03-30', 62, 45),
- ('2024-04-20', 22, 46),
- ('2023-09-14', 55, 47),
- ('2022-11-29', 95, 48),
- ('2022-07-27', 2, 49),
- ('2024-04-30', 71, 50),
- ('2024-04-25', 120, 51),
- ('2024-03-14', 136, 52),
- ('2023-11-17', 103, 53),
- ('2023-03-14', 58, 54),
- ('2023-04-03', 35, 55),
- ('2023-10-28', 122, 56),
- ('2023-09-21', 58, 57),
- ('2024-02-18', 89, 58),
- ('2023-07-19', 145, 59),
- ('2023-02-07', 41, 60),
- ('2022-07-26', 127, 61),
- ('2023-05-13', 48, 62),
- ('2022-07-26', 48, 63),
- ('2023-06-01', 51, 64),
- ('2024-01-17', 32, 65),
- ('2023-09-06', 1, 66),
- ('2024-05-22', 119, 67),
- ('2024-01-08', 75, 68),
- ('2022-08-05', 45, 69),
- ('2024-03-06', 75, 70),
- ('2024-05-22', 10, 71),
- ('2024-01-19', 120, 72),
- ('2022-10-08', 27, 73),
- ('2023-08-03', 121, 74),
- ('2022-10-15', 41, 75),
- ('2023-05-02', 69, 76),
- ('2022-11-03', 131, 77),
- ('2024-03-07', 54, 78),
- ('2022-09-09', 143, 79),
- ('2023-11-11', 51, 80),
- ('2023-06-08', 36, 81),
- ('2022-11-07', 38, 82),
- ('2023-01-19', 27, 83),
- ('2022-07-04', 68, 84),
- ('2022-09-13', 38, 85),
- ('2023-03-12', 25, 86),
- ('2022-10-04', 15, 87),
- ('2024-04-20', 26, 88),
- ('2023-09-24', 79, 89),
- ('2024-01-06', 89, 90),
- ('2023-08-16', 16, 91),
- ('2023-04-14', 107, 92),
- ('2022-11-08', 98, 93),
- ('2023-04-30', 76, 94),
- ('2022-07-16', 128, 95),
- ('2023-08-12', 81, 96),
- ('2023-12-14', 149, 97),
- ('2024-04-27', 114, 98),
- ('2024-02-29', 66, 99),
- ('2023-09-24', 109, 100),
- ('2023-09-01', 149, 101),
- ('2022-10-24', 125, 102),
- ('2024-01-21', 17, 103),
- ('2023-05-06', 18, 104),
- ('2023-05-10', 138, 105),
- ('2023-08-19', 33, 106),
- ('2023-09-10', 73, 107),
- ('2023-06-14', 100, 108),
- ('2024-01-04', 47, 109),
- ('2023-05-09', 74, 110),
- ('2022-08-09', 93, 111),
- ('2022-10-24', 130, 112),
- ('2023-07-21', 6, 113),
- ('2023-02-13', 148, 114),
- ('2022-08-28', 43, 115),
- ('2022-11-24', 2, 116),
- ('2022-07-08', 27, 117),
- ('2023-01-09', 143, 118),
- ('2023-09-25', 117, 119),
- ('2023-01-07', 21, 120),
- ('2023-08-21', 1, 121),
- ('2024-03-22', 55, 122),
- ('2023-05-23', 54, 123),
- ('2022-06-22', 108, 124),
- ('2024-03-11', 6, 125),
- ('2023-06-29', 130, 126),
- ('2023-10-01', 140, 127),
- ('2023-10-28', 64, 128),
- ('2022-10-07', 86, 129),
- ('2022-12-28', 48, 130),
- ('2023-07-16', 92, 131),
- ('2023-06-24', 33, 132),
- ('2022-10-24', 141, 133),
- ('2023-10-25', 52, 134),
- ('2024-01-26', 140, 135),
- ('2022-10-16', 73, 136),
- ('2022-11-12', 29, 137),
- ('2023-03-31', 136, 138),
- ('2022-06-11', 53, 139),
- ('2024-02-08', 57, 140),
- ('2022-11-21', 82, 141),
- ('2023-08-31', 102, 142),
- ('2023-09-21', 24, 143),
- ('2023-07-14', 127, 144),
- ('2023-05-15', 74, 145),
- ('2024-01-08', 109, 146),
- ('2023-05-17', 7, 147),
- ('2023-07-13', 89, 148),
- ('2024-03-07', 4, 149),
- ('2024-05-17', 123, 150),
- ('2023-06-23', 46, 151),
- ('2023-12-21', 117, 152),
- ('2023-05-12', 148, 153),
- ('2023-03-31', 147, 154),
- ('2022-07-08', 41, 155),
- ('2024-02-02', 67, 156),
- ('2023-11-08', 7, 157),
- ('2023-01-16', 96, 158),
- ('2024-02-26', 84, 159),
- ('2023-07-14', 11, 160),
- ('2022-11-04', 57, 161),
- ('2023-07-13', 29, 162),
- ('2022-07-23', 130, 163),
- ('2023-11-16', 43, 164),
- ('2022-11-19', 43, 165),
- ('2022-12-03', 128, 166),
- ('2023-06-29', 94, 167),
- ('2022-08-23', 51, 168),
- ('2022-12-07', 103, 169),
- ('2023-12-04', 70, 170),
- ('2024-02-23', 21, 171),
- ('2023-03-30', 6, 172),
- ('2023-09-14', 80, 173),
- ('2022-10-15', 90, 174),
- ('2023-09-24', 128, 175),
- ('2024-06-01', 85, 176),
- ('2022-10-24', 71, 177),
- ('2023-05-22', 121, 178),
- ('2022-07-15', 94, 179),
- ('2023-01-01', 2, 180),
- ('2024-04-23', 61, 181),
- ('2023-11-08', 60, 182),
- ('2024-02-16', 97, 183),
- ('2024-02-18', 75, 184),
- ('2023-12-21', 94, 185),
- ('2022-07-01', 93, 186),
- ('2023-08-05', 40, 187),
- ('2024-02-18', 124, 188),
- ('2023-04-19', 90, 189),
- ('2024-04-01', 123, 190),
- ('2022-11-10', 75, 191),
- ('2022-12-10', 80, 192),
- ('2023-08-31', 132, 193),
- ('2022-08-27', 12, 194),
- ('2023-05-05', 101, 195),
- ('2024-01-31', 34, 196),
- ('2022-08-14', 129, 197),
- ('2023-09-12', 24, 198),
- ('2023-10-18', 5, 199),
- ('2023-07-13', 41, 200),
- ('2023-09-28', 73, 201),
- ('2024-04-17', 22, 202),
- ('2024-04-16', 21, 203),
- ('2023-06-23', 62, 204),
- ('2023-04-07', 143, 205),
- ('2023-01-01', 100, 206),
- ('2023-04-10', 124, 207),
- ('2024-05-04', 107, 208),
- ('2023-11-29', 4, 209),
- ('2023-12-31', 143, 210),
- ('2023-10-26', 60, 211),
- ('2023-07-16', 67, 212),
- ('2022-11-09', 105, 213),
- ('2023-07-02', 119, 214),
- ('2023-07-27', 8, 215),
- ('2023-01-02', 113, 216),
- ('2023-07-11', 116, 217),
- ('2023-06-03', 58, 218),
- ('2022-07-14', 66, 219),
- ('2024-01-20', 16, 220),
- ('2022-10-23', 1, 221),
- ('2022-06-21', 29, 222),
- ('2024-06-02', 110, 223),
- ('2022-08-25', 57, 224),
- ('2023-04-18', 79, 225),
- ('2023-05-20', 35, 226),
- ('2023-07-24', 103, 227),
- ('2023-10-11', 46, 228),
- ('2023-05-07', 10, 229),
- ('2023-04-16', 44, 230),
- ('2024-02-22', 21, 231),
- ('2023-09-27', 125, 232),
- ('2024-05-21', 45, 233),
- ('2024-04-14', 74, 234),
- ('2023-07-19', 80, 235),
- ('2023-03-11', 108, 236),
- ('2024-02-03', 126, 237),
- ('2022-09-27', 105, 238),
- ('2024-03-20', 118, 239),
- ('2023-04-14', 95, 240),
- ('2023-06-19', 44, 241),
- ('2024-03-15', 68, 242),
- ('2024-05-26', 136, 243),
- ('2024-03-09', 131, 244),
- ('2022-09-26', 78, 245),
- ('2023-03-13', 62, 246),
- ('2023-09-16', 114, 247),
- ('2024-01-14', 142, 248),
- ('2023-07-31', 138, 249),
- ('2024-03-15', 94, 250),
- ('2022-12-25', 25, 251),
- ('2022-10-21', 118, 252),
- ('2022-09-09', 103, 253),
- ('2023-03-07', 91, 254),
- ('2022-06-26', 72, 255),
- ('2023-05-05', 88, 256),
- ('2022-11-28', 40, 257),
- ('2023-05-29', 133, 258),
- ('2024-04-22', 12, 259),
- ('2023-06-29', 48, 260),
- ('2022-06-26', 55, 261),
- ('2023-06-25', 149, 262),
- ('2022-07-29', 54, 263),
- ('2022-10-16', 137, 264),
- ('2024-02-27', 36, 265),
- ('2022-06-05', 100, 266),
- ('2024-04-07', 123, 267),
- ('2022-07-02', 55, 268),
- ('2022-12-06', 31, 269),
- ('2022-11-14', 129, 270),
- ('2023-12-27', 57, 271),
- ('2023-04-27', 17, 272),
- ('2023-05-12', 120, 273),
- ('2024-02-29', 113, 274),
- ('2024-02-02', 35, 275),
- ('2023-06-24', 108, 276),
- ('2022-11-25', 11, 277),
- ('2023-06-17', 150, 278),
- ('2023-04-04', 4, 279),
- ('2024-03-19', 51, 280),
- ('2023-02-07', 101, 281),
- ('2024-04-06', 40, 282),
- ('2024-05-05', 65, 283),
- ('2023-04-23', 117, 284),
- ('2023-11-14', 96, 285),
- ('2024-03-28', 115, 286),
- ('2023-07-27', 64, 287),
- ('2022-10-19', 67, 288),
- ('2022-07-28', 96, 289),
- ('2022-11-14', 142, 290),
- ('2024-01-29', 44, 291),
- ('2023-11-21', 91, 292),
- ('2023-05-08', 95, 293),
- ('2023-04-22', 117, 294),
- ('2022-06-25', 86, 295),
- ('2023-11-02', 41, 296),
- ('2023-01-22', 141, 297),
- ('2022-10-16', 150, 298),
- ('2024-06-02', 60, 299),
- ('2022-08-12', 42, 300);
+insert into investor_politician_order (created_at, investor_id, politician_order_id) values
+ ('2022-12-23', 1, 1),
+ ('2022-07-23', 2, 2),
+ ('2023-07-22', 3, 3),
+ ('2023-01-04', 4, 4),
+ ('2022-10-06', 5, 5),
+ ('2023-08-11', 6, 6),
+ ('2023-02-24', 7, 7),
+ ('2022-08-28', 8, 8),
+ ('2024-04-24', 9, 9),
+ ('2024-02-27', 10, 10),
+ ('2024-01-12', 11, 11),
+ ('2022-06-19', 12, 12),
+ ('2024-05-23', 13, 13),
+ ('2022-12-15', 14, 14),
+ ('2024-04-18', 15, 15),
+ ('2023-06-17', 16, 16),
+ ('2024-03-04', 17, 17),
+ ('2023-05-30', 18, 18),
+ ('2023-01-26', 19, 19),
+ ('2022-06-22', 20, 20);
 
+insert into investor_stock (created_at, investor_id, stock_id) values
+ ('2022-12-27', 1, 1),
+ ('2023-12-23', 2, 2),
+ ('2023-05-25', 3, 3),
+ ('2024-04-15', 4, 4),
+ ('2022-07-13', 5, 5),
+ ('2024-03-09', 6, 6),
+ ('2023-08-03', 7, 7),
+ ('2023-05-26', 8, 8),
+ ('2024-06-03', 9,9),
+ ('2022-08-12', 10, 10),
+ ('2023-06-17', 11, 11),
+ ('2023-12-12', 12, 12),
+ ('2023-06-01', 13, 13),
+ ('2023-09-22', 14, 14),
+ ('2024-01-18', 15, 15),
+ ('2023-05-30', 16, 16),
+ ('2024-02-19', 17, 17),
+ ('2023-11-05', 18, 18),
+ ('2022-10-10', 19, 19),
+ ('2022-07-04', 20, 20);
 
+insert into legislation (title, date, pass, active, sector, id) values ('The Internet Privacy Act', '2023-06-16', 0, 1, 'Consumer Services', 1);
+insert into legislation (title, date, pass, active, sector, id) values ('The Consumer Protection Act', '2023-12-11', 1, 1, 'Capital Goods', 2);
+insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2023-12-12', 1, 0, 'n/a', 3);
+insert into legislation (title, date, pass, active, sector, id) values ('The Consumer Protection Act', '2024-04-26', 1, 0, 'Consumer Services', 4);
+insert into legislation (title, date, pass, active, sector, id) values ('The Cybersecurity Enhancement Act', '2024-06-04', 1, 0, 'Health Care', 5);
+insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2023-09-01', 0, 1, 'Finance', 6);
+insert into legislation (title, date, pass, active, sector, id) values ('The Renewable Energy Act', '2024-02-17', 1, 0, 'Health Care', 7);
+insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2024-01-18', 1, 0, 'Health Care', 8);
+insert into legislation (title, date, pass, active, sector, id) values ('The Drug Price Regulation Act', '2023-11-21', 1, 1, 'n/a', 9);
+insert into legislation (title, date, pass, active, sector, id) values ('The Drug Price Regulation Act', '2023-08-29', 1, 1, 'Consumer Services', 10);
+insert into legislation (title, date, pass, active, sector, id) values ('The Immigration Reform Act', '2023-07-08', 1, 1, 'Consumer Durables', 11);
+insert into legislation (title, date, pass, active, sector, id) values ('The Consumer Protection Act', '2023-08-19', 0, 0, 'Health Care', 12);
+insert into legislation (title, date, pass, active, sector, id) values ('The Affordable Housing Act', '2024-02-21', 1, 0, 'Consumer Services', 13);
+insert into legislation (title, date, pass, active, sector, id) values ('The Clean Air Act', '2023-12-22', 1, 1, 'n/a', 14);
+insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2023-08-25', 1, 1, 'Health Care', 15);
+insert into legislation (title, date, pass, active, sector, id) values ('The Affordable Housing Act', '2023-12-13', 0, 0, 'Health Care', 16);
+insert into legislation (title, date, pass, active, sector, id) values ('The Affordable Housing Act', '2023-08-27', 0, 1, 'Health Care', 17);
+insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2023-09-29', 1, 0, 'Energy', 18);
+insert into legislation (title, date, pass, active, sector, id) values ('The Consumer Protection Act', '2023-11-29', 0, 1, 'n/a', 19);
+insert into legislation (title, date, pass, active, sector, id) values ('The Renewable Energy Act', '2023-10-12', 1, 1, 'n/a', 20);
 
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-08-24', 1, 1);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-12-09', 2, 2);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-06-24', 3, 3);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-10-25', 4, 4);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-08-12', 5, 5);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2024-01-30', 6, 6);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-10-13', 7, 7);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-08-02', 8, 8);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2024-02-26', 9, 9);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2024-03-12', 10, 10);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-07-10', 11, 11);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2024-05-11', 12, 12);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-07-11', 13, 13);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-08-04', 14, 14);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-10-03', 15, 15);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-02-15', 16, 16);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-02-11', 17, 17);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-09-21', 18, 18);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-11-27', 19, 19);
+insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-10-08', 20, 20);
 
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2022-10-02', 1, 1);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2023-11-18', 2, 2);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2024-02-05', 3, 3);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2022-10-30', 4, 4);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2023-06-16', 5, 5);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2023-06-15', 6, 6);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2023-10-25', 7, 7);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2024-02-29', 8, 8);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2024-05-22', 9, 9);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2023-10-05', 10, 10);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2023-06-23', 11, 11);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2024-05-16', 12, 12);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2024-01-03', 13, 13);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2022-11-17', 14, 14);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2022-11-15', 15, 15);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2023-10-10', 16, 16);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2024-05-03', 17, 17);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2024-03-03', 18, 18);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2022-11-26', 19, 19);
+insert into journalist_politician (created_at, journalist_id, politician_id) values ('2023-09-08', 20, 20);
 
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2023-07-01', 1, 1);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2023-10-23', 2, 2);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2023-07-05', 3, 3);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2024-04-13', 4, 4);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2024-02-26', 5, 5);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2024-03-11', 6, 6);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2023-09-20', 7, 7);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2023-08-06', 8, 8);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2024-02-10', 9, 9);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2024-01-09', 10, 10);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2024-02-02', 11, 11);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2023-07-23', 12, 12);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2024-04-14', 13, 13);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2024-02-18', 14, 14);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2024-01-26', 15, 15);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2024-05-27', 16, 16);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2024-02-04', 17, 17);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2023-11-24', 18, 18);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2023-08-03', 19, 19);
+insert into politician_legislation (created_at, legislation_id, politician_id) values ('2023-07-26', 20, 20);
+
+insert into politician_investor (created_at, investor_id, politician_id) values ('2024-02-03', 1, 1);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2024-03-12', 2, 2);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2024-03-10', 3, 3);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2023-09-08', 4, 4);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2024-01-23', 5, 5);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2023-08-18', 6, 6);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2024-05-01', 7, 7);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2024-05-02', 8, 8);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2023-12-21', 9, 9);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2023-10-13', 10, 10);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2023-06-13', 11, 11);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2023-09-08', 12, 12);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2023-08-21', 13, 13);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2024-02-24', 14, 14);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2024-02-19', 15, 15);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2023-10-20', 16, 16);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2024-03-07', 17, 17);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2024-04-02', 18, 18);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2023-06-06', 19, 19);
+insert into politician_investor (created_at, investor_id, politician_id) values ('2023-08-08', 20, 20);
+
+insert into politician_manager (created_at, manager_id, politician_id) values ('2022-10-04', 1, 1);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2022-07-05', 2, 2);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2024-03-07', 3, 3);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2024-02-28', 4, 4);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2023-03-09', 5, 5);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2022-11-03', 6, 6);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2024-05-27', 7, 7);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2023-03-23', 8, 8);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2023-01-23', 9, 9);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2024-04-09', 10, 10);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2023-01-23', 11, 11);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2023-02-05', 12, 12);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2023-08-18', 13, 13);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2023-02-12', 14, 14);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2022-10-14', 15, 15);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2022-12-12', 16, 16);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2022-11-05', 17, 17);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2022-06-08', 18, 18);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2023-12-10', 19, 19);
+insert into politician_manager (created_at, manager_id, politician_id) values ('2022-11-02', 20, 20);
+
+insert into politician_search_history (investor_id, politician_id, date, id) values (1, 1, '2022-06-26', 1);
+insert into politician_search_history (investor_id, politician_id, date, id) values (2, 2, '2023-04-19', 2);
+insert into politician_search_history (investor_id, politician_id, date, id) values (3, 3, '2022-12-12', 3);
+insert into politician_search_history (investor_id, politician_id, date, id) values (4, 4, '2022-12-16', 4);
+insert into politician_search_history (investor_id, politician_id, date, id) values (5, 5, '2022-06-13', 5);
+insert into politician_search_history (investor_id, politician_id, date, id) values (6, 6, '2023-12-15', 6);
+insert into politician_search_history (investor_id, politician_id, date, id) values (7, 7, '2023-09-08', 7);
+insert into politician_search_history (investor_id, politician_id, date, id) values (8, 8, '2024-04-15', 8);
+insert into politician_search_history (investor_id, politician_id, date, id) values (9, 9, '2023-08-28', 9);
+insert into politician_search_history (investor_id, politician_id, date, id) values (10, 10, '2022-09-21', 10);
+insert into politician_search_history (investor_id, politician_id, date, id) values (11, 11, '2023-12-15', 11);
+insert into politician_search_history (investor_id, politician_id, date, id) values (12, 12, '2023-03-20', 12);
+insert into politician_search_history (investor_id, politician_id, date, id) values (13, 13, '2022-07-27', 13);
+insert into politician_search_history (investor_id, politician_id, date, id) values (14, 14, '2023-08-09', 14);
+insert into politician_search_history (investor_id, politician_id, date, id) values (15, 15, '2023-10-13', 15);
+insert into politician_search_history (investor_id, politician_id, date, id) values (16, 16, '2023-02-13', 16);
+insert into politician_search_history (investor_id, politician_id, date, id) values (17, 17, '2023-09-13', 17);
+insert into politician_search_history (investor_id, politician_id, date, id) values (18, 18, '2023-03-16', 18);
+insert into politician_search_history (investor_id, politician_id, date, id) values (19, 19, '2023-11-29', 19);
+insert into politician_search_history (investor_id, politician_id, date, id) values (20, 20, '2023-11-22', 20);
+
+insert into stock_search_history (investor_id, stock_id, date, id) values (1, 1, '2022-11-25', 1);
+insert into stock_search_history (investor_id, stock_id, date, id) values (2, 2, '2023-10-20', 2);
+insert into stock_search_history (investor_id, stock_id, date, id) values (3, 3, '2023-06-03', 3);
+insert into stock_search_history (investor_id, stock_id, date, id) values (4, 4, '2023-11-13', 4);
+insert into stock_search_history (investor_id, stock_id, date, id) values (5, 5, '2024-02-10', 5);
+insert into stock_search_history (investor_id, stock_id, date, id) values (6, 6, '2024-04-08', 6);
+insert into stock_search_history (investor_id, stock_id, date, id) values (7, 7, '2023-10-04', 7);
+insert into stock_search_history (investor_id, stock_id, date, id) values (8, 8, '2022-07-23', 8);
+insert into stock_search_history (investor_id, stock_id, date, id) values (9, 9, '2023-02-01', 9);
+insert into stock_search_history (investor_id, stock_id, date, id) values (10, 10, '2022-10-21', 10);
+insert into stock_search_history (investor_id, stock_id, date, id) values (11, 11, '2022-06-18', 11);
+insert into stock_search_history (investor_id, stock_id, date, id) values (12, 12, '2024-01-08', 12);
+insert into stock_search_history (investor_id, stock_id, date, id) values (13, 13, '2024-04-10', 13);
+insert into stock_search_history (investor_id, stock_id, date, id) values (14, 14, '2023-07-14', 14);
+insert into stock_search_history (investor_id, stock_id, date, id) values (15, 15, '2024-05-24', 15);
+insert into stock_search_history (investor_id, stock_id, date, id) values (16, 16, '2024-03-12', 16);
+insert into stock_search_history (investor_id, stock_id, date, id) values (17, 17, '2023-11-10', 17);
+insert into stock_search_history (investor_id, stock_id, date, id) values (18, 18, '2023-04-21', 18);
+insert into stock_search_history (investor_id, stock_id, date, id) values (19, 19, '2022-09-05', 19);
+insert into stock_search_history (investor_id, stock_id, date, id) values (20, 20, '2022-11-25', 20);
+
+insert into legislation_politician_ids (legislation_id, politician_id) values (1, 1);
+insert into legislation_politician_ids (legislation_id, politician_id) values (2, 2);
+insert into legislation_politician_ids (legislation_id, politician_id) values (3, 3);
+insert into legislation_politician_ids (legislation_id, politician_id) values (4, 4);
+insert into legislation_politician_ids (legislation_id, politician_id) values (5, 5);
+insert into legislation_politician_ids (legislation_id, politician_id) values (6, 6);
+insert into legislation_politician_ids (legislation_id, politician_id) values (7, 7);
+insert into legislation_politician_ids (legislation_id, politician_id) values (8, 8);
+insert into legislation_politician_ids (legislation_id, politician_id) values (9, 9);
+insert into legislation_politician_ids (legislation_id, politician_id) values (10, 10);
+insert into legislation_politician_ids (legislation_id, politician_id) values (11, 11);
+insert into legislation_politician_ids (legislation_id, politician_id) values (12, 12);
+insert into legislation_politician_ids (legislation_id, politician_id) values (13, 13);
+insert into legislation_politician_ids (legislation_id, politician_id) values (14, 14);
+insert into legislation_politician_ids (legislation_id, politician_id) values (15, 15);
+insert into legislation_politician_ids (legislation_id, politician_id) values (16, 16);
+insert into legislation_politician_ids (legislation_id, politician_id) values (17, 17);
+insert into legislation_politician_ids (legislation_id, politician_id) values (18, 18);
+insert into legislation_politician_ids (legislation_id, politician_id) values (19, 19);
+insert into legislation_politician_ids (legislation_id, politician_id) values (20, 20);
 
 
