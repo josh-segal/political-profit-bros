@@ -7,7 +7,7 @@ from backend.db_connection import db
 from sklearn.metrics import r2_score
 import numpy as np
 import logging
-
+from phase3_python_functions import line_of_best_fit, linreg_predict
 
 def train():
   """
@@ -19,6 +19,16 @@ def train():
 def test():
   return 'Testing the model'
 
+
+def prediction(stock_df):
+  """
+  Predicts stock price based on date using simple linear regression 
+  """
+  X = np.array(stock_df['Date_ordinal'])
+  Y = np.array(stock_df['Adj Close'])
+  equation = line_of_best_fit(X, Y)
+  predict = linreg_predict(X, Y, equation)
+  return predict
 
 def predict(var01, var02):
   """
