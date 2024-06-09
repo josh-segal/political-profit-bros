@@ -9,7 +9,10 @@ st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
-st.title('Journalist Home Page')
+st.title(f"Welcome Journalist, {st.session_state['first_name']}.")
+st.write('')
+st.write('')
+st.write('### What would you like to do today?')
 
 if st.button('Inference Model', 
              type='primary',
