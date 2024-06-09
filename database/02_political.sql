@@ -90,10 +90,13 @@ CREATE TABLE IF NOT EXISTS legislation
 
 CREATE TABLE IF NOT EXISTS stock
 (
-    curr_price FLOAT,
-    company VARCHAR(80),
+    open float,
+    high float,
+    low float,
+    close FLOAT,
+    adj_close float,
+    volume, int
     ticker VARCHAR(10),
-    id INT,
     PRIMARY KEY (id)
 );
 
