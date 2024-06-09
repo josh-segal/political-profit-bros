@@ -19,25 +19,6 @@ data = np.random.randn(100).cumsum()
 df = pd.DataFrame(data, index=dates, columns=['Value'])
 st.line_chart(df)
 
-# volume = st.number_input("How many shares...", min_value=1, value=1, step=1)
-# buy_sell = st.selectbox(
-#     "Buy or Sell",
-#     ("Buy", "Sell"))
-
-# if st.button('Buy Stock',
-#                         type='primary',
-#                         use_container_width=True):
-#     buy_sell_value = 1 if buy_sell == "Buy" else 0
-
-#     payload = {
-#             'price': stock['curr_price'],
-#                     'buy': buy_sell_value,
-#                     'stock_id': stock['id'],
-#                     'investor_id': 1, #TODO: change to specific investor users
-#                     'volume': volume,
-#                     'date': dt.now().isoformat(),
-#     }
-
 if st.button('Track stock',
                         type='primary',
                         use_container_width=True):
@@ -50,11 +31,21 @@ if st.button('Track stock',
 
     url = 'http://api:4000/s/track'
 
+    # search_history_url = 'http://api:4000/s/history'
+
     response = requests.post(url, json=payload)
+
+    # search_history_response = requests.post(search_history_url, json=payload)
 
     logger.info('respose', response)
     if response.status_code == 200:
         st.success('Stock successfully tracked!')
     else:
         st.error('Failed to track stock. Please try again.')
+
+    # logger.info('search_history_response', search_history_response)
+    # if search_history_response.status_code == 200:
+    #     st.success('history successfully tracked!')
+    # else:
+    #     st.error('Failed to track history. Please try again.')
 
