@@ -16,22 +16,48 @@ import urllib.parse
 # Call the SideBarLinks from the nav module in the modules directory
 SideBarLinks()
 
+politician = requests.get(f'http://api:4000/po/politicians_dropdown').json()
+logger.info(f'politician: {politician}')
 
-name_input = st.text_input('Search for a politician...')
+politicians = []
 
-if name_input:
-    try:
-        # URL encode the name_input to handle spaces and special characters
-        encoded_name = urllib.parse.quote(name_input)
-        logger.info(f'encoded_name: {encoded_name}')
-        response = requests.get(f'http://api:4000/po/{encoded_name}') 
-        logger.info(f'byebyebyebye{response}')
-        results = response.json()
-        st.dataframe(results, column_order=["Name", "Politician_id", "Party", "Chamber", "State", "Asset_Type", \
-         "Issuer", "Ticker", "Issuer_Country", "Type", "txId", "Date_Traded", "Date_Published", "Trade_Size",\
-             "Trade_Price", "Trade_Value"])
-    except requests.exceptions.RequestException as e:
-        st.error(f"An error occurred: {e}")
+for p in politician:
+     politicians.append(p['item'])
+
+#dropdown_list = pd.DataFrame(politician).values.astype(str)
+
+search_query = st.selectbox('Search for a politician...', politicians, index=None)
+
+
+if search_query:
+    search_query = (search_query.split(" -")[0])
+    results = requests.get(f'http://api:4000/po/{search_query}').json()
+    if results:
+        for politician in results:
+            if st.button(politician['Name'],
+                        type='primary',
+                        use_container_width=True):
+                st.session_state.payload = politician
+                st.switch_page('pages/09_Politician_Detail.py')
+    else:
+        st.write('no politicians found... check spelling')
+        
+
+# name_input = st.text_input('Search for a politician...')
+
+# if name_input:
+#     try:
+#         # URL encode the name_input to handle spaces and special characters
+#         encoded_name = urllib.parse.quote(name_input)
+#         logger.info(f'encoded_name: {encoded_name}')
+#         response = requests.get(f'http://api:4000/po/{encoded_name}') 
+#         logger.info(f'byebyebyebye{response}')
+#         results = response.json()
+#         st.dataframe(results, column_order=["Name", "Politician_id", "Party", "Chamber", "State", "Asset_Type", \
+#          "Issuer", "Ticker", "Issuer_Country", "Type", "txId", "Date_Traded", "Date_Published", "Trade_Size",\
+#              "Trade_Price", "Trade_Value"])
+#     except requests.exceptions.RequestException as e:
+#         st.error(f"An error occurred: {e}")
     
 else:
     st.write("Trending Politicians:")
@@ -39,7 +65,7 @@ else:
     # SQL query to grab 5 most searched politicians ... eventually
     results = requests.get(f'http://api:4000/po/politicians').json()
     for politician in results:
-            if st.button('🔥 ' + politician['name'],
+            if st.button('🔥 ' + politician['Name'],
                         type='primary',
                         use_container_width=True):
                 st.session_state.payload = politician

@@ -12,9 +12,9 @@ SideBarLinks()
 
 if st.session_state['role'] == 'investor':
 
-    st.write('politician Detail Page')
+    st.write('Politician Detail Page')
     politician = st.session_state.payload
-    st.write(politician['name'])
+    st.write(politician['Name'])
 
     if st.button('Track politician',
                             type='primary',
@@ -22,7 +22,7 @@ if st.session_state['role'] == 'investor':
 
         payload = {
                 'investor_id': 1, # TODO: figure out how to do this with 3 users
-                        'politician_id': politician['id'],
+                        'politician_id': politician['politician_id'],
                         'date': dt.now().isoformat(),
         }
 
