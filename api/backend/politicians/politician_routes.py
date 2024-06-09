@@ -6,7 +6,7 @@ import pandas as pd
 
 politicians = Blueprint('politicians', __name__)
 
-
+"""
 # Get all the politicians from the database
 @politicians.route('/politicians', methods=['GET'])
 def get_politicians():
@@ -51,10 +51,10 @@ def put_tracked_politician ():
     politician_id = the_data['politician_id']
     date = the_data['date']
 
-    query = f"""
+    query = f"
             INSERT INTO politician_investor (investor_id, politician_id, created_at)
             VALUES ('{investor_id}', '{politician_id}', '{date}')
-            """
+            "
     current_app.logger.info(query)
 
     # Execute the query
@@ -82,12 +82,12 @@ def get_politician_portfolio(investor_id):
 
     return jsonify(theData)
 
+"""
 # Get all customers from the DB based on name
 @politicians.route('/politicians/<name>', methods=['GET'])
 def get_politicians(name):
     current_app.logger.info('politicians_routes.py: GET /politicians/<name> route')
     cursor = db.get_db().cursor()
-    # Use parameterized query to prevent SQL injection and handle string inputs correctly
     current_app.logger.info(f'politician name = {name}')
     query = f"SELECT * FROM politician WHERE name like '%{name}%'"
     cursor.execute(query)
@@ -95,3 +95,32 @@ def get_politicians(name):
     theData = cursor.fetchall()
     current_app.logger.info(f'fetchall: {theData}') 
     return jsonify(theData)
+
+@politicians.route('/distinct_politicians', methods=['GET'])
+def get_distinct_politicians():
+    current_app.logger.info('politicians_routes.py: GET /politicians route')
+    cursor = db.get_db().cursor()
+    query = f"SELECT DISTINCT(Name) FROM politician ORDER BY Name"
+    cursor.execute(query)
+    current_app.logger.info(f'Query: {query}')
+    theData = cursor.fetchall()
+    current_app.logger.info(f'fetchall: {theData}') 
+    return jsonify(theData)
+
+@politicians.route('/volume_politicians/<name>', methods=['GET'])
+def get_politician_trade_volume(name):
+    current_app.logger.info('politicians_routes.py: GET /volume_politicians/<name> route')
+    cursor = db.get_db().cursor()
+    current_app.logger.info(f'politician name = {name}')
+    query = f"SELECT Name, Party, Date_Traded, SUM(Trade_Value) AS Total_Trade_Value \
+            FROM politician \
+            WHERE Name LIKE '%{name}%' \
+            GROUP BY Name, Party, Date_Traded \
+            ORDER BY SUM(Trade_Value) DESC" 
+    cursor.execute(query)
+    current_app.logger.info(f'Query: {query}')
+    theData = cursor.fetchall()
+    current_app.logger.info(f'fetchall: {theData}') 
+    return jsonify(theData)
+
+

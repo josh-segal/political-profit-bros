@@ -15,3 +15,9 @@ if st.button('Inference Model',
              type='primary',
              use_container_width=True):
   st.switch_page('pages/22_Model_Inference.py')
+
+
+if st.button("Track Politician's Trade Volume", 
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/23_Politician_Trade_Volume.py')
