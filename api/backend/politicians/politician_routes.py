@@ -30,7 +30,6 @@ LIMIT 5''')
 
 @politicians.route('/<politician_name>', methods=['GET'])
 def get_stock_detail (politician_name):
-
     query = f"SELECT * FROM politician WHERE name like '%{politician_name}%'"
     current_app.logger.info(query)
 

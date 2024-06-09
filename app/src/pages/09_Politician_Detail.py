@@ -35,12 +35,25 @@ if st.session_state['role'] == 'investor':
             st.success('politician successfully tracked!')
         else:
             st.error('Failed to track politician. Please try again.')
+        politician_name = politician['name']
+        if st.button(f"What Securities Does {politician_name} hold?",
+                            type='primary',
+                            use_container_width=True):
+            try:
+                politician_response = requests.get(f'http://api:4000/po/{politician_name}')
+                logger.info(f'politician_response: {politician_response}')
+                politician_results = politician_response.json()
+                st.dataframe(politician_results, column_order=["Name", "Politician_id", "Party", "Chamber", "State", "Asset_Type", \
+                "Issuer", "Ticker", "Issuer_Country", "Type", "txId", "Date_Traded", "Date_Published", "Trade_Size",\
+                "Trade_Price", "Trade_Value"])
 
+            except requests.exceptions.RequestException as e:
+                st.error(f"An error occurred: {e}")
 elif st.session_state['role'] == 'manager':
 
     st.write('politician Detail Page')
     politician = st.session_state.payload
-    st.write(politician['Name'])
+    st.write(politician['name'])
 
     if st.button('Track candidate politician',
                             type='primary',
