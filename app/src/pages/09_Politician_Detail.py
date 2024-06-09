@@ -49,10 +49,10 @@ if st.session_state['role'] == 'investor':
                 politician_results_df = pd.DataFrame(politician_results)
 
                 # Group by columns and sum the Trade_Value
-                grouped_df = politician_results_df.groupby(["Name", "Party", "State", "Ticker"], as_index=False)["Trade_Value"].sum()
+                grouped_df = politician_results_df.groupby(["Name", "Party", "State", "Ticker", "Issuer"], as_index=False)["Trade_Value"].sum()
                 
                 # Display the grouped dataframe
-                st.dataframe(grouped_df.sort_values(by='Trade_Value', ascending=False).reset_index(), column_order=["Name", "Party", "State", "Ticker", "Trade_Value"])
+                st.dataframe(grouped_df.sort_values(by='Trade_Value', ascending=False).reset_index(), column_order=["Name", "Party", "State", "Ticker", "Issuer", "Trade_Value"])
             #    column_order=["Name", "Politician_id", "Party", "Chamber", "State", "Asset_Type", \
             #  "Issuer", "Ticker", "Issuer_Country", "Type", "txId", "Date_Traded", "Date_Published", "Trade_Size",\
             #      "Trade_Price", "Trade_Value"])
