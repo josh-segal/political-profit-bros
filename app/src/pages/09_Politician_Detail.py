@@ -14,20 +14,22 @@ if st.session_state['role'] == 'investor':
 
 
     politician = st.session_state.payload
-    st.write(politician['name'])
+    st.title(politician['name'] + ' \n\n **Party**: ' + politician['party'] + ' \n\n **State**: ' + politician['state'])
+
     politician_name = politician['name']
 
     politician_stocks = st.session_state.politician_stock
 
     for stock in politician_stocks:
-            if st.button(stock['Ticker'] + ' - $' + str(stock['Trade_Value']) + ' - on ' + stock['Date_Traded'],
-                        type='secondary',
-                        use_container_width=True):
-                search_query = stock['Ticker']
-                results = requests.get(f'http://api:4000/s/{search_query}').json()
-                st.session_state.politician_stock_list = results
-                logger.info('pol_stock_response ----------->', results)
-                st.write(stock['Ticker'])
+            # if st.button(stock['Ticker'] + ' - $' + str(stock['Trade_Value']) + ' - on ' + stock['Date_Traded'],
+            #             type='secondary',
+            #             use_container_width=True):
+            #     search_query = stock['Ticker']
+            #     results = requests.get(f'http://api:4000/s/{search_query}').json()
+            #     st.session_state.politician_stock_list = results
+            #     logger.info('pol_stock_response ----------->', results)
+            #     st.write(stock['Ticker'])
+            st.write('- ' + stock['Ticker'] + ' - $' + str(stock['Trade_Value']) + ' - on ' + stock['Date_Traded'])
                 # st.switch_page('pages/08_Stock_Detail.py')
 
     if st.button('Track politician',
