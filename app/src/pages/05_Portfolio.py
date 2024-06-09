@@ -18,11 +18,10 @@ st.header('Portfolio')
 
 if st.session_state['role'] == 'investor':
 
-    st.write(f"### Hi, {st.session_state['first_name']}. Here are the stocks you are tracking.")
+    # stock_pol = st.toggle("Politician / Stock Portfolio", value=True)
+    tab1, tab2 = st.tabs(["Stock Portfolio", "Politician Portfolio"])
 
-    stock_pol = st.toggle("Politician / Stock Portfolio", value=True)
-
-    if stock_pol:
+    with tab1:
 
         results = requests.get(f'http://api:4000/i/stock_portfolio/{1}').json()
         if results:
@@ -52,10 +51,7 @@ if st.session_state['role'] == 'investor':
 
         else:
             st.write('no stocks found... check spelling')
-    else:
-
-        st.write(f"### Hi, {st.session_state['first_name']}. Here are the politicians you are tracking.")
-
+    with tab2:
 
         results = requests.get(f'http://api:4000/po/politician_portfolio/{1}').json()
         if results:
@@ -85,7 +81,6 @@ if st.session_state['role'] == 'investor':
 
 elif st.session_state['role'] == 'manager':
 
-    st.write(f"### Hi, {st.session_state['first_name']}. Here are the politicians you are tracking.")
 
     results = requests.get(f'http://api:4000/m/politician_portfolio/{3}').json()
 

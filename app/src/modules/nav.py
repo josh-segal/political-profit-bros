@@ -83,6 +83,7 @@ def SideBarLinks(show_home=False):
             managerHomeNav()
             PoliticianSearchNav()
             editManagerNav()
+            PortfolioNav()
             
         
         # If the user is an administrator, give them access to the administrator pages
