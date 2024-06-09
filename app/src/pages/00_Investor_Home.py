@@ -19,15 +19,18 @@ col1, col2, col3 = st.columns(3)
 with col1:
     if st.button('Search Stock Database',
              type='primary',
-             use_container_width=True):
+             use_container_width=True,
+             help="explore the stock database"):
       st.switch_page('pages/01_Stock_Search.py')
 with col2:
     if st.button('Search Politician Database', 
              type='primary',
-             use_container_width=True):
+             use_container_width=True,
+             help="explore the politician database"):
       st.switch_page('pages/07_Politician_Search.py')
 with col3:
     if st.button('View My Portfolio', 
              type='primary',
-             use_container_width=True):
+             use_container_width=True,
+             help="view your saved stocks and politicians"):
       st.switch_page('pages/05_Portfolio.py')
