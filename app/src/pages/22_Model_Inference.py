@@ -38,7 +38,6 @@ if name_input and date_input:
     # Will analyze any significant stock price changes
     stock = yf.download([f'{name_input}'], start=begin_date_str, end=end_date_str).reset_index()
 
-
     # Calculate the linear regression slope and intercept
     X = np.array(list(range(1, len(stock) + 1)))
     Y = np.array(stock['Adj Close'])
