@@ -127,3 +127,17 @@ def politician_dropdown ():
     theData = cursor.fetchall()
     current_app.logger.info(f'GET /politician: theData = {pd.DataFrame(theData).values}')
     return jsonify(theData)
+
+
+
+@politicians.route('/politician_stock_details/<politician_name>', methods=['GET'])
+def get_politician_stock_detail (politician_name):
+
+    query = f"SELECT * FROM poly_trade_data WHERE Name like '%{politician_name}%'"
+    current_app.logger.info(query)
+
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    the_data = cursor.fetchall()
+
+    return jsonify(the_data)
