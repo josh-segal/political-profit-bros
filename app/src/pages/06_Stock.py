@@ -12,7 +12,7 @@ import requests
 SideBarLinks()
 
 search_query = st.text_input('Search for a stock...')
-
+"""
 if search_query:
 
     if st.button('Stock 1', 
@@ -21,7 +21,7 @@ if search_query:
         # results = requests.get(f'http://api:4000/stock/{search_query}').json()
         # results should be dataframe
 
-
+"""
 
 # set the header of the page
 # st.header('World Bank Data')

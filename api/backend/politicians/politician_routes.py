@@ -14,10 +14,10 @@ def get_politicians():
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of politicians
-    cursor.execute('''SELECT p.name, p.party, p.state, p.politician_id
+    cursor.execute('''SELECT p.name, p.party, p.state, p.id
 FROM politician p
-         LEFT JOIN politician_search_history psh ON p.politician_id = psh.politician_id
-GROUP BY p.politician_id, p.name, p.party, p.state
+         LEFT JOIN politician_search_history psh ON p.id = psh.politician_id
+GROUP BY p.id, p.name, p.party, p.state
 ORDER BY count(psh.politician_id)
 LIMIT 5''')
 
@@ -72,7 +72,7 @@ def get_politician_portfolio(investor_id):
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of stocks
-    cursor.execute(f"SELECT DISTINCT p.name, p.party, p.state, p.politician_id FROM politician p JOIN politician_investor po ON p.politician_id = po.politician_id WHERE investor_id = '{investor_id}'")
+    cursor.execute(f"SELECT DISTINCT p.name, p.party, p.state, p.id FROM politician p JOIN politician_investor po ON p.id = po.politician_id WHERE investor_id = '{investor_id}'")
 
     # fetch all the data from the cursor
     theData = cursor.fetchall()
@@ -82,6 +82,7 @@ def get_politician_portfolio(investor_id):
 
     return jsonify(theData)
 
+<<<<<<< HEAD
 """
 # Get all customers from the DB based on name
 @politicians.route('/politicians/<name>', methods=['GET'])
@@ -133,3 +134,13 @@ def predict_trade_volume(name):
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
     return the_response
+=======
+
+@politicians.route('/politicians_dropdown', methods=['GET'])
+def politician_dropdown ():
+    cursor = db.get_db().cursor()
+    cursor.execute("select distinct concat(Name, ' - ', Party, ' - ', State) as item, p.name, p.party, p.state, p.id FROM politician p order by item")
+    theData = cursor.fetchall()
+    current_app.logger.info(f'GET /politician: theData = {pd.DataFrame(theData).values}')
+    return jsonify(theData)
+>>>>>>> main

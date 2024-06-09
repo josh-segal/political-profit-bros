@@ -8,15 +8,10 @@ st.write("# About this App")
 
 st.markdown (
     """
-    This app is being built as an exemplar for Northeastern University's 
-    Summer 2024 Dialogue of Civilization Program titled *Data and 
-    Software in International Government and Politics*.  The program is bein
-    led by Dr. Mark Fontenot and Dr. Eric Gerber from the Khoury College of
-    Computer Sciences.  
-
-    The goal of this demo is to provide information on the tech stack 
-    being used as well as demo some of the features of the various platforms. 
-
-    Stay tuned for more information and features to come!
+    Introducing PublicInterest, a cutting-edge political stock trading app designed to empower investors, campaign managers, and journalists with actionable insights. 
+    PublicInterest harnesses the power of machine learning models to provide predictive analysis of stock prices influenced by politicians' trading activities and legislative developments. 
+    By seamlessly integrating real-time data on political actions and market trends, PublicInterest offers a unique platform where users can make informed investment decisions, strategize campaign finances, and craft data-driven journalistic narratives. 
+    Join PublicInterest today and stay ahead in the dynamic intersection of politics and finance.
+    
     """
         )
