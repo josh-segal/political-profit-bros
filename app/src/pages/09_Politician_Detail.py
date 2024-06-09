@@ -40,7 +40,7 @@ elif st.session_state['role'] == 'manager':
 
     st.write('politician Detail Page')
     politician = st.session_state.payload
-    st.write(politician['Name'])
+    st.write(politician['name'])
 
     if st.button('Track candidate politician',
                             type='primary',

@@ -130,7 +130,7 @@ elif st.session_state['role'] == 'manager':
                                 response_container.text(f"Successfully untracked {politician['name']}.")
                                 st.rerun()
                             else:
-                                response_container.text(f"Failed to untrack {politician['name']}.")
+                                response_container.text(f"Failed to untrack {politician['Name']}.")
             else:
                 with col2:
                     innerCol1Bad, innerCol2Bad = st.columns([2, 1])
@@ -155,4 +155,4 @@ elif st.session_state['role'] == 'manager':
                                 response_container.text(f"Successfully untracked {politician['name']}.")
                                 st.rerun()
                             else:
-                                response_container.text(f"Failed to untrack {politician['name']}.")
+                                response_container.text(f"Failed to untrack {politician['Name']}.")

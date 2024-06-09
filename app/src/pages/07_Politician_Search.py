@@ -29,7 +29,7 @@ if search_query:
     results = requests.get(f'http://api:4000/po/{search_query}').json()
     if results:
         for politician in results:
-            if st.button(politician['Name'],
+            if st.button(politician['name'],
                         type='primary',
                         use_container_width=True):
                 st.session_state.payload = politician
