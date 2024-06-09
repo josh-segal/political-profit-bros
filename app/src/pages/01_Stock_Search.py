@@ -50,7 +50,7 @@ else:
     # SQL query to grab 5 most searched stocks ... eventually
     results = requests.get(f'http://api:4000/s/stocks').json()
     for stock in results:
-            if st.button(stock['company'],
+            if st.button('🔥 ' + stock['company'],
                         type='primary',
                         use_container_width=True):
                 st.session_state.payload = stock
