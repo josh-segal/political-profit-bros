@@ -46,9 +46,12 @@ if st.button('View Trade Volume Information', type='primary', use_container_widt
     
     
     # Create the line plot
-    #st.line_chart(df, x='Date_Traded', y='ypreds', color="#FF0000")
+    st.line_chart(df, x='Date_Traded', y='ypreds', color="#FF0000")
     st.line_chart(df, x='Date_Traded', y=['Total_Trade_Value','ypreds'], color=["#0000FF","#FF0000"])
-    st.write(prediction_response['result']['equation'])
+
+    agree = st.checkbox("Click to see Details")
+    if agree:
+        st.write(prediction_response['result']['equation'])
 
     
 
