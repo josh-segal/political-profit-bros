@@ -4,7 +4,6 @@ from backend.db_connection import db
 import yfinance as yf
 from datetime import date
 from dateutil.relativedelta import *
-from backend.ml_models.model01 import prediction
 
 
 stocks = Blueprint('stocks', __name__)
@@ -23,10 +22,10 @@ def get_stocks():
     current_app.logger.info(f'GET /stocks: theData = {theData}')
 
     return jsonify(theData)
+"""
 
 @stocks.route('/stocks/<name>', methods=['GET'])
 def predict_stockprice(name):
-    
     current_app.logger.info(f'name: {name}')
     current_date = date.today()
     current_date_str = current_date.strftime('%Y-%m-%d')
@@ -50,6 +49,7 @@ def predict_stockprice(name):
 
 #jsonify dictionary
 
+"""
 """
 # Get all customers from the DB based on name
 @politicians.route('/politicians/<name>', methods=['GET'])

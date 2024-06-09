@@ -3,7 +3,7 @@ import json
 import pymysql
 from backend.db_connection import db
 import pandas as pd
-
+from backend.ml_models.model01 import volume_prediction
 politicians = Blueprint('politicians', __name__)
 
 """
@@ -123,4 +123,13 @@ def get_politician_trade_volume(name):
     current_app.logger.info(f'fetchall: {theData}') 
     return jsonify(theData)
 
-
+@politicians.route('/predict_volume/<name>', methods=['GET'])
+def predict_trade_volume(name):
+    current_app.logger.info('politicians_routes.py: GET /predict_volume/<name> route')
+    current_app.logger.info(f'name = {name}')
+    predict_values = volume_prediction(name)
+    return_dict = {'result': predict_values}
+    the_response = make_response(jsonify(return_dict))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
