@@ -83,17 +83,10 @@ def get_politician_portfolio(investor_id):
     return jsonify(theData)
 
 
-# Get all customers from the DB based on name
-# @politicians.route('/politicians/<name>', methods=['GET'])
-# def get_politicians(name):
-#     current_app.logger.info('politicians_routes.py: GET /politicians/<name> route')
-#     cursor = db.get_db().cursor()
-#     # Use parameterized query to prevent SQL injection and handle string inputs correctly
-#     current_app.logger.info(f'politician name = {name}')
-#     query = f"SELECT * FROM politician WHERE name like '%{name}%'"
-#     cursor.execute(query)
-#     current_app.logger.info(f'Query: {query}')
-#     theData = cursor.fetchall()
-#     current_app.logger.info(f'fetchall: {theData}')
-   
-#     return jsonify(theData)
+@politicians.route('/politicians_dropdown', methods=['GET'])
+def politician_dropdown ():
+    cursor = db.get_db().cursor()
+    cursor.execute("select distinct concat(Name, ' - ', Party, ' - ', State) as item, p.name, p.party, p.state, p.id FROM politician p order by item")
+    theData = cursor.fetchall()
+    current_app.logger.info(f'GET /politician: theData = {pd.DataFrame(theData).values}')
+    return jsonify(theData)
