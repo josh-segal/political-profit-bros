@@ -17,10 +17,9 @@ def csv_to_sql_insert(csv_file_path, table_name, output_file_path):
         for statement in insert_statements:
             output_file.write(statement + '\n')
 
-# Example usage
-csv_file_path = '/Users/asun/DS 3000/CS 4973/political-profit-bros/app/src/assets/python/politician_dataset.csv'
-table_name = 'politician'
-output_file_path = '/Users/asun/DS 3000/CS 4973/political-profit-bros/database/politician.sql'
+csv_file_path = '/Users/joshuasegal/Coding/cs3200materials/political-profit-bros/app/src/assets/python/cleanedbilldata.csv'
+table_name = 'legislation_mega'
+output_file_path = '/Users/joshuasegal/Coding/cs3200materials/political-profit-bros/database/04_legislation.sql'
 csv_to_sql_insert(csv_file_path, table_name, output_file_path)
 
 print(f"SQL INSERT statements have been written to {output_file_path}")
