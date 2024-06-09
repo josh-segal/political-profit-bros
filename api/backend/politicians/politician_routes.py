@@ -6,7 +6,7 @@ import pandas as pd
 from backend.ml_models.model01 import volume_prediction
 politicians = Blueprint('politicians', __name__)
 
-"""
+
 # Get all the politicians from the database
 @politicians.route('/politicians', methods=['GET'])
 def get_politicians():
@@ -51,10 +51,10 @@ def put_tracked_politician ():
     politician_id = the_data['politician_id']
     date = the_data['date']
 
-    query = f"
+    query = f"""
             INSERT INTO politician_investor (investor_id, politician_id, created_at)
             VALUES ('{investor_id}', '{politician_id}', '{date}')
-            "
+            """
     current_app.logger.info(query)
 
     # Execute the query
@@ -80,21 +80,6 @@ def get_politician_portfolio(investor_id):
     # for each of the rows, zip the data elements together with
     # the column headers. 
 
-    return jsonify(theData)
-
-<<<<<<< HEAD
-"""
-# Get all customers from the DB based on name
-@politicians.route('/politicians/<name>', methods=['GET'])
-def get_politicians(name):
-    current_app.logger.info('politicians_routes.py: GET /politicians/<name> route')
-    cursor = db.get_db().cursor()
-    current_app.logger.info(f'politician name = {name}')
-    query = f"SELECT * FROM politician WHERE name like '%{name}%'"
-    cursor.execute(query)
-    current_app.logger.info(f'Query: {query}')
-    theData = cursor.fetchall()
-    current_app.logger.info(f'fetchall: {theData}') 
     return jsonify(theData)
 
 @politicians.route('/distinct_politicians', methods=['GET'])
@@ -134,7 +119,6 @@ def predict_trade_volume(name):
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
     return the_response
-=======
 
 @politicians.route('/politicians_dropdown', methods=['GET'])
 def politician_dropdown ():
@@ -143,4 +127,3 @@ def politician_dropdown ():
     theData = cursor.fetchall()
     current_app.logger.info(f'GET /politician: theData = {pd.DataFrame(theData).values}')
     return jsonify(theData)
->>>>>>> main
