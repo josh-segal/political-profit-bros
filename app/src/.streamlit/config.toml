@@ -3,6 +3,6 @@ showSidebarNavigation = false
 
 [theme]
 base="dark"
-primaryColor="#6550e6"
-font="monospace"
+primaryColor="#4e944b"
+font="sans serif"
 

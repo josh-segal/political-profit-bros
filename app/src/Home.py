@@ -10,7 +10,7 @@ st.set_page_config(layout = 'wide')
 st.session_state['authenticated'] = False
 SideBarLinks(show_home=True)
 
-st.title('PublicInterest')
+st.title(':green[P]**ublic**:green[I]**nterest**')
 
 st.write('\n\n')
 st.write('### HI! As which user would you like to log in?')
