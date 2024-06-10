@@ -28,6 +28,23 @@ LIMIT 10''')
     return jsonify(theData)
 
 
+@politicians.route('/politicians_all', methods=['GET'])
+def get_all_politicians():
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+
+    # use cursor to query the database for a list of politicians
+    cursor.execute('''SELECT p.name, p.party, p.state, p.id
+FROM politician p
+                   ''')
+
+    # fetch all the data from the cursor
+    theData = cursor.fetchall()
+    current_app.logger.info(f'GET /politicians_all: theData = {theData}')
+
+    return jsonify(theData)
+
+
 @politicians.route('/<politician_name>', methods=['GET'])
 def get_stock_detail (politician_name):
 
@@ -39,6 +56,35 @@ def get_stock_detail (politician_name):
     the_data = cursor.fetchall()
 
     return jsonify(the_data)
+
+
+from flask import request, jsonify
+
+@politicians.route('/legislations', methods=['POST'])
+def get_politician_name():
+    politician_ids = request.json
+    
+    if not politician_ids:
+        return jsonify({"error": "No politician IDs provided"}), 400
+
+    # Convert politician_ids to a comma-separated string
+    ids_str = ','.join([f'"{id}"' for id in politician_ids])
+
+    query = f"""
+        SELECT id, name, party, state 
+        FROM politician 
+        WHERE id IN ({ids_str})
+    """
+    current_app.logger.info(query)
+
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    the_data = cursor.fetchall()
+
+    return jsonify(the_data)
+
+
+
 
 
 @politicians.route('/track', methods=['POST'])
@@ -154,6 +200,19 @@ def politician_dropdown ():
 def get_politician_stock_detail (politician_name):
 
     query = f"SELECT * FROM poly_trade_data WHERE Name like '%{politician_name}%'"
+    current_app.logger.info(query)
+
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    the_data = cursor.fetchall()
+
+    return jsonify(the_data)
+
+
+@politicians.route('/politician_trade', methods=['GET'])
+def get_politician_trade_detail ():
+
+    query = f"SELECT * FROM politician_trade"
     current_app.logger.info(query)
 
     cursor = db.get_db().cursor()

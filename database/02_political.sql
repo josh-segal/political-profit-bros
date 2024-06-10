@@ -147,8 +147,7 @@ CREATE TABLE IF NOT EXISTS stock_search_history
     stock_id VARCHAR(10),
     date DATETIME,
     PRIMARY KEY (investor_id, stock_id),
-    FOREIGN KEY (investor_id) REFERENCES investor (id),
-    FOREIGN KEY (stock_id) REFERENCES stock_unique (ticker)
+    FOREIGN KEY (investor_id) REFERENCES investor (id)
 );
 CREATE TABLE IF NOT EXISTS journalist_legislation
 (
@@ -202,8 +201,7 @@ CREATE TABLE IF NOT EXISTS investor_stock
     investor_id INT,
     stock_id VARCHAR(10),
     PRIMARY KEY (investor_id, stock_id),
-    FOREIGN KEY (investor_id) REFERENCES investor (id),
-    FOREIGN KEY (stock_id) REFERENCES stock_unique (ticker)
+    FOREIGN KEY (investor_id) REFERENCES investor (id)
 );
 CREATE TABLE IF NOT EXISTS investor_politician_order
 (
