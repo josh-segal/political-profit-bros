@@ -6,7 +6,7 @@ from modules.nav import SideBarLinks
 import requests
 import logging
 logger = logging.getLogger()
-from datetime import datetime as dt
+from datetime import datetime
 
 SideBarLinks()
 
@@ -31,7 +31,7 @@ if st.session_state['role'] == 'investor':
             #     st.write(stock['Ticker'])
             try:
                 
-                    st.write('- ' + stock['Ticker'] + ' - $' + str(stock['Trade_Value']) + ' - on ' + stock['Date_Traded'])
+                    st.write('- ' + stock['Ticker'] + ' - $' + str(stock['Trade_Value']) + ' - on ' + str(stock['Date_Traded'][:16]))
             except:
                 st.write()
                 # st.switch_page('pages/08_Stock_Detail.py')
@@ -43,7 +43,7 @@ if st.session_state['role'] == 'investor':
         payload = {
                 'investor_id': 1, # TODO: figure out how to do this with 3 users
                         'politician_id': politician['id'],
-                        'date': dt.now().isoformat(),
+                        'date': datetime.now().isoformat(),
         }
 
 
@@ -70,7 +70,7 @@ elif st.session_state['role'] == 'manager':
         payload = {
                 'manager_id': 3, # TODO: figure out how to do this with 3 users
                         'politician_id': politician['id'],
-                        'date': dt.now().isoformat(),
+                        'date': datetime.now().isoformat(),
                         'candidate_opp': 1,
         }
 
@@ -91,7 +91,7 @@ elif st.session_state['role'] == 'manager':
         payload = {
                 'manager_id': 3, # TODO: figure out how to do this with 3 users
                         'politician_id': politician['id'],
-                        'date': dt.now().isoformat(),
+                        'date': datetime.now().isoformat(),
                         'candidate_opp': 0,
         }
 

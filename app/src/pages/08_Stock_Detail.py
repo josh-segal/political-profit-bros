@@ -6,7 +6,7 @@ from modules.nav import SideBarLinks
 import requests
 import logging
 logger = logging.getLogger()
-from datetime import datetime as dt
+from datetime import datetime
 
 SideBarLinks()
 
@@ -14,10 +14,18 @@ st.write('Stock Detail Page')
 stock = st.session_state.payload
 st.write(stock['company'])
 
-dates = pd.date_range('2023-01-01', periods=100)
-data = np.random.randn(100).cumsum()
-df = pd.DataFrame(data, index=dates, columns=['Value'])
-st.line_chart(df)
+ticker = stock['ticker']
+def convert_date(date_string):
+    # convert string to date object
+    date_object = datetime.strptime(date_string, '%a, %d %b %Y %H:%M:%S %Z').date()
+    return date_object
+# dates = pd.date_range('2023-06-09', '2024-06-09')
+data = requests.get(f'http://api:4000/s/stocks_closing_value/{ticker}').json()
+logger.info(f'JSON: {data}')
+df = pd.DataFrame(data)
+df['Date'] = df['Date'].apply(lambda x: convert_date(x))
+df = df.sort_values(by='Date', ascending=False)
+st.line_chart(df, x='Date', y='Close')
 
 if st.button('Track stock',
                         type='primary',
@@ -25,8 +33,8 @@ if st.button('Track stock',
     
     payload = {
             'investor_id': 1, # TODO: figure out how to do this with 3 users
-            'stock_id': stock['id'],
-            'date': dt.now().isoformat(),
+            'stock_id': stock['ticker'],
+            'date': datetime.now().isoformat(),
     }
 
     url = 'http://api:4000/s/track'

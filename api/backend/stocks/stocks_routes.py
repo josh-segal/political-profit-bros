@@ -16,13 +16,21 @@ def get_stocks():
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of stocks
-    cursor.execute('SELECT s.curr_price, s.company, s.ticker, s.id FROM stock s LEFT JOIN stock_search_history ssh ON s.id = ssh.stock_id GROUP BY s.id ORDER BY count(ssh.stock_id) LIMIT 5')
+    cursor.execute('SELECT s.ticker, s.company FROM stock_unique s LEFT JOIN stock_search_history ssh ON s.ticker = ssh.stock_id GROUP BY s.ticker, s.company ORDER BY count(ssh.stock_id) DESC LIMIT 10')
 
     # fetch all the data from the cursor
     theData = cursor.fetchall()
     current_app.logger.info(f'GET /stocks: theData = {theData}')
 
     return jsonify(theData)
+
+
+@stocks.route('stocks_closing_value/<ticker>', methods=['GET'])
+def stocks_closing_value(ticker):
+    cursor = db.get_db().cursor()
+    cursor.execute(f"select ticker, Close, Date from stocks where ticker = '{ticker}' order by Date")
+    the_data = cursor.fetchall()
+    return jsonify(the_data)
 
 
 # @stocks.route('/stocks/<name>', methods=['GET'])
@@ -85,7 +93,7 @@ def get_stocks():
 @stocks.route('/<stock_name>', methods=['GET'])
 def get_stock_detail (stock_name):
 
-    query = f"SELECT * FROM stock WHERE ticker like '%{stock_name}%'"
+    query = f"SELECT distinct s.ticker, s.company FROM stock_unique s WHERE s.ticker like '%{stock_name}%'"
     current_app.logger.info(query)
 
     cursor = db.get_db().cursor()
@@ -120,11 +128,53 @@ def put_tracked_stock ():
     return 'Success!'
 
 
+@stocks.route('/history', methods=['POST'])
+def put_history_stock ():
+    
+    the_data = request.json
+    current_app.logger.info(f'the_data = {the_data}')
+
+    investor_id = the_data['investor_id']
+    stock_id = the_data['stock_id']
+    date = the_data['date']
+
+    query = f"""
+            INSERT INTO stock_search_history (investor_id, stock_id, date)
+            VALUES ('{investor_id}', '{stock_id}', '{date}')
+            """
+    
+    current_app.logger.info(query)
+
+    # Execute the query
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    db.get_db().commit()
+    
+    return 'Success!'
+
+
 @stocks.route('/stocks_dropdown', methods=['GET'])
 def stock_dropdown ():
 
     cursor = db.get_db().cursor()
-    cursor.execute("select concat(ticker, ' - ', company) as item from stock order by ticker")
+    cursor.execute("select concat(ticker, ' - ', company) as item from stock_unique order by ticker")
     theData = cursor.fetchall()
     current_app.logger.info(f'GET /stocks: theData = {pd.DataFrame(theData).values}')
+    return jsonify(theData)
+
+
+@stocks.route('/stocks_volume', methods=['GET'])
+def get_stock_by_volume ():
+    cursor = db.get_db().cursor()
+    query = """
+SELECT s.ticker, s.company, SUM(s.Volume)
+FROM stocks s
+GROUP BY s.ticker, s.company
+ORDER BY SUM(s.Volume) DESC
+LIMIT 10;
+""" 
+    cursor.execute(query)
+    current_app.logger.info(f'Query: {query}')
+    theData = cursor.fetchall()
+    current_app.logger.info(f'fetchall: {theData}') 
     return jsonify(theData)

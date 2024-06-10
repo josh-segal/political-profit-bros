@@ -32,6 +32,7 @@ if search_query:
             if st.button(politician['name'],
                         type='primary',
                         use_container_width=True):
+                politician_name = politician['name']
                 politician_response = requests.get(f'http://api:4000/po/politician_stock_details/{politician_name}').json()
                 st.session_state.politician_stock = politician_response
                 st.session_state.payload = politician
@@ -40,16 +41,35 @@ if search_query:
         st.write('no politicians found... check spelling')
     
 else:
-    st.write("Trending Politicians:")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("Trending Politicians:")
 
-    # SQL query to grab 5 most searched politicians ... eventually
-    results = requests.get(f'http://api:4000/po/politicians').json()
-    for politician in results:
-            if st.button('🔥 ' + politician['name'],
-                        type='primary',
-                        use_container_width=True):
-                politician_name = politician['name']
-                politician_response = requests.get(f'http://api:4000/po/politician_stock_details/{politician_name}').json()
-                st.session_state.politician_stock = politician_response
-                st.session_state.payload = politician
-                st.switch_page('pages/09_Politician_Detail.py')
+        # SQL query to grab 5 most searched politicians ... eventually
+        results = requests.get(f'http://api:4000/po/politicians').json()
+        for politician in results:
+                if st.button('🔥 ' + politician['name'],
+                            type='primary',
+                            use_container_width=True,
+                            key=f"{politician['name']}_name_trending"):
+                    politician_name = politician['name']
+                    politician_response = requests.get(f'http://api:4000/po/politician_stock_details/{politician_name}').json()
+                    st.session_state.politician_stock = politician_response
+                    st.session_state.payload = politician
+                    st.switch_page('pages/09_Politician_Detail.py')
+
+    with col2:
+        st.write("Politicians with Highest Volume:")
+
+        # SQL query to grab 5 most searched politicians ... eventually
+        results = requests.get(f'http://api:4000/po/politicians_volume').json()
+        for politician in results:
+                if st.button(politician['name'],
+                            type='primary',
+                            use_container_width=True,
+                            key=f"{politician['name']}_name_volume"):
+                    politician_name = politician['name']
+                    politician_response = requests.get(f'http://api:4000/po/politician_stock_details/{politician_name}').json()
+                    st.session_state.politician_stock = politician_response
+                    st.session_state.payload = politician
+                    st.switch_page('pages/09_Politician_Detail.py')

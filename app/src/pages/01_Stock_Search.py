@@ -37,7 +37,7 @@ if search_query:
             if st.button(stock['company'],
                         type='primary',
                         use_container_width=True,
-                        key=f"{stock['id']}_name"):
+                        key=f"{stock['ticker']}_name"):
                 st.session_state.payload = stock
                 st.switch_page('pages/08_Stock_Detail.py')
     else:
@@ -45,13 +45,27 @@ if search_query:
          
     
 else:
-    st.write("Trending Stocks:")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("Trending Stocks by PoliticalInterest Users:")
 
-    # SQL query to grab 5 most searched stocks ... eventually
-    results = requests.get(f'http://api:4000/s/stocks').json()
-    for stock in results:
-            if st.button('🔥 ' + stock['company'],
-                        type='primary',
-                        use_container_width=True):
+        # SQL query to grab 5 most searched stocks ... eventually
+        results = requests.get(f'http://api:4000/s/stocks').json()
+        for stock in results:
+                if st.button('🔥 ' + stock['company'],
+                            type='primary',
+                            use_container_width=True,
+                            key=f"{stock['ticker']}_trending"):
+                    st.session_state.payload = stock
+                    st.switch_page('pages/08_Stock_Detail.py')
+    
+    with col2:
+        st.write("Stocks by Volume: ")
+        results = requests.get(f'http://api:4000/s/stocks_volume').json()
+        for stock in results:
+            if st.button(stock['company'],
+                            type='primary',
+                            use_container_width=True,
+                            key=f"{stock['ticker']}_volume"):
                 st.session_state.payload = stock
                 st.switch_page('pages/08_Stock_Detail.py')

@@ -1,8 +1,24 @@
 -- DROP DATABASE IF EXISTS JoshProject;
 -- CREATE DATABASE IF NOT EXISTS JoshProject;
-
 USE JoshProject;
-
+CREATE TABLE IF NOT EXISTS poly_trade_data (
+    txId VARCHAR(255),
+    Name VARCHAR(255),
+    id VARCHAR(255),
+    Party VARCHAR(255),
+    Chamber VARCHAR(255),
+    State VARCHAR(255),
+    Asset_Type VARCHAR(255),
+    Issuer VARCHAR(255),
+    Ticker VARCHAR(255),
+    Issuer_Country VARCHAR(255),
+    Type VARCHAR(255),
+    Date_Traded DATE,
+    Date_Published DATE,
+    Trade_Size FLOAT,
+    Trade_Price FLOAT,
+    Trade_Value INT
+);
 CREATE TABLE IF NOT EXISTS investor
 (
     name VARCHAR(50) NOT NULL,
@@ -11,7 +27,6 @@ CREATE TABLE IF NOT EXISTS investor
     id INT,
     PRIMARY KEY (id)
 );
-
 CREATE TABLE IF NOT EXISTS journalist
 (
     name VARCHAR(50) NOT NULL,
@@ -23,7 +38,6 @@ CREATE TABLE IF NOT EXISTS journalist
     id INT,
     PRIMARY KEY (id)
 );
-
 CREATE TABLE IF NOT EXISTS manager
 (
     name VARCHAR(50) NOT NULL,
@@ -32,8 +46,6 @@ CREATE TABLE IF NOT EXISTS manager
     id INT,
     PRIMARY KEY (id)
 );
-
-
 CREATE TABLE IF NOT EXISTS politician_list
 (
     name VARCHAR(50) NOT NULL,
@@ -44,7 +56,6 @@ CREATE TABLE IF NOT EXISTS politician_list
     PRIMARY KEY (id),
     FOREIGN KEY (manager_id) REFERENCES manager (id)
 );
-
 -- CREATE TABLE IF NOT EXISTS poly_trade_data (
 --     txId VARCHAR(255),
 --     Name VARCHAR(255),
@@ -63,20 +74,14 @@ CREATE TABLE IF NOT EXISTS politician_list
 --     Trade_Price FLOAT,
 --     Trade_Value INT
 -- );
-
 CREATE TABLE politician AS SELECT distinct id, Name, Party, Chamber, State from poly_trade_data;
-
-CREATE TABLE politician_trade AS SELECT txId, 
+CREATE TABLE politician_trade AS SELECT txId,
     id, Asset_Type, Issuer, Ticker, Issuer_Country, Type,
     Date_Traded, Date_Published, Trade_Size, Trade_Price,
     Trade_Value from poly_trade_data;
-
 ALTER TABLE politician ADD PRIMARY KEY (id);
-
 ALTER TABLE politician_trade ADD PRIMARY KEY (txId);
-
 ALTER TABLE politician_trade ADD FOREIGN KEY (id) REFERENCES politician (id);
-
 CREATE TABLE IF NOT EXISTS legislation
 (
     title VARCHAR(80),
@@ -87,44 +92,45 @@ CREATE TABLE IF NOT EXISTS legislation
     id INT,
     PRIMARY KEY (id)
 );
-
-CREATE TABLE IF NOT EXISTS stock
+CREATE TABLE IF NOT EXISTS stocks
 (
-    curr_price FLOAT,
-    company VARCHAR(80),
+    Date DATETIME,
+    Open float,
+    High float,
+    Low float,
+    Close FLOAT,
+    Adj_Close float,
+    Volume int,
     ticker VARCHAR(10),
-    id INT,
-    PRIMARY KEY (id)
+    company Varchar(255),
+    PRIMARY KEY (ticker, Date)
 );
-
 CREATE TABLE IF NOT EXISTS politician_order
 (
     price FLOAT,
     buy TINYINT(1),
-    stock_id INT,
+    stock_id VARCHAR(10),
     politician_id VARCHAR(255),
     volume FLOAT,
     date DATETIME,
     id INT,
     PRIMARY KEY (id),
-    FOREIGN KEY (stock_id) REFERENCES stock (id),
+    FOREIGN KEY (stock_id, date) REFERENCES stocks(ticker,Date),
     FOREIGN KEY (politician_id) REFERENCES politician (id)
 );
-
 CREATE TABLE IF NOT EXISTS investor_order
 (
     price FLOAT,
     buy TINYINT(1),
-    stock_id INT,
+    stock_id VARCHAR(10),
     investor_id INT,
     volume FLOAT,
     date DATETIME,
     id INT,
     PRIMARY KEY (id),
-    FOREIGN KEY (stock_id) REFERENCES stock (id),
+    FOREIGN KEY (stock_id, date) REFERENCES stocks(ticker, Date),
     FOREIGN KEY (investor_id) REFERENCES investor (id)
 );
-
 CREATE TABLE IF NOT EXISTS politician_search_history
 (
   investor_id INT,
@@ -135,17 +141,14 @@ CREATE TABLE IF NOT EXISTS politician_search_history
   FOREIGN KEY (investor_id) REFERENCES investor (id),
   FOREIGN KEY (politician_id) REFERENCES politician (id)
 );
-
 CREATE TABLE IF NOT EXISTS stock_search_history
 (
     investor_id INT,
-    stock_id INT,
+    stock_id VARCHAR(10),
     date DATETIME,
     PRIMARY KEY (investor_id, stock_id),
-    FOREIGN KEY (investor_id) REFERENCES investor (id),
-    FOREIGN KEY (stock_id) REFERENCES stock (id)
+    FOREIGN KEY (investor_id) REFERENCES investor (id)
 );
-
 CREATE TABLE IF NOT EXISTS journalist_legislation
 (
     created_at DATETIME,
@@ -155,7 +158,6 @@ CREATE TABLE IF NOT EXISTS journalist_legislation
     FOREIGN KEY (journalist_id) REFERENCES journalist (id),
     FOREIGN KEY (legislation_id) REFERENCES legislation (id)
 );
-
 CREATE TABLE IF NOT EXISTS journalist_politician
 (
     created_at DATETIME,
@@ -165,7 +167,6 @@ CREATE TABLE IF NOT EXISTS journalist_politician
     FOREIGN KEY (journalist_id) REFERENCES journalist (id),
     FOREIGN KEY (politician_id) REFERENCES politician (id)
 );
-
 CREATE TABLE IF NOT EXISTS politician_legislation
 (
     created_at DATETIME,
@@ -175,7 +176,6 @@ CREATE TABLE IF NOT EXISTS politician_legislation
     FOREIGN KEY (legislation_id) REFERENCES legislation (id),
     FOREIGN KEY (politician_id) REFERENCES politician (id)
 );
-
 CREATE TABLE IF NOT EXISTS politician_manager
 (
     created_at DATETIME,
@@ -186,7 +186,6 @@ CREATE TABLE IF NOT EXISTS politician_manager
     FOREIGN KEY (manager_id) REFERENCES manager (id),
     FOREIGN KEY (politician_id) REFERENCES politician (id)
 );
-
 CREATE TABLE IF NOT EXISTS politician_investor
 (
     created_at DATETIME,
@@ -196,17 +195,14 @@ CREATE TABLE IF NOT EXISTS politician_investor
     FOREIGN KEY (investor_id) REFERENCES investor (id),
     FOREIGN KEY (politician_id) REFERENCES politician (id)
 );
-
 CREATE TABLE IF NOT EXISTS investor_stock
 (
     created_at DATETIME,
     investor_id INT,
-    stock_id INT,
+    stock_id VARCHAR(10),
     PRIMARY KEY (investor_id, stock_id),
-    FOREIGN KEY (investor_id) REFERENCES investor (id),
-    FOREIGN KEY (stock_id) REFERENCES stock (id)
+    FOREIGN KEY (investor_id) REFERENCES investor (id)
 );
-
 CREATE TABLE IF NOT EXISTS investor_politician_order
 (
     created_at DATETIME,
@@ -216,7 +212,6 @@ CREATE TABLE IF NOT EXISTS investor_politician_order
     FOREIGN KEY (investor_id) REFERENCES investor (id),
     FOREIGN KEY (politician_order_id) REFERENCES politician_order (id)
 );
-
 CREATE TABLE IF NOT EXISTS legislation_politician_ids
 (
     legislation_id INT,
@@ -483,131 +478,131 @@ insert into journalist (name, created_at, expert_industry, company, state, party
 insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Zonda Faccini', '2023-12-05', 'Medical/Dental Instruments', 'The Sunday Times', 'Illinois', 'Unity Party', 99);
 insert into journalist (name, created_at, expert_industry, company, state, party, id) values ('Cosetta Glynn', '2023-11-01', 'Major Pharmaceuticals', 'Daily Sun Chronicle', 'California', 'Unity Party', 100);
 
-insert into stock (curr_price, company, ticker, id) values (472.91, 'Barings Participation Investors', 'MPV', 1);
-insert into stock (curr_price, company, ticker, id) values (356.17, 'PennantPark Investment Corporation', 'PNTA.CL', 2);
-insert into stock (curr_price, company, ticker, id) values (677.63, 'GDS Holdings Limited', 'GDS', 3);
-insert into stock (curr_price, company, ticker, id) values (497.91, 'NMI Holdings Inc', 'NMIH', 4);
-insert into stock (curr_price, company, ticker, id) values (282.79, 'Tocagen Inc.', 'TOCA', 5);
-insert into stock (curr_price, company, ticker, id) values (765.84, 'Ocera Therapeutics, Inc.', 'OCRX', 6);
-insert into stock (curr_price, company, ticker, id) values (765.34, 'AllianzGI Convertible & Income Fund II', 'NCZ', 7);
-insert into stock (curr_price, company, ticker, id) values (812.29, 'CECO Environmental Corp.', 'CECE', 8);
-insert into stock (curr_price, company, ticker, id) values (420.56, 'Mannatech, Incorporated', 'MTEX', 9);
-insert into stock (curr_price, company, ticker, id) values (995.03, 'Mattel, Inc.', 'MAT', 10);
-insert into stock (curr_price, company, ticker, id) values (445.53, 'Aldeyra Therapeutics, Inc.', 'ALDX', 11);
-insert into stock (curr_price, company, ticker, id) values (498.27, 'Taylor Morrison Home Corporation', 'TMHC', 12);
-insert into stock (curr_price, company, ticker, id) values (327.47, 'Amaya Inc.', 'AYA', 13);
-insert into stock (curr_price, company, ticker, id) values (80.73, 'Philip Morris International Inc', 'PM', 14);
-insert into stock (curr_price, company, ticker, id) values (359.67, 'Bridgford Foods Corporation', 'BRID', 15);
-insert into stock (curr_price, company, ticker, id) values (902.06, 'PowerShares DWA Energy Momentum Portfolio', 'PXI', 16);
-insert into stock (curr_price, company, ticker, id) values (36.63, 'Rocket Fuel Inc.', 'FUEL', 17);
-insert into stock (curr_price, company, ticker, id) values (555.84, 'IDACORP, Inc.', 'IDA', 18);
-insert into stock (curr_price, company, ticker, id) values (346.73, 'Ocular Therapeutix, Inc.', 'OCUL', 19);
-insert into stock (curr_price, company, ticker, id) values (997.5, 'Seadrill Partners LLC', 'SDLP', 20);
-insert into stock (curr_price, company, ticker, id) values (289.94, 'China Life Insurance Company Limited', 'LFC', 21);
-insert into stock (curr_price, company, ticker, id) values (78.42, 'iShares iBoxx $ High Yield ex Oil & Gas Corporate Bond ETF', 'HYXE', 22);
-insert into stock (curr_price, company, ticker, id) values (365.54, 'Advanced Emissions Solutions, Inc.', 'ADES', 23);
-insert into stock (curr_price, company, ticker, id) values (846.53, 'Planet Fitness, Inc.', 'PLNT', 24);
-insert into stock (curr_price, company, ticker, id) values (505.16, 'FIRST REPUBLIC BANK', 'FRC^C', 25);
-insert into stock (curr_price, company, ticker, id) values (976.97, 'Flaherty & Crumrine Total Return Fund Inc', 'FLC', 26);
-insert into stock (curr_price, company, ticker, id) values (225.77, 'The Navigators Group, Inc.', 'NAVG', 27);
-insert into stock (curr_price, company, ticker, id) values (549.49, 'Frankly, Inc.', 'FKLYU', 28);
-insert into stock (curr_price, company, ticker, id) values (934.34, 'Ormat Technologies, Inc.', 'ORA', 29);
-insert into stock (curr_price, company, ticker, id) values (149.66, 'Pimco Corporate & Income Stategy Fund', 'PCN', 30);
-insert into stock (curr_price, company, ticker, id) values (228.46, 'Janus Henderson Group plc', 'JHG', 31);
-insert into stock (curr_price, company, ticker, id) values (814.65, 'LINE Corporation', 'LN', 32);
-insert into stock (curr_price, company, ticker, id) values (128.77, 'Orchid Island Capital, Inc.', 'ORC', 33);
-insert into stock (curr_price, company, ticker, id) values (66.05, 'NICE Ltd', 'NICE', 34);
-insert into stock (curr_price, company, ticker, id) values (204.46, 'New York Mortgage Trust, Inc.', 'NYMTO', 35);
-insert into stock (curr_price, company, ticker, id) values (12.52, 'Tableau Software, Inc.', 'DATA', 36);
-insert into stock (curr_price, company, ticker, id) values (131.26, 'Bank of America Corporation', 'BAC^Y', 37);
-insert into stock (curr_price, company, ticker, id) values (696.72, 'Tuttle Tactical Management U.S. Core ETF', 'TUTT', 38);
-insert into stock (curr_price, company, ticker, id) values (352.29, 'Upland Software, Inc.', 'UPLD', 39);
-insert into stock (curr_price, company, ticker, id) values (407.96, 'Invesco Mortgage Capital Inc.', 'IVR^A', 40);
-insert into stock (curr_price, company, ticker, id) values (809.04, 'Kayne Anderson Acquisition Corp.', 'KAAC', 41);
-insert into stock (curr_price, company, ticker, id) values (490.3, 'Rosetta Genomics Ltd.', 'ROSG', 42);
-insert into stock (curr_price, company, ticker, id) values (563.5, 'Weatherford International plc', 'WFT', 43);
-insert into stock (curr_price, company, ticker, id) values (300.4, 'Cedar Fair, L.P.', 'FUN', 44);
-insert into stock (curr_price, company, ticker, id) values (489.57, 'Scudder Strategic Municiple Income Trust', 'KSM', 45);
-insert into stock (curr_price, company, ticker, id) values (367.77, 'Southern California Edison Company', 'SCE^H', 46);
-insert into stock (curr_price, company, ticker, id) values (947.31, 'Dreyfus Municipal Bond Infrastructure Fund, Inc.', 'DMB', 47);
-insert into stock (curr_price, company, ticker, id) values (351.72, 'Canadian Natural Resources Limited', 'CNQ', 48);
-insert into stock (curr_price, company, ticker, id) values (146.47, 'PVH Corp.', 'PVH', 49);
-insert into stock (curr_price, company, ticker, id) values (160.2, 'Vanguard Total International Stock ETF', 'VXUS', 50);
-insert into stock (curr_price, company, ticker, id) values (208.14, 'Eaton Vance Risk-Managed Diversified Equity Income Fund', 'ETJ', 51);
-insert into stock (curr_price, company, ticker, id) values (910.0, 'Rambus, Inc.', 'RMBS', 52);
-insert into stock (curr_price, company, ticker, id) values (96.48, 'Neurocrine Biosciences, Inc.', 'NBIX', 53);
-insert into stock (curr_price, company, ticker, id) values (480.65, 'Weyerhaeuser Company', 'WY', 54);
-insert into stock (curr_price, company, ticker, id) values (185.76, 'Sportsman''s Warehouse Holdings, Inc.', 'SPWH', 55);
-insert into stock (curr_price, company, ticker, id) values (368.7, 'Microsoft Corporation', 'MSFT', 56);
-insert into stock (curr_price, company, ticker, id) values (106.77, 'Interactive Brokers Group, Inc.', 'IBKR', 57);
-insert into stock (curr_price, company, ticker, id) values (973.8, 'Modern Media Acquisition Corp.', 'MMDMU', 58);
-insert into stock (curr_price, company, ticker, id) values (919.08, 'RSP Permian, Inc.', 'RSPP', 59);
-insert into stock (curr_price, company, ticker, id) values (47.23, 'American Express Company', 'AXP', 60);
-insert into stock (curr_price, company, ticker, id) values (692.49, 'Navistar International Corporation', 'NAV^D', 61);
-insert into stock (curr_price, company, ticker, id) values (58.79, 'Nuveen Select Tax Free Income Portfolio III', 'NXR', 62);
-insert into stock (curr_price, company, ticker, id) values (614.85, 'Microvision, Inc.', 'MVIS', 63);
-insert into stock (curr_price, company, ticker, id) values (256.29, 'Flaherty & Crumrine Total Return Fund Inc', 'FLC', 64);
-insert into stock (curr_price, company, ticker, id) values (408.15, 'Scudder Strategic Income Trust', 'KST', 65);
-insert into stock (curr_price, company, ticker, id) values (685.73, 'First Trust South Korea AlphaDEX Fund', 'FKO', 66);
-insert into stock (curr_price, company, ticker, id) values (338.33, 'Gores Holdings II, Inc.', 'GSHT', 67);
-insert into stock (curr_price, company, ticker, id) values (251.76, 'Winmark Corporation', 'WINA', 68);
-insert into stock (curr_price, company, ticker, id) values (792.09, 'PowerShares BuyBack Achievers Portfolio', 'PKW', 69);
-insert into stock (curr_price, company, ticker, id) values (450.2, 'Diodes Incorporated', 'DIOD', 70);
-insert into stock (curr_price, company, ticker, id) values (240.32, 'Playa Hotels & Resorts N.V.', 'PLYAW', 71);
-insert into stock (curr_price, company, ticker, id) values (83.77, 'CSW Industrials, Inc.', 'CSWI', 72);
-insert into stock (curr_price, company, ticker, id) values (67.17, 'City Office REIT, Inc.', 'CIO', 73);
-insert into stock (curr_price, company, ticker, id) values (160.61, 'Helen of Troy Limited', 'HELE', 74);
-insert into stock (curr_price, company, ticker, id) values (98.15, 'Gabelli Dividend', 'GDV^D', 75);
-insert into stock (curr_price, company, ticker, id) values (325.71, 'Pathfinder Bancorp, Inc.', 'PBHC', 76);
-insert into stock (curr_price, company, ticker, id) values (352.81, 'Eltek Ltd.', 'ELTK', 77);
-insert into stock (curr_price, company, ticker, id) values (816.91, 'National General Holdings Corp', 'NGHCO', 78);
-insert into stock (curr_price, company, ticker, id) values (923.82, 'Endurance International Group Holdings, Inc.', 'EIGI', 79);
-insert into stock (curr_price, company, ticker, id) values (468.59, 'Iridium Communications Inc', 'IRDM', 80);
-insert into stock (curr_price, company, ticker, id) values (990.08, 'VeriSign, Inc.', 'VRSN', 81);
-insert into stock (curr_price, company, ticker, id) values (559.31, 'Heartland Financial USA, Inc.', 'HTLF', 82);
-insert into stock (curr_price, company, ticker, id) values (995.19, 'Catalyst Pharmaceuticals, Inc.', 'CPRX', 83);
-insert into stock (curr_price, company, ticker, id) values (983.79, 'Goldman Sachs Group, Inc. (The)', 'GS^C', 84);
-insert into stock (curr_price, company, ticker, id) values (772.91, 'Asia Pacific Wire & Cable Corporation Limited', 'APWC', 85);
-insert into stock (curr_price, company, ticker, id) values (947.78, 'Moog Inc.', 'MOG.A', 86);
-insert into stock (curr_price, company, ticker, id) values (795.06, 'Aflac Incorporated', 'AFSD', 87);
-insert into stock (curr_price, company, ticker, id) values (153.57, 'Dynagas LNG Partners LP', 'DLNG', 88);
-insert into stock (curr_price, company, ticker, id) values (354.93, 'Semiconductor  Manufacturing International Corporation', 'SMI', 89);
-insert into stock (curr_price, company, ticker, id) values (525.24, 'CoBiz Financial Inc.', 'COBZ', 90);
-insert into stock (curr_price, company, ticker, id) values (964.62, 'WPP plc', 'WPPGY', 91);
-insert into stock (curr_price, company, ticker, id) values (379.45, 'Realty Income Corporation', 'O', 92);
-insert into stock (curr_price, company, ticker, id) values (979.34, 'Cempra, Inc.', 'CEMP', 93);
-insert into stock (curr_price, company, ticker, id) values (220.75, 'Dreyfus Strategic Municipals, Inc.', 'LEO', 94);
-insert into stock (curr_price, company, ticker, id) values (844.5, 'Diageo plc', 'DEO', 95);
-insert into stock (curr_price, company, ticker, id) values (349.98, 'First Trust Large Cap Growth AlphaDEX Fund', 'FTC', 96);
-insert into stock (curr_price, company, ticker, id) values (778.86, 'Triumph Group, Inc.', 'TGI', 97);
-insert into stock (curr_price, company, ticker, id) values (205.77, 'Delaware Enhanced Global Dividend', 'DEX', 98);
-insert into stock (curr_price, company, ticker, id) values (988.13, 'Hi-Crush Partners LP', 'HCLP', 99);
-insert into stock (curr_price, company, ticker, id) values (780.26, 'China Jo-Jo Drugstores, Inc.', 'CJJD', 100);
+-- insert into stock (curr_price, company, ticker, id) values (472.91, 'Barings Participation Investors', 'MPV', 1);
+-- insert into stock (curr_price, company, ticker, id) values (356.17, 'PennantPark Investment Corporation', 'PNTA.CL', 2);
+-- insert into stock (curr_price, company, ticker, id) values (677.63, 'GDS Holdings Limited', 'GDS', 3);
+-- insert into stock (curr_price, company, ticker, id) values (497.91, 'NMI Holdings Inc', 'NMIH', 4);
+-- insert into stock (curr_price, company, ticker, id) values (282.79, 'Tocagen Inc.', 'TOCA', 5);
+-- insert into stock (curr_price, company, ticker, id) values (765.84, 'Ocera Therapeutics, Inc.', 'OCRX', 6);
+-- insert into stock (curr_price, company, ticker, id) values (765.34, 'AllianzGI Convertible & Income Fund II', 'NCZ', 7);
+-- insert into stock (curr_price, company, ticker, id) values (812.29, 'CECO Environmental Corp.', 'CECE', 8);
+-- insert into stock (curr_price, company, ticker, id) values (420.56, 'Mannatech, Incorporated', 'MTEX', 9);
+-- insert into stock (curr_price, company, ticker, id) values (995.03, 'Mattel, Inc.', 'MAT', 10);
+-- insert into stock (curr_price, company, ticker, id) values (445.53, 'Aldeyra Therapeutics, Inc.', 'ALDX', 11);
+-- insert into stock (curr_price, company, ticker, id) values (498.27, 'Taylor Morrison Home Corporation', 'TMHC', 12);
+-- insert into stock (curr_price, company, ticker, id) values (327.47, 'Amaya Inc.', 'AYA', 13);
+-- insert into stock (curr_price, company, ticker, id) values (80.73, 'Philip Morris International Inc', 'PM', 14);
+-- insert into stock (curr_price, company, ticker, id) values (359.67, 'Bridgford Foods Corporation', 'BRID', 15);
+-- insert into stock (curr_price, company, ticker, id) values (902.06, 'PowerShares DWA Energy Momentum Portfolio', 'PXI', 16);
+-- insert into stock (curr_price, company, ticker, id) values (36.63, 'Rocket Fuel Inc.', 'FUEL', 17);
+-- insert into stock (curr_price, company, ticker, id) values (555.84, 'IDACORP, Inc.', 'IDA', 18);
+-- insert into stock (curr_price, company, ticker, id) values (346.73, 'Ocular Therapeutix, Inc.', 'OCUL', 19);
+-- insert into stock (curr_price, company, ticker, id) values (997.5, 'Seadrill Partners LLC', 'SDLP', 20);
+-- insert into stock (curr_price, company, ticker, id) values (289.94, 'China Life Insurance Company Limited', 'LFC', 21);
+-- insert into stock (curr_price, company, ticker, id) values (78.42, 'iShares iBoxx $ High Yield ex Oil & Gas Corporate Bond ETF', 'HYXE', 22);
+-- insert into stock (curr_price, company, ticker, id) values (365.54, 'Advanced Emissions Solutions, Inc.', 'ADES', 23);
+-- insert into stock (curr_price, company, ticker, id) values (846.53, 'Planet Fitness, Inc.', 'PLNT', 24);
+-- insert into stock (curr_price, company, ticker, id) values (505.16, 'FIRST REPUBLIC BANK', 'FRC^C', 25);
+-- insert into stock (curr_price, company, ticker, id) values (976.97, 'Flaherty & Crumrine Total Return Fund Inc', 'FLC', 26);
+-- insert into stock (curr_price, company, ticker, id) values (225.77, 'The Navigators Group, Inc.', 'NAVG', 27);
+-- insert into stock (curr_price, company, ticker, id) values (549.49, 'Frankly, Inc.', 'FKLYU', 28);
+-- insert into stock (curr_price, company, ticker, id) values (934.34, 'Ormat Technologies, Inc.', 'ORA', 29);
+-- insert into stock (curr_price, company, ticker, id) values (149.66, 'Pimco Corporate & Income Stategy Fund', 'PCN', 30);
+-- insert into stock (curr_price, company, ticker, id) values (228.46, 'Janus Henderson Group plc', 'JHG', 31);
+-- insert into stock (curr_price, company, ticker, id) values (814.65, 'LINE Corporation', 'LN', 32);
+-- insert into stock (curr_price, company, ticker, id) values (128.77, 'Orchid Island Capital, Inc.', 'ORC', 33);
+-- insert into stock (curr_price, company, ticker, id) values (66.05, 'NICE Ltd', 'NICE', 34);
+-- insert into stock (curr_price, company, ticker, id) values (204.46, 'New York Mortgage Trust, Inc.', 'NYMTO', 35);
+-- insert into stock (curr_price, company, ticker, id) values (12.52, 'Tableau Software, Inc.', 'DATA', 36);
+-- insert into stock (curr_price, company, ticker, id) values (131.26, 'Bank of America Corporation', 'BAC^Y', 37);
+-- insert into stock (curr_price, company, ticker, id) values (696.72, 'Tuttle Tactical Management U.S. Core ETF', 'TUTT', 38);
+-- insert into stock (curr_price, company, ticker, id) values (352.29, 'Upland Software, Inc.', 'UPLD', 39);
+-- insert into stock (curr_price, company, ticker, id) values (407.96, 'Invesco Mortgage Capital Inc.', 'IVR^A', 40);
+-- insert into stock (curr_price, company, ticker, id) values (809.04, 'Kayne Anderson Acquisition Corp.', 'KAAC', 41);
+-- insert into stock (curr_price, company, ticker, id) values (490.3, 'Rosetta Genomics Ltd.', 'ROSG', 42);
+-- insert into stock (curr_price, company, ticker, id) values (563.5, 'Weatherford International plc', 'WFT', 43);
+-- insert into stock (curr_price, company, ticker, id) values (300.4, 'Cedar Fair, L.P.', 'FUN', 44);
+-- insert into stock (curr_price, company, ticker, id) values (489.57, 'Scudder Strategic Municiple Income Trust', 'KSM', 45);
+-- insert into stock (curr_price, company, ticker, id) values (367.77, 'Southern California Edison Company', 'SCE^H', 46);
+-- insert into stock (curr_price, company, ticker, id) values (947.31, 'Dreyfus Municipal Bond Infrastructure Fund, Inc.', 'DMB', 47);
+-- insert into stock (curr_price, company, ticker, id) values (351.72, 'Canadian Natural Resources Limited', 'CNQ', 48);
+-- insert into stock (curr_price, company, ticker, id) values (146.47, 'PVH Corp.', 'PVH', 49);
+-- insert into stock (curr_price, company, ticker, id) values (160.2, 'Vanguard Total International Stock ETF', 'VXUS', 50);
+-- insert into stock (curr_price, company, ticker, id) values (208.14, 'Eaton Vance Risk-Managed Diversified Equity Income Fund', 'ETJ', 51);
+-- insert into stock (curr_price, company, ticker, id) values (910.0, 'Rambus, Inc.', 'RMBS', 52);
+-- insert into stock (curr_price, company, ticker, id) values (96.48, 'Neurocrine Biosciences, Inc.', 'NBIX', 53);
+-- insert into stock (curr_price, company, ticker, id) values (480.65, 'Weyerhaeuser Company', 'WY', 54);
+-- insert into stock (curr_price, company, ticker, id) values (185.76, 'Sportsman''s Warehouse Holdings, Inc.', 'SPWH', 55);
+-- insert into stock (curr_price, company, ticker, id) values (368.7, 'Microsoft Corporation', 'MSFT', 56);
+-- insert into stock (curr_price, company, ticker, id) values (106.77, 'Interactive Brokers Group, Inc.', 'IBKR', 57);
+-- insert into stock (curr_price, company, ticker, id) values (973.8, 'Modern Media Acquisition Corp.', 'MMDMU', 58);
+-- insert into stock (curr_price, company, ticker, id) values (919.08, 'RSP Permian, Inc.', 'RSPP', 59);
+-- insert into stock (curr_price, company, ticker, id) values (47.23, 'American Express Company', 'AXP', 60);
+-- insert into stock (curr_price, company, ticker, id) values (692.49, 'Navistar International Corporation', 'NAV^D', 61);
+-- insert into stock (curr_price, company, ticker, id) values (58.79, 'Nuveen Select Tax Free Income Portfolio III', 'NXR', 62);
+-- insert into stock (curr_price, company, ticker, id) values (614.85, 'Microvision, Inc.', 'MVIS', 63);
+-- insert into stock (curr_price, company, ticker, id) values (256.29, 'Flaherty & Crumrine Total Return Fund Inc', 'FLC', 64);
+-- insert into stock (curr_price, company, ticker, id) values (408.15, 'Scudder Strategic Income Trust', 'KST', 65);
+-- insert into stock (curr_price, company, ticker, id) values (685.73, 'First Trust South Korea AlphaDEX Fund', 'FKO', 66);
+-- insert into stock (curr_price, company, ticker, id) values (338.33, 'Gores Holdings II, Inc.', 'GSHT', 67);
+-- insert into stock (curr_price, company, ticker, id) values (251.76, 'Winmark Corporation', 'WINA', 68);
+-- insert into stock (curr_price, company, ticker, id) values (792.09, 'PowerShares BuyBack Achievers Portfolio', 'PKW', 69);
+-- insert into stock (curr_price, company, ticker, id) values (450.2, 'Diodes Incorporated', 'DIOD', 70);
+-- insert into stock (curr_price, company, ticker, id) values (240.32, 'Playa Hotels & Resorts N.V.', 'PLYAW', 71);
+-- insert into stock (curr_price, company, ticker, id) values (83.77, 'CSW Industrials, Inc.', 'CSWI', 72);
+-- insert into stock (curr_price, company, ticker, id) values (67.17, 'City Office REIT, Inc.', 'CIO', 73);
+-- insert into stock (curr_price, company, ticker, id) values (160.61, 'Helen of Troy Limited', 'HELE', 74);
+-- insert into stock (curr_price, company, ticker, id) values (98.15, 'Gabelli Dividend', 'GDV^D', 75);
+-- insert into stock (curr_price, company, ticker, id) values (325.71, 'Pathfinder Bancorp, Inc.', 'PBHC', 76);
+-- insert into stock (curr_price, company, ticker, id) values (352.81, 'Eltek Ltd.', 'ELTK', 77);
+-- insert into stock (curr_price, company, ticker, id) values (816.91, 'National General Holdings Corp', 'NGHCO', 78);
+-- insert into stock (curr_price, company, ticker, id) values (923.82, 'Endurance International Group Holdings, Inc.', 'EIGI', 79);
+-- insert into stock (curr_price, company, ticker, id) values (468.59, 'Iridium Communications Inc', 'IRDM', 80);
+-- insert into stock (curr_price, company, ticker, id) values (990.08, 'VeriSign, Inc.', 'VRSN', 81);
+-- insert into stock (curr_price, company, ticker, id) values (559.31, 'Heartland Financial USA, Inc.', 'HTLF', 82);
+-- insert into stock (curr_price, company, ticker, id) values (995.19, 'Catalyst Pharmaceuticals, Inc.', 'CPRX', 83);
+-- insert into stock (curr_price, company, ticker, id) values (983.79, 'Goldman Sachs Group, Inc. (The)', 'GS^C', 84);
+-- insert into stock (curr_price, company, ticker, id) values (772.91, 'Asia Pacific Wire & Cable Corporation Limited', 'APWC', 85);
+-- insert into stock (curr_price, company, ticker, id) values (947.78, 'Moog Inc.', 'MOG.A', 86);
+-- insert into stock (curr_price, company, ticker, id) values (795.06, 'Aflac Incorporated', 'AFSD', 87);
+-- insert into stock (curr_price, company, ticker, id) values (153.57, 'Dynagas LNG Partners LP', 'DLNG', 88);
+-- insert into stock (curr_price, company, ticker, id) values (354.93, 'Semiconductor  Manufacturing International Corporation', 'SMI', 89);
+-- insert into stock (curr_price, company, ticker, id) values (525.24, 'CoBiz Financial Inc.', 'COBZ', 90);
+-- insert into stock (curr_price, company, ticker, id) values (964.62, 'WPP plc', 'WPPGY', 91);
+-- insert into stock (curr_price, company, ticker, id) values (379.45, 'Realty Income Corporation', 'O', 92);
+-- insert into stock (curr_price, company, ticker, id) values (979.34, 'Cempra, Inc.', 'CEMP', 93);
+-- insert into stock (curr_price, company, ticker, id) values (220.75, 'Dreyfus Strategic Municipals, Inc.', 'LEO', 94);
+-- insert into stock (curr_price, company, ticker, id) values (844.5, 'Diageo plc', 'DEO', 95);
+-- insert into stock (curr_price, company, ticker, id) values (349.98, 'First Trust Large Cap Growth AlphaDEX Fund', 'FTC', 96);
+-- insert into stock (curr_price, company, ticker, id) values (778.86, 'Triumph Group, Inc.', 'TGI', 97);
+-- insert into stock (curr_price, company, ticker, id) values (205.77, 'Delaware Enhanced Global Dividend', 'DEX', 98);
+-- insert into stock (curr_price, company, ticker, id) values (988.13, 'Hi-Crush Partners LP', 'HCLP', 99);
+-- insert into stock (curr_price, company, ticker, id) values (780.26, 'China Jo-Jo Drugstores, Inc.', 'CJJD', 100);
 
 
 -- Sample data for investor_order table
-insert into investor_order (price, buy, stock_id, investor_id, volume, date, id) values
- (51162, 0, 1, 1, 21.77, '2023-06-27', 1),
- (18686, 1, 2, 2, 5.92, '2023-11-24', 2),
- (83341, 0, 3, 3, 27.16, '2022-10-31', 3),
- (30599, 0, 4, 4, 27.83, '2024-04-02', 4),
- (81941, 0, 5, 5, 27.15, '2023-01-19', 5),
- (94406, 1, 6, 6, 24.8, '2023-11-08', 6),
- (57576, 1, 7, 7, 4.13, '2022-08-26', 7),
- (82904, 1, 8, 8, 25.37, '2024-04-11', 8),
- (86369, 0, 9, 9, 17.84, '2022-12-29', 9),
- (27535, 1, 10, 10, 2.98, '2024-03-13', 10),
- (11345, 1, 11, 11, 23.92, '2022-09-24', 11),
- (73095, 0, 12, 12, 14.07, '2023-05-06', 12),
- (37832, 1, 13, 13, 13.48, '2023-11-16', 13),
- (76062, 0, 14, 14, 19.31, '2022-11-18', 14),
- (2581, 0, 15, 15, 10.22, '2022-09-17', 15),
- (74876, 1, 16, 16, 27.54, '2024-04-07', 16),
- (46238, 1, 17, 17, 11.36, '2024-05-26', 17),
- (6323, 1, 18, 18, 4.57, '2022-07-04', 18),
- (66576, 0, 19, 19, 14.01, '2023-09-11', 19),
- (65484, 1, 20, 20, 20.53, '2023-10-30', 20),
- (49736, 1, 21, 21, 7.75, '2023-07-25', 21);
+-- insert into investor_order (price, buy, stock_id, investor_id, volume, date, id) values
+--  (51162, 0, 1, 1, 21.77, '2023-06-27', 1),
+--  (18686, 1, 2, 2, 5.92, '2023-11-24', 2),
+--  (83341, 0, 3, 3, 27.16, '2022-10-31', 3),
+--  (30599, 0, 4, 4, 27.83, '2024-04-02', 4),
+--  (81941, 0, 5, 5, 27.15, '2023-01-19', 5),
+--  (94406, 1, 6, 6, 24.8, '2023-11-08', 6),
+--  (57576, 1, 7, 7, 4.13, '2022-08-26', 7),
+--  (82904, 1, 8, 8, 25.37, '2024-04-11', 8),
+--  (86369, 0, 9, 9, 17.84, '2022-12-29', 9),
+--  (27535, 1, 10, 10, 2.98, '2024-03-13', 10),
+--  (11345, 1, 11, 11, 23.92, '2022-09-24', 11),
+--  (73095, 0, 12, 12, 14.07, '2023-05-06', 12),
+--  (37832, 1, 13, 13, 13.48, '2023-11-16', 13),
+--  (76062, 0, 14, 14, 19.31, '2022-11-18', 14),
+--  (2581, 0, 15, 15, 10.22, '2022-09-17', 15),
+--  (74876, 1, 16, 16, 27.54, '2024-04-07', 16),
+--  (46238, 1, 17, 17, 11.36, '2024-05-26', 17),
+--  (6323, 1, 18, 18, 4.57, '2022-07-04', 18),
+--  (66576, 0, 19, 19, 14.01, '2023-09-11', 19),
+--  (65484, 1, 20, 20, 20.53, '2023-10-30', 20),
+--  (49736, 1, 21, 21, 7.75, '2023-07-25', 21);
 
 -- insert into politician_list (name, party, state, manager_id, id) values
 --  ('Britni Gullick', 'Democrat', 'Indiana', 33, 1),
@@ -756,69 +751,69 @@ insert into investor_order (price, buy, stock_id, investor_id, volume, date, id)
 --  ('2023-01-26', 19, 19),
 --  ('2022-06-22', 20, 20);
 
-insert into investor_stock (created_at, investor_id, stock_id) values
- ('2022-12-27', 1, 1),
- ('2023-12-23', 2, 2),
- ('2023-05-25', 3, 3),
- ('2024-04-15', 4, 4),
- ('2022-07-13', 5, 5),
- ('2024-03-09', 6, 6),
- ('2023-08-03', 7, 7),
- ('2023-05-26', 8, 8),
- ('2024-06-03', 9,9),
- ('2022-08-12', 10, 10),
- ('2023-06-17', 11, 11),
- ('2023-12-12', 12, 12),
- ('2023-06-01', 13, 13),
- ('2023-09-22', 14, 14),
- ('2024-01-18', 15, 15),
- ('2023-05-30', 16, 16),
- ('2024-02-19', 17, 17),
- ('2023-11-05', 18, 18),
- ('2022-10-10', 19, 19),
- ('2022-07-04', 20, 20);
+-- insert into investor_stock (created_at, investor_id, stock_id) values
+--  ('2022-12-27', 1, 1),
+--  ('2023-12-23', 2, 2),
+--  ('2023-05-25', 3, 3),
+--  ('2024-04-15', 4, 4),
+--  ('2022-07-13', 5, 5),
+--  ('2024-03-09', 6, 6),
+--  ('2023-08-03', 7, 7),
+--  ('2023-05-26', 8, 8),
+--  ('2024-06-03', 9,9),
+--  ('2022-08-12', 10, 10),
+--  ('2023-06-17', 11, 11),
+--  ('2023-12-12', 12, 12),
+--  ('2023-06-01', 13, 13),
+--  ('2023-09-22', 14, 14),
+--  ('2024-01-18', 15, 15),
+--  ('2023-05-30', 16, 16),
+--  ('2024-02-19', 17, 17),
+--  ('2023-11-05', 18, 18),
+--  ('2022-10-10', 19, 19),
+--  ('2022-07-04', 20, 20);
 
-insert into legislation (title, date, pass, active, sector, id) values ('The Internet Privacy Act', '2023-06-16', 0, 1, 'Consumer Services', 1);
-insert into legislation (title, date, pass, active, sector, id) values ('The Consumer Protection Act', '2023-12-11', 1, 1, 'Capital Goods', 2);
-insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2023-12-12', 1, 0, 'n/a', 3);
-insert into legislation (title, date, pass, active, sector, id) values ('The Consumer Protection Act', '2024-04-26', 1, 0, 'Consumer Services', 4);
-insert into legislation (title, date, pass, active, sector, id) values ('The Cybersecurity Enhancement Act', '2024-06-04', 1, 0, 'Health Care', 5);
-insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2023-09-01', 0, 1, 'Finance', 6);
-insert into legislation (title, date, pass, active, sector, id) values ('The Renewable Energy Act', '2024-02-17', 1, 0, 'Health Care', 7);
-insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2024-01-18', 1, 0, 'Health Care', 8);
-insert into legislation (title, date, pass, active, sector, id) values ('The Drug Price Regulation Act', '2023-11-21', 1, 1, 'n/a', 9);
-insert into legislation (title, date, pass, active, sector, id) values ('The Drug Price Regulation Act', '2023-08-29', 1, 1, 'Consumer Services', 10);
-insert into legislation (title, date, pass, active, sector, id) values ('The Immigration Reform Act', '2023-07-08', 1, 1, 'Consumer Durables', 11);
-insert into legislation (title, date, pass, active, sector, id) values ('The Consumer Protection Act', '2023-08-19', 0, 0, 'Health Care', 12);
-insert into legislation (title, date, pass, active, sector, id) values ('The Affordable Housing Act', '2024-02-21', 1, 0, 'Consumer Services', 13);
-insert into legislation (title, date, pass, active, sector, id) values ('The Clean Air Act', '2023-12-22', 1, 1, 'n/a', 14);
-insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2023-08-25', 1, 1, 'Health Care', 15);
-insert into legislation (title, date, pass, active, sector, id) values ('The Affordable Housing Act', '2023-12-13', 0, 0, 'Health Care', 16);
-insert into legislation (title, date, pass, active, sector, id) values ('The Affordable Housing Act', '2023-08-27', 0, 1, 'Health Care', 17);
-insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2023-09-29', 1, 0, 'Energy', 18);
-insert into legislation (title, date, pass, active, sector, id) values ('The Consumer Protection Act', '2023-11-29', 0, 1, 'n/a', 19);
-insert into legislation (title, date, pass, active, sector, id) values ('The Renewable Energy Act', '2023-10-12', 1, 1, 'n/a', 20);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Internet Privacy Act', '2023-06-16', 0, 1, 'Consumer Services', 1);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Consumer Protection Act', '2023-12-11', 1, 1, 'Capital Goods', 2);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2023-12-12', 1, 0, 'n/a', 3);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Consumer Protection Act', '2024-04-26', 1, 0, 'Consumer Services', 4);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Cybersecurity Enhancement Act', '2024-06-04', 1, 0, 'Health Care', 5);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2023-09-01', 0, 1, 'Finance', 6);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Renewable Energy Act', '2024-02-17', 1, 0, 'Health Care', 7);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2024-01-18', 1, 0, 'Health Care', 8);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Drug Price Regulation Act', '2023-11-21', 1, 1, 'n/a', 9);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Drug Price Regulation Act', '2023-08-29', 1, 1, 'Consumer Services', 10);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Immigration Reform Act', '2023-07-08', 1, 1, 'Consumer Durables', 11);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Consumer Protection Act', '2023-08-19', 0, 0, 'Health Care', 12);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Affordable Housing Act', '2024-02-21', 1, 0, 'Consumer Services', 13);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Clean Air Act', '2023-12-22', 1, 1, 'n/a', 14);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2023-08-25', 1, 1, 'Health Care', 15);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Affordable Housing Act', '2023-12-13', 0, 0, 'Health Care', 16);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Affordable Housing Act', '2023-08-27', 0, 1, 'Health Care', 17);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Criminal Justice Reform Act', '2023-09-29', 1, 0, 'Energy', 18);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Consumer Protection Act', '2023-11-29', 0, 1, 'n/a', 19);
+-- insert into legislation (title, date, pass, active, sector, id) values ('The Renewable Energy Act', '2023-10-12', 1, 1, 'n/a', 20);
 
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-08-24', 1, 1);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-12-09', 2, 2);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-06-24', 3, 3);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-10-25', 4, 4);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-08-12', 5, 5);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2024-01-30', 6, 6);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-10-13', 7, 7);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-08-02', 8, 8);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2024-02-26', 9, 9);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2024-03-12', 10, 10);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-07-10', 11, 11);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2024-05-11', 12, 12);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-07-11', 13, 13);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-08-04', 14, 14);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-10-03', 15, 15);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-02-15', 16, 16);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-02-11', 17, 17);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-09-21', 18, 18);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-11-27', 19, 19);
-insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-10-08', 20, 20);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-08-24', 1, 1);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-12-09', 2, 2);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-06-24', 3, 3);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-10-25', 4, 4);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-08-12', 5, 5);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2024-01-30', 6, 6);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-10-13', 7, 7);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-08-02', 8, 8);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2024-02-26', 9, 9);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2024-03-12', 10, 10);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-07-10', 11, 11);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2024-05-11', 12, 12);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-07-11', 13, 13);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-08-04', 14, 14);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-10-03', 15, 15);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-02-15', 16, 16);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-02-11', 17, 17);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2022-09-21', 18, 18);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-11-27', 19, 19);
+-- insert into journalist_legislation (created_at, journalist_id, legislation_id) values ('2023-10-08', 20, 20);
 
 -- insert into journalist_politician (created_at, journalist_id, politician_id) values ('2022-10-02', 1, 1);
 -- insert into journalist_politician (created_at, journalist_id, politician_id) values ('2023-11-18', 2, 2);

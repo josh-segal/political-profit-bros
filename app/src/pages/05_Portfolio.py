@@ -32,7 +32,7 @@ if st.session_state['role'] == 'investor':
                     if st.button(stock['company'],
                                 type='primary',
                                 use_container_width=True,
-                                key=f"{stock['id']}_name"):
+                                key=f"{stock['ticker']}_name"):
                         st.session_state.payload = stock
                         st.switch_page('pages/08_Stock_Detail.py')  
 
@@ -40,9 +40,9 @@ if st.session_state['role'] == 'investor':
                     if st.button(":x:",
                                 type='secondary',
                                 use_container_width=False,
-                                key=f"{stock['id']}_untrack",
+                                key=f"{stock['ticker']}_untrack",
                                 help="untrack stock"):
-                        stock_id = stock['id']
+                        stock_id = stock['ticker']
                         user_id = 1
 
                         payload = {
