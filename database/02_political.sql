@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS stock_search_history
     date DATETIME,
     PRIMARY KEY (investor_id, stock_id),
     FOREIGN KEY (investor_id) REFERENCES investor (id),
-    FOREIGN KEY (stock_id) REFERENCES stock_unique(ticker)
+    FOREIGN KEY (stock_id) REFERENCES stock_unique (ticker)
 );
 CREATE TABLE IF NOT EXISTS journalist_legislation
 (
