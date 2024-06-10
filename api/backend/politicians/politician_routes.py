@@ -19,7 +19,7 @@ FROM politician p
          LEFT JOIN politician_search_history psh ON p.id = psh.politician_id
 GROUP BY p.id, p.name, p.party, p.state
 ORDER BY count(psh.politician_id)
-LIMIT 5''')
+LIMIT 10''')
 
     # fetch all the data from the cursor
     theData = cursor.fetchall()
@@ -99,7 +99,7 @@ def get_politician_trade_volume(name):
     cursor = db.get_db().cursor()
     current_app.logger.info(f'politician name = {name}')
     query = f"SELECT Name, Party, Date_Traded, SUM(Trade_Value) AS Total_Trade_Value \
-            FROM politician \
+            FROM politician_trade \
             WHERE Name LIKE '%{name}%' \
             GROUP BY Name, Party, Date_Traded \
             ORDER BY SUM(Trade_Value) DESC" 
@@ -108,6 +108,26 @@ def get_politician_trade_volume(name):
     theData = cursor.fetchall()
     current_app.logger.info(f'fetchall: {theData}') 
     return jsonify(theData)
+
+
+@politicians.route('/politicians_volume', methods=['GET'])
+def get_politician_by_volume ():
+    cursor = db.get_db().cursor()
+    query = """
+SELECT p.name, p.party, p.state, p.id, SUM(pt.Trade_Value) AS Total_Trade_Value
+FROM politician p
+         JOIN
+     politician_trade pt ON p.id = pt.id
+GROUP BY p.name, p.party, p.state, p.id
+ORDER BY Total_Trade_Value DESC
+LIMIT 10;
+""" 
+    cursor.execute(query)
+    current_app.logger.info(f'Query: {query}')
+    theData = cursor.fetchall()
+    current_app.logger.info(f'fetchall: {theData}') 
+    return jsonify(theData)
+
 
 @politicians.route('/predict_volume/<name>', methods=['GET'])
 def predict_trade_volume(name):

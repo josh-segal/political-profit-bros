@@ -6,7 +6,7 @@ from modules.nav import SideBarLinks
 import requests
 import logging
 logger = logging.getLogger()
-from datetime import datetime as dt
+from datetime import datetime
 
 SideBarLinks()
 
@@ -31,7 +31,7 @@ if st.session_state['role'] == 'investor':
             #     st.write(stock['Ticker'])
             try:
                 
-                    st.write('- ' + stock['Ticker'] + ' - $' + str(stock['Trade_Value']) + ' - on ' + stock['Date_Traded'])
+                    st.write('- ' + stock['Ticker'] + ' - $' + str(stock['Trade_Value']) + ' - on ' + str(stock['Date_Traded'][:16]))
             except:
                 st.write()
                 # st.switch_page('pages/08_Stock_Detail.py')

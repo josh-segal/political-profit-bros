@@ -9,7 +9,7 @@ st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
-st.title(f"Welcome Journalist, {st.session_state['first_name']}.")
+st.title(f"Welcome Journalist, :green[{st.session_state['first_name']}]")
 st.write('')
 st.write('')
 st.write('### What would you like to do today?')
