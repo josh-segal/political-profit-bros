@@ -35,9 +35,9 @@ with col1:
         with st.expander("Explore features"):
                 st.write('''
                         As an investor you can:
-                        - do this
-                        - and that
-                        - finally this
+                        - Access to historical data on politicians’ stock
+                        - View stock performance and see a prediction on performance 
+                        - Be able to track politicians and stocks
                         ''')
 
 with col2:
@@ -59,9 +59,9 @@ with col2:
         with st.expander("Explore features"):
                 st.write('''
                         As a campaign manager you can:
-                        - do this
-                        - and that
-                        - finally this
+                        - Access detailed reports on stock trades made by the opponent.
+                        - Create compelling visualizations of the stock trades
+                        - Being able to track oponent politician and edit my clients
                         ''')
 
 with col3:
@@ -82,9 +82,9 @@ with col3:
         with st.expander("Explore features"):
                 st.write('''
                         As a journalist you can:
-                        - do this
-                        - and that
-                        - finally this
+                        - See the data behind the stock trade placed by a certain politician
+                        - Compare stock performance before and after certain legislation is passed
+                        - Create detailed findings and visual evidence
                         ''')
 
 
