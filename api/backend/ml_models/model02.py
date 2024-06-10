@@ -1,15 +1,7 @@
-import pandas as pd
-import streamlit as st
+from backend.db_connection import db
 import numpy as np
-from modules.nav import SideBarLinks
-import requests
-import logging
-logger = logging.getLogger()
-from datetime import datetime as dt
-
+from flask import Blueprint, request, jsonify, make_response, current_app
 import tensorflow as tf
-import numpy as np
-
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import * 
@@ -26,9 +18,9 @@ import matplotlib.pyplot as plt
 from datetime import date
 import logging
 
-
+# df add
 def initalize(step=70):
-    #cursor = db.get_db().cursor()
+    cursor = db.get_db().cursor()
 
     # query = f"""
     #         SELECT curr_price, ticker
@@ -96,6 +88,57 @@ def initalize(step=70):
 
     return df_close, df_training_size, df_training_predictions, df_testing_predictions, start_date
 
+
+
+
+
+
+    #return df_x_training, df_y_training, df_x_testing, df_y_testing, df_scaler, df_close, df_training_size
+
+
+# # Function to preprocess the data for training and testing
+# def preprocess_data(df, step=70):
+#     # Rounding off the necessary columns
+#     columns_to_round = ['Open', "High", "Low", "Close", "Adj Close"]
+#     df[columns_to_round] = np.round(df[columns_to_round], 4)
+    
+#     # Extracting the 'Close' prices
+#     df_close = df[["Close"]]
+#     df_close_data = df_close.values
+#     df_size = len(df_close_data)
+#     df_training_size = int(len(df_close_data) * .90)
+    
+#     # Scaling the data between 0 and 1
+#     df_scaler = MinMaxScaler(feature_range=(0, 1))
+#     df_scaled_data = df_scaler.fit_transform(df_close_data)
+
+#     # Splitting the data into training and testing sets
+#     df_training_data = df_scaled_data[0:df_training_size, :]
+#     df_testing_data = df_scaled_data[df_training_size-step:, :]
+    
+#     # Creating training and testing datasets
+#     df_x_training = []
+#     df_y_training = []
+#     df_x_testing = []
+#     df_y_testing = df_close_data[df_training_size:, :]
+
+#     for i in range(step, df_training_size):
+#         df_x_training.append(df_training_data[i-step:i, 0])
+#         df_y_training.append(df_training_data[i, 0])
+
+#     for i in range(step, len(df_testing_data)):
+#         df_x_testing.append(df_testing_data[i-step:i, 0])
+
+#     df_x_training = np.array(df_x_training)
+#     df_y_training = np.array(df_y_training)
+#     df_x_testing = np.array(df_x_testing)
+
+#     df_x_training = np.reshape(df_x_training, (df_x_training.shape[0], df_x_training.shape[1], 1))
+#     df_x_testing = np.reshape(df_x_testing, (df_x_testing.shape[0], df_x_testing.shape[1], 1))
+    
+#     return df_x_training, df_y_training, df_x_testing, df_y_testing, df_scaler, df_close, df_training_size
+
+# Function to create and compile the LSTM model
 def create_lstm_model(input_shape, n=128, n2=64):
     model = Sequential()
     model.add(InputLayer(input_shape=input_shape))
@@ -138,51 +181,26 @@ def plot_predictions(df_close, df_training_size, df_training_predictions, df_tes
     plt.legend(('Training Data', 'Actual Close', 'Predicted Close'))
     plt.show()
 
-SideBarLinks()
+# Example usage:
+ticker = ["TSLA"]
+start_date = "2021-05-28"
+end_date = date.today().strftime("%Y-%m-%d")
 
-st.write('Stock Detail Page')
-stock = st.session_state.payload
-st.write(stock['company'])
+# Step 1: Get stock data
+df = get_stock_data(ticker, start_date, end_date)
 
-dates = pd.date_range('2023-01-01', periods=100)
-data = np.random.randn(100).cumsum()
-df = pd.DataFrame(data, index=dates, columns=['Value'])
-st.line_chart(df)
+# Step 2: Preprocess the data
+df_x_training, df_y_training, df_x_testing, df_y_testing, df_scaler, df_close, df_training_size = preprocess_data(df)
 
-if st.button('Track stock',
-                        type='primary',
-                        use_container_width=True):
-    
-    payload = {
-            'investor_id': 1, # TODO: figure out how to do this with 3 users
-            'stock_id': stock['id'],
-            'date': dt.now().isoformat(),
-    }
+# Step 3: Create the LSTM model
+input_shape = (df_x_training.shape[1], 1)
+model = create_lstm_model(input_shape)
 
-    url = 'http://api:4000/s/track'
+# Step 4: Train the LSTM model
+model = train_model(model, df_x_training, df_y_training, epochs=1, batch_size=1)
 
-    # search_history_url = 'http://api:4000/s/history'
+# Step 5: Make predictions
+df_training_predictions, df_testing_predictions = make_predictions(model, df_x_training, df_x_testing, df_scaler)
 
-    response = requests.post(url, json=payload)
-
-    # search_history_response = requests.post(search_history_url, json=payload)
-
-    logger.info('respose', response)
-    if response.status_code == 200:
-        st.success('Stock successfully tracked!')
-    else:
-        st.error('Failed to track stock. Please try again.')
-
-    # logger.info('search_history_response', search_history_response)
-    # if search_history_response.status_code == 200:
-    #     st.success('history successfully tracked!')
-    # else:
-    #     st.error('Failed to track history. Please try again.')
-
-
-if st.button('Predict',
-                        type='primary',
-                        use_container_width=True):
-    
-    df_close, df_training_size, df_training_predictions, df_testing_predictions, start_date = initalize()
-    st.pyplot(plot_predictions(df_close, df_training_size, df_training_predictions, df_testing_predictions, start_date))
+# Step 6: Plot the predictions
+plot_predictions(df_close, df_training_size, df_training_predictions, df_testing_predictions, start_date)
