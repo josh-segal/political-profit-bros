@@ -38,8 +38,6 @@ if st.button('View Trade Volume Information', type='primary', use_container_widt
         'Other': 'black'
     }
 
-
-
     # Converting trade value into integers and Date into Datetime object
     df['Total_Trade_Value'] = df['Total_Trade_Value'].astype(int)
     df['Date_Traded'] = df['Date_Traded'].apply(lambda x: convert_date(x))
