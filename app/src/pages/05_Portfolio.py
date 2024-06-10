@@ -68,8 +68,10 @@ if st.session_state['role'] == 'investor':
                                 use_container_width=True,
                                 key=f"{politician['id']}_name"):
                         st.session_state.payload = politician
-                        st.switch_page('pages/09_Politician_Detail.py')  
-
+                        politician_name = politician['name']
+                        politician_response = requests.get(f'http://api:4000/po/politician_stock_details/{politician_name}').json()
+                        st.session_state.politician_stock = politician_response
+                        st.switch_page('pages/09_Politician_Detail.py')
                 with col2:
                     if st.button(":x:",
                                 type='secondary',

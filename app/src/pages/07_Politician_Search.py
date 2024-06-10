@@ -32,6 +32,8 @@ if search_query:
             if st.button(politician['name'],
                         type='primary',
                         use_container_width=True):
+                politician_response = requests.get(f'http://api:4000/po/politician_stock_details/{politician_name}').json()
+                st.session_state.politician_stock = politician_response
                 st.session_state.payload = politician
                 st.switch_page('pages/09_Politician_Detail.py')
     else:
@@ -46,5 +48,8 @@ else:
             if st.button('🔥 ' + politician['name'],
                         type='primary',
                         use_container_width=True):
+                politician_name = politician['name']
+                politician_response = requests.get(f'http://api:4000/po/politician_stock_details/{politician_name}').json()
+                st.session_state.politician_stock = politician_response
                 st.session_state.payload = politician
                 st.switch_page('pages/09_Politician_Detail.py')

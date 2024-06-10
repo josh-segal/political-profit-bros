@@ -14,8 +14,27 @@ if st.session_state['role'] == 'investor':
 
 
     politician = st.session_state.payload
-    st.write(politician['name'])
+    st.title(politician['name'] + ' \n\n **Party**: ' + politician['party'] + ' \n\n **State**: ' + politician['state'])
+
     politician_name = politician['name']
+
+    politician_stocks = st.session_state.politician_stock
+    with st.expander("Explore Politician's trades..."):
+        for stock in politician_stocks:
+            # if st.button(stock['Ticker'] + ' - $' + str(stock['Trade_Value']) + ' - on ' + stock['Date_Traded'],
+            #             type='secondary',
+            #             use_container_width=True):
+            #     search_query = stock['Ticker']
+            #     results = requests.get(f'http://api:4000/s/{search_query}').json()
+            #     st.session_state.politician_stock_list = results
+            #     logger.info('pol_stock_response ----------->', results)
+            #     st.write(stock['Ticker'])
+            try:
+                
+                    st.write('- ' + stock['Ticker'] + ' - $' + str(stock['Trade_Value']) + ' - on ' + stock['Date_Traded'])
+            except:
+                st.write()
+                # st.switch_page('pages/08_Stock_Detail.py')
 
     if st.button('Track politician',
                             type='primary',
@@ -37,30 +56,6 @@ if st.session_state['role'] == 'investor':
             st.success('politician successfully tracked!')
         else:
             st.error('Failed to track politician. Please try again.')
-
-    elif st.button(f"What Securities Does {politician_name} hold?",
-                    type='primary',
-                    use_container_width=True):
-        try:
-            politician_response = requests.get(f'http://api:4000/po/politician_stock_details/{politician_name}')
-            logger.info(f'politician_response: {politician_response}')
-            politician_results = politician_response.json()
-            if len(politician_results) > 0:
-                politician_results_df = pd.DataFrame(politician_results)
-
-                # Group by columns and sum the Trade_Value
-                grouped_df = politician_results_df.groupby(["Name", "Party", "State", "Ticker", "Issuer"], as_index=False)["Trade_Value"].sum()
-                
-                # Display the grouped dataframe
-                st.dataframe(grouped_df.sort_values(by='Trade_Value', ascending=False).reset_index(), column_order=["Name", "Party", "State", "Ticker", "Issuer", "Trade_Value"])
-            #    column_order=["Name", "Politician_id", "Party", "Chamber", "State", "Asset_Type", \
-            #  "Issuer", "Ticker", "Issuer_Country", "Type", "txId", "Date_Traded", "Date_Published", "Trade_Size",\
-            #      "Trade_Price", "Trade_Value"])
-            else:
-                st.write(f"{politician_name} holds no Securities.")
-        except requests.exceptions.RequestException as e:
-            st.error(f"An error occurred: {e}")
-
 
 elif st.session_state['role'] == 'manager':
 
