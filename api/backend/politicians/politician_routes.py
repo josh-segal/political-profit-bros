@@ -145,7 +145,7 @@ def get_politician_trade_volume(name):
     cursor = db.get_db().cursor()
     current_app.logger.info(f'politician name = {name}')
     query = f"SELECT Name, Party, Date_Traded, SUM(Trade_Value) AS Total_Trade_Value \
-            FROM politician_trade \
+            FROM poly_trade_data \
             WHERE Name LIKE '%{name}%' \
             GROUP BY Name, Party, Date_Traded \
             ORDER BY SUM(Trade_Value) DESC" 
