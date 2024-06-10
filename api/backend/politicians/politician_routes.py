@@ -220,3 +220,23 @@ def get_politician_trade_detail ():
     the_data = cursor.fetchall()
 
     return jsonify(the_data)
+
+
+@politicians.route('/politician_trade_party_date/<date>', methods=['GET'])
+def get_politician_trade_detail_party_date (date):
+
+    query = f"""
+SELECT *
+FROM politician_trade
+WHERE Asset_Type = 'Stock'
+    AND Date_Traded BETWEEN DATE_SUB('{date}', INTERVAL 1 MONTH) AND DATE_ADD('{date}', INTERVAL 1 MONTH)
+ORDER BY Trade_Value DESC
+LIMIT 3;
+    """
+    current_app.logger.info(query)
+
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    the_data = cursor.fetchall()
+
+    return jsonify(the_data)

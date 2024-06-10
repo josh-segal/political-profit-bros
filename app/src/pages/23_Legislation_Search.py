@@ -38,11 +38,17 @@ with col1:
                 if st.button("Find Stocks",
                          help="Find stocks with similar date, party, and subject",
                          key=f"find_stocks_button_{i}"):
-                     st.write("working...")
-                     trade = "updated"
+                    date = str(l['Date_of_Introduction'])
+                    date_str = "Wed, 08 May 2024 00:00:00 GMT"
+                    date_obj = datetime.strptime(date_str, "%a, %d %b %Y %H:%M:%S %Z")
+                    date_only = date_obj.date()
+                    trade = requests.get(f'http://api:4000/po/politician_trade_party_date/{date_only}').json()
 
 with col2:
     st.header("Politician Trades")
-    st.write(trade)
+    st.write("Select a bill to see stocks bought around the same time")
+    for i, l in enumerate(trade):
+        st.write('- ' + l['Ticker'] + ' - $' + str(l['Trade_Value']) + ' - on ' + str(l['Date_Traded'][:16]))
+
 
     
