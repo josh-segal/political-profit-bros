@@ -16,7 +16,7 @@ def get_stocks():
     cursor = db.get_db().cursor()
 
     # use cursor to query the database for a list of stocks
-    cursor.execute('SELECT s.curr_price, s.company, s.ticker, s.id FROM stock s LEFT JOIN stock_search_history ssh ON s.id = ssh.stock_id GROUP BY s.id ORDER BY count(ssh.stock_id) LIMIT 5')
+    cursor.execute('SELECT s.curr_price, s.company, s.ticker, s.id FROM stock s LEFT JOIN stock_search_history ssh ON s.id = ssh.stock_id GROUP BY s.id ORDER BY count(ssh.stock_id) DESC LIMIT 5')
 
     # fetch all the data from the cursor
     theData = cursor.fetchall()
@@ -107,6 +107,31 @@ def put_tracked_stock ():
 
     query = f"""
             INSERT INTO investor_stock (investor_id, stock_id, created_at)
+            VALUES ('{investor_id}', '{stock_id}', '{date}')
+            """
+    
+    current_app.logger.info(query)
+
+    # Execute the query
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    db.get_db().commit()
+    
+    return 'Success!'
+
+
+@stocks.route('/history', methods=['POST'])
+def put_history_stock ():
+    
+    the_data = request.json
+    current_app.logger.info(f'the_data = {the_data}')
+
+    investor_id = the_data['investor_id']
+    stock_id = the_data['stock_id']
+    date = the_data['date']
+
+    query = f"""
+            INSERT INTO stock_search_history (investor_id, stock_id, date)
             VALUES ('{investor_id}', '{stock_id}', '{date}')
             """
     
