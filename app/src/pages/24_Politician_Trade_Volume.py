@@ -29,7 +29,7 @@ if st.button('View Trade Volume Information', type='primary', use_container_widt
     st.dataframe(df, column_order=["Name", "Party", "Date_Traded", "Total_Trade_Value"])
 
     prediction_response = requests.get(f'http://api:4000/po/predict_volume/{name}').json()
-    st.write(prediction_response)
+    #st.write(prediction_response)
     
     # Define the color map
     color_map = {
@@ -47,17 +47,7 @@ if st.button('View Trade Volume Information', type='primary', use_container_widt
     df['ypreds'] = prediction_response['result']['ypreds']
     
     # Create the line plot
-    st.line_chart(df, x='Date_Traded', y='ypreds', color="#FF0000")
     st.line_chart(df, x='Date_Traded', y=['Total_Trade_Value','ypreds'], color=["#0000FF","#FF0000"])
-
-    agree = st.checkbox("Click to see Details")
-    if agree:
-        st.write(prediction_response['result']['equation'])
-
-    
-
-    
-
-
-
+    st.write(f"Equation of Linear Regression:' {prediction_response['result']['equation']}")
+        
 

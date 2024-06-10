@@ -96,7 +96,7 @@ def volume_prediction(name):
     cursor = db.get_db().cursor()
     query = f"""
             SELECT Name, Party, Date_Traded, SUM(Trade_Value) AS Total_Trade_Value
-            FROM politician
+            FROM poly_trade_data
             WHERE Name LIKE '%{name}%'
             GROUP BY Name, Party, Date_Traded
             ORDER BY Date_Traded
