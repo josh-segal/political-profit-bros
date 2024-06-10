@@ -19,8 +19,8 @@ if st.session_state['role'] == 'investor':
     politician_name = politician['name']
 
     politician_stocks = st.session_state.politician_stock
-
-    for stock in politician_stocks:
+    with st.expander("Explore Politician's trades..."):
+        for stock in politician_stocks:
             # if st.button(stock['Ticker'] + ' - $' + str(stock['Trade_Value']) + ' - on ' + stock['Date_Traded'],
             #             type='secondary',
             #             use_container_width=True):
@@ -29,7 +29,11 @@ if st.session_state['role'] == 'investor':
             #     st.session_state.politician_stock_list = results
             #     logger.info('pol_stock_response ----------->', results)
             #     st.write(stock['Ticker'])
-            st.write('- ' + stock['Ticker'] + ' - $' + str(stock['Trade_Value']) + ' - on ' + stock['Date_Traded'])
+            try:
+                
+                    st.write('- ' + stock['Ticker'] + ' - $' + str(stock['Trade_Value']) + ' - on ' + stock['Date_Traded'])
+            except:
+                st.write()
                 # st.switch_page('pages/08_Stock_Detail.py')
 
     if st.button('Track politician',
