@@ -1,0 +1,4 @@
+USE JoshProject;
+
+CREATE TABLE stock_unique AS SELECT DISTINCT ticker, company FROM stocks;
+ALTER TABLE stock_unique ADD PRIMARY KEY (ticker);

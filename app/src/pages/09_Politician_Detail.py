@@ -43,7 +43,7 @@ if st.session_state['role'] == 'investor':
         payload = {
                 'investor_id': 1, # TODO: figure out how to do this with 3 users
                         'politician_id': politician['id'],
-                        'date': dt.now().isoformat(),
+                        'date': datetime.now().isoformat(),
         }
 
 
@@ -70,7 +70,7 @@ elif st.session_state['role'] == 'manager':
         payload = {
                 'manager_id': 3, # TODO: figure out how to do this with 3 users
                         'politician_id': politician['id'],
-                        'date': dt.now().isoformat(),
+                        'date': datetime.now().isoformat(),
                         'candidate_opp': 1,
         }
 
@@ -91,7 +91,7 @@ elif st.session_state['role'] == 'manager':
         payload = {
                 'manager_id': 3, # TODO: figure out how to do this with 3 users
                         'politician_id': politician['id'],
-                        'date': dt.now().isoformat(),
+                        'date': datetime.now().isoformat(),
                         'candidate_opp': 0,
         }
 
