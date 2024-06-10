@@ -30,22 +30,22 @@ if st.button('Track stock',
     }
 
     url = 'http://api:4000/s/track'
+    search_history_url = 'http://api:4000/s/history'
 
-    # search_history_url = 'http://api:4000/s/history'
+    try:
+        response = requests.post(url, json=payload)
+        if response.status_code == 200:
+            st.success('Stock successfully tracked!')
+        else:
+            st.error('Failed to track stock. Please try again.')
+            logger.error(f"Failed to track stock: {response.status_code}, {response.text}")
 
-    response = requests.post(url, json=payload)
-
-    # search_history_response = requests.post(search_history_url, json=payload)
-
-    logger.info('respose', response)
-    if response.status_code == 200:
-        st.success('Stock successfully tracked!')
-    else:
-        st.error('Failed to track stock. Please try again.')
-
-    # logger.info('search_history_response', search_history_response)
-    # if search_history_response.status_code == 200:
-    #     st.success('history successfully tracked!')
-    # else:
-    #     st.error('Failed to track history. Please try again.')
-
+        search_history_response = requests.post(search_history_url, json=payload)
+        if search_history_response.status_code == 200:
+            st.success('Search history successfully tracked!')
+        else:
+            st.error('Failed to track search history. Please try again.')
+            logger.error(f"Failed to track search history: {search_history_response.status_code}, {search_history_response.text}")
+    except requests.exceptions.RequestException as e:
+        st.error('An error occurred while making requests. Please try again.')
+        logger.error(f"RequestException: {e}")

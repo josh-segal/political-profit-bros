@@ -141,8 +141,7 @@ CREATE TABLE IF NOT EXISTS stock_search_history
     investor_id INT,
     stock_id INT,
     date DATETIME,
-    id INT,
-    PRIMARY KEY (id),
+    PRIMARY KEY (investor_id, stock_id),
     FOREIGN KEY (investor_id) REFERENCES investor (id),
     FOREIGN KEY (stock_id) REFERENCES stock (id)
 );
