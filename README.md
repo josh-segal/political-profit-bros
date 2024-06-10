@@ -51,8 +51,8 @@ Welcome to our cutting-edge website, designed to revolutionize the way you appro
 Key Features
 
 1. Stock Tracking and Prediction
-Real-Time Data: Stay updated with the latest stock market trends through real-time tracking.
 Predictive Analytics: Utilize advanced algorithms to forecast stock movements, helping you to make data-driven investment decisions.
+Add stocks that you may want to invest or keep an eye on into your portfolio.
 
 2. Politician Trades Monitoring
 Transparency: Access detailed records of buying and selling activities by politicians.
@@ -60,21 +60,22 @@ Strategic Insights: Gain valuable insights by analyzing the trades of politician
 
 3. Personalized Portfolio Management
 Custom Tracking: Add your preferred stocks and politicians to your personal portfolio for tailored updates.
-Personalized Dashboard: Get a customized view of your tracked assets and receive relevant notifications.
 
 4. Comprehensive Stock Database
 Extensive Database: Our platform utilizes a robust database of stocks, ensuring comprehensive coverage and up-to-date information.
-CS3200 Integration: The database and routes for the features and machine learning models were meticulously created by CS3200, providing a seamless and efficient experience.
+CS3200 Integration: The database and routes for the features and machine learning models were meticulously created by CS3200, providing an efficent implementation. 
 Data Management: Efficiently manage and retrieve stock data through well-structured routes, enabling smooth functionality for all features.
 
 5. Advanced Machine Learning Models
-Linear Regression Model: Developed by DS3000 students, this model uses three years of politicians' trading data to predict stock movements based on their trading values.
-LSTM Model: Another innovation by DS3000 students, this Long Short-Term Memory (LSTM) model predicts stock prices based solely on historical price and date data, leveraging deep learning for more accurate predictions.
+Linear Regression Model: Developed by DS3000 team, this model uses three years of politicians' trading data to predict stock movements based on their trading values.
+LSTM Model: Another model by DS3000 team, this Long Short-Term Memory (LSTM) model predicts stock prices based solely on historical price and date data, using deep learning for more accurate predictions.
 
 ## Benefits
 
 Informed Investment Decisions
+
 Our platform empowers you with predictive analytics and real-time data, enabling you to anticipate market movements and make informed investment choices.
 
 Enhanced Transparency
+
 By monitoring the financial activities of politicians, you gain insight into potential future regulations and market shifts, promoting a more transparent political system.
