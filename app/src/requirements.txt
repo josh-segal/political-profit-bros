@@ -15,3 +15,5 @@ scikit-learn
 shap
 yfinance
 urllib3
+tensorflow
+h5py

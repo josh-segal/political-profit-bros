@@ -1,4 +1,4 @@
--- USE JoshProject;
+USE JoshProject;
 
 CREATE TABLE IF NOT EXISTS legislation_mega (
     Legislation_Number VARCHAR(255), 

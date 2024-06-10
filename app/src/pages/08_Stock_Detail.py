@@ -7,6 +7,12 @@ import requests
 import logging
 logger = logging.getLogger()
 from datetime import datetime
+import tensorflow as tf
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import * 
+import keras 
+from assets.python.LSTM import predict
 
 SideBarLinks()
 
@@ -26,6 +32,12 @@ df = pd.DataFrame(data)
 df['Date'] = df['Date'].apply(lambda x: convert_date(x))
 df = df.sort_values(by='Date', ascending=False)
 st.line_chart(df, x='Date', y='Close')
+
+if st.button('Predict stock price',
+             type = 'secondary',
+             use_container_width=False):
+    fig = predict(ticker, df)
+    st.pyplot(fig)
 
 if st.button('Track stock',
                         type='primary',
