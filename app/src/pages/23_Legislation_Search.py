@@ -24,16 +24,25 @@ url = 'http://api:4000/po/legislations'
 payload = id_list
 pol_data_list = requests.post(url, json=payload)
 
-
+trade = pd.DataFrame(trade)
 # # Layout with columns
 col1, col2= st.columns(2)
 
 with col1:
     st.header("Legislations")
-    st.write(pd.DataFrame(legislation))
+    if legislation:
+        for i, l in enumerate(legislation):
+            with st.expander(l['Title'], expanded=False):
+                for key, value in l.items():
+                    st.write(f"- **{key}:** {value}")
+                if st.button("Find Stocks",
+                         help="Find stocks with similar date, party, and subject",
+                         key=f"find_stocks_button_{i}"):
+                     st.write("working...")
+                     trade = "updated"
 
 with col2:
     st.header("Politician Trades")
-    st.write(pd.DataFrame(trade))
+    st.write(trade)
 
     
