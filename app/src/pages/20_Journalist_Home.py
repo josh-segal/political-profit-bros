@@ -21,3 +21,10 @@ if st.button('Search Legislation Database',
              use_container_width=True,
             help="Explore the legislation database"):
     st.switch_page('pages/23_Legislation_Search.py')
+
+
+if st.button("Track Politician's Trade Volumes(See which ones playing stock market the most)",
+             type='primary',
+             use_container_width=True,
+            help="Explore the legislation database"):
+    st.switch_page('pages/24_Politician_Trade_Volume.py')

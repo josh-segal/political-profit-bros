@@ -99,7 +99,7 @@ def get_politician_trade_volume(name):
     cursor = db.get_db().cursor()
     current_app.logger.info(f'politician name = {name}')
     query = f"SELECT Name, Party, Date_Traded, SUM(Trade_Value) AS Total_Trade_Value \
-            FROM politician \
+            FROM poly_trade_data \
             WHERE Name LIKE '%{name}%' \
             GROUP BY Name, Party, Date_Traded \
             ORDER BY SUM(Trade_Value) DESC" 
@@ -123,7 +123,7 @@ def predict_trade_volume(name):
 @politicians.route('/politicians_dropdown', methods=['GET'])
 def politician_dropdown ():
     cursor = db.get_db().cursor()
-    cursor.execute("select distinct concat(Name, ' - ', Party, ' - ', State) as item, p.name, p.party, p.state, p.id FROM politician p order by item")
+    cursor.execute("select distinct concat(Name, ' - ', Party, ' - ', State) as item, p.name, p.party, p.state, p.id FROM poly_trade_data p order by item")
     theData = cursor.fetchall()
     current_app.logger.info(f'GET /politician: theData = {pd.DataFrame(theData).values}')
     return jsonify(theData)
