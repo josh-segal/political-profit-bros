@@ -24,6 +24,8 @@ Data Management: Efficiently manage and retrieve stock data through well-structu
 Linear Regression Model: Developed by DS3000 team, this model uses three years of politicians' trading data to predict stock movements based on their trading values.
 LSTM Model: Another model by DS3000 team, this Long Short-Term Memory (LSTM) model predicts stock prices based solely on historical price and date data, using deep learning for more accurate predictions.
 
+![LSTM graph](app/src/assets/lin_reg_stock_price.png)
+
 ## Benefits
 
 Informed Investment Decisions
