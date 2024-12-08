@@ -1,3 +1,5 @@
+![home](app/src/assets/home.png)
+
 Overview
 
 Welcome to our cutting-edge website, designed to revolutionize the way you approach stock investments and political transparency. Our platform offers powerful tools to track stock performance, predict market trends, and gain insights into the trading activities of politicians. By leveraging this information, you can make more informed investment decisions and contribute to a more transparent and accountable political environment.
